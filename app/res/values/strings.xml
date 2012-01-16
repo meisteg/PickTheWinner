@@ -17,6 +17,9 @@
 
 <resources>
     <string name="app_name">Pick The Winner</string>
+    <string name="eula_title">License</string>
+    <string name="eula_accept">Accept</string>
+    <string name="eula_refuse">Refuse</string>
     <string name="legal">Legal</string>
     <string name="settings">Settings</string>
 </resources>

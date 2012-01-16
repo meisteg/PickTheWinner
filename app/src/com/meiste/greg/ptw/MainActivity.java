@@ -34,6 +34,8 @@ public class MainActivity extends FragmentActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Eula.show(this);
+        
         setContentView(R.layout.main);
         
         mAdapter = new TestFragmentAdapter(getSupportFragmentManager());
