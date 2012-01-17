@@ -15,20 +15,28 @@
  */
 package com.meiste.greg.ptw;
 
+import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 
-import com.viewpagerindicator.PageIndicator;
 import com.viewpagerindicator.TitlePageIndicator;
 import com.viewpagerindicator.TitlePageIndicator.IndicatorStyle;
 
 public class MainActivity extends FragmentActivity {
-	TestFragmentAdapter mAdapter;
-	ViewPager mPager;
-	PageIndicator mIndicator;
+	private final String TAG = "PickTheWinner";
+	private final boolean DEBUG = true;
+	
+	public static final String PREFERENCES_STATE = "state";
+	private final String PREFERENCE_LAST_TAB = "tab.last";
+	
+	private TestFragmentAdapter mAdapter;
+	private ViewPager mPager;
+	private TitlePageIndicator mIndicator;
 	
     /** Called when the activity is first created. */
     @Override
@@ -38,26 +46,40 @@ public class MainActivity extends FragmentActivity {
         
         setContentView(R.layout.main);
         
+        final SharedPreferences prefs = getSharedPreferences(PREFERENCES_STATE,
+        		Activity.MODE_PRIVATE);
+        
         mAdapter = new TestFragmentAdapter(getSupportFragmentManager());
 
 		mPager = (ViewPager)findViewById(R.id.pager);
 		mPager.setAdapter(mAdapter);
 
-		TitlePageIndicator indicator = (TitlePageIndicator)findViewById(R.id.indicator);
-		mIndicator = indicator;
-		indicator.setViewPager(mPager);
+		mIndicator = (TitlePageIndicator)findViewById(R.id.indicator);
+		mIndicator.setViewPager(mPager);
+		mIndicator.setCurrentItem(prefs.getInt(PREFERENCE_LAST_TAB, 0));
 
 		/** TODO: Move style to layout */
 		final float density = getResources().getDisplayMetrics().density;
-		indicator.setBackgroundColor(0x18FF0000);
-		indicator.setFooterColor(0xFFAA2222);
-		indicator.setFooterLineHeight(1 * density); //1dp
-		indicator.setFooterIndicatorHeight(3 * density); //3dp
-		indicator.setFooterIndicatorStyle(IndicatorStyle.Underline);
-		indicator.setTextColor(0xAA000000);
-		indicator.setSelectedColor(0xFF000000);
-		indicator.setSelectedBold(true);
+		mIndicator.setBackgroundColor(0x18FF0000);
+		mIndicator.setFooterColor(0xFFAA2222);
+		mIndicator.setFooterLineHeight(1 * density); //1dp
+		mIndicator.setFooterIndicatorHeight(3 * density); //3dp
+		mIndicator.setFooterIndicatorStyle(IndicatorStyle.Underline);
+		mIndicator.setTextColor(0xAA000000);
+		mIndicator.setSelectedColor(0xFF000000);
+		mIndicator.setSelectedBold(true);
     }
+    
+    @Override
+	public void onPause() {
+		super.onPause();
+
+		if (DEBUG) Log.d(TAG, "Saving state: tab=" + mPager.getCurrentItem());
+		
+		final SharedPreferences prefs = getSharedPreferences(PREFERENCES_STATE,
+        		Activity.MODE_PRIVATE);
+		prefs.edit().putInt(PREFERENCE_LAST_TAB, mPager.getCurrentItem()).commit();
+	}
     
     @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
