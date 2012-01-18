@@ -16,10 +16,18 @@
 -->
 
 <resources>
+    <string name="about">About</string>
     <string name="app_name">Pick The Winner</string>
+    <string name="build_version">Build version</string>
     <string name="eula_title">License</string>
     <string name="eula_accept">Accept</string>
     <string name="eula_refuse">Refuse</string>
     <string name="legal">Legal</string>
+    <string name="notifications">Notifications</string>
+    <string name="remind_questions">Question reminders</string>
+    <string name="remind_questions_summary">Show when new questions are available</string>
+    <string name="remind_race">Race reminders</string>
+    <string name="remind_race_summary">Show when it is time to watch the race</string>
     <string name="settings">Settings</string>
+    <string name="version">1.0</string>
 </resources>

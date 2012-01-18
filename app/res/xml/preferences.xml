@@ -1,0 +1,24 @@
+<PreferenceScreen
+  xmlns:android="http://schemas.android.com/apk/res/android">
+  <PreferenceCategory android:title="@string/notifications">
+    <CheckBoxPreference
+      android:key="remind.questions"
+      android:title="@string/remind_questions"
+      android:summary="@string/remind_questions_summary"
+      android:defaultValue="true"
+    />
+    <CheckBoxPreference
+      android:key="remind.race"
+      android:title="@string/remind_race"
+      android:summary="@string/remind_race_summary"
+      android:defaultValue="true"
+    />
+  </PreferenceCategory>
+  <PreferenceCategory android:title="@string/about">
+    <Preference
+      android:key="build"
+      android:title="@string/build_version"
+      android:summary="@string/version"
+    />
+  </PreferenceCategory>
+</PreferenceScreen>

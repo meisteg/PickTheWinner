@@ -16,6 +16,7 @@
 package com.meiste.greg.ptw;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -91,7 +92,7 @@ public class MainActivity extends FragmentActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.settings:
-				/** TODO */
+				startActivity(new Intent(this, EditPreferences.class));
 				return true;
 
 			case R.id.legal:
