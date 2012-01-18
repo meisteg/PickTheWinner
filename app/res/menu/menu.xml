@@ -16,6 +16,10 @@
 -->
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/settings" android:title="@string/settings" />
-    <item android:id="@+id/legal" android:title="@string/legal" />
+    <item android:id="@+id/settings"
+          android:icon="@drawable/ic_menu_preferences"
+          android:title="@string/settings" />
+    <item android:id="@+id/legal"
+          android:icon="@drawable/ic_menu_agenda"
+          android:title="@string/legal" />
 </menu>
