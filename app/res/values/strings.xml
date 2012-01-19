@@ -23,7 +23,12 @@
     <string name="eula_accept">Accept</string>
     <string name="eula_refuse">Refuse</string>
     <string name="legal">Legal</string>
+    <string name="legal_content">This application is NOT affiliated with or endorsed by NASCAR®.
+        NASCAR® and Sprint Cup® are registered trademarks of the National Association for Stock
+        Car Auto Racing, Inc. All other trademarks, names or logos in this application are the
+        property of their respective owners.</string>
     <string name="notifications">Notifications</string>
+    <string name="ok">OK</string>
     <string name="remind_questions">Question reminders</string>
     <string name="remind_questions_summary">Show when new questions are available</string>
     <string name="remind_race">Race reminders</string>

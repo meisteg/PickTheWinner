@@ -16,6 +16,7 @@
 package com.meiste.greg.ptw;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -96,7 +97,12 @@ public class MainActivity extends FragmentActivity {
 				return true;
 
 			case R.id.legal:
-				/** TODO */
+				final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	            builder.setTitle(R.string.legal);
+	            builder.setCancelable(true);
+	            builder.setPositiveButton(R.string.ok, null);
+	            builder.setMessage(R.string.legal_content);
+	            builder.create().show();
 				return true;
 		}
 		return super.onOptionsItemSelected(item);
