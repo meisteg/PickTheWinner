@@ -15,6 +15,9 @@
  */
 package com.meiste.greg.ptw;
 
+import java.util.List;
+import java.util.Vector;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -36,7 +39,7 @@ public class MainActivity extends FragmentActivity {
 	public static final String PREFERENCES_STATE = "state";
 	private final String PREFERENCE_LAST_TAB = "tab.last";
 	
-	private TestFragmentAdapter mAdapter;
+	private TabFragmentAdapter mAdapter;
 	private ViewPager mPager;
 	private TitlePageIndicator mIndicator;
 	
@@ -51,7 +54,13 @@ public class MainActivity extends FragmentActivity {
         final SharedPreferences prefs = getSharedPreferences(PREFERENCES_STATE,
         		Activity.MODE_PRIVATE);
         
-        mAdapter = new TestFragmentAdapter(getSupportFragmentManager());
+        List<TabFragment> fragments = new Vector<TabFragment>();
+        fragments.add(TestFragment.newInstance("RULE BOOK"));
+        fragments.add(TestFragment.newInstance("QUESTIONS"));
+        fragments.add(TestFragment.newInstance("STANDINGS"));
+        fragments.add(TestFragment.newInstance("SCHEDULE"));
+        fragments.add(TestFragment.newInstance("SUGGEST"));
+        mAdapter = new TabFragmentAdapter(getSupportFragmentManager(), fragments);
 
 		mPager = (ViewPager)findViewById(R.id.pager);
 		mPager.setAdapter(mAdapter);

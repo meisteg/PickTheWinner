@@ -16,7 +16,6 @@
 package com.meiste.greg.ptw;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
-public final class TestFragment extends Fragment {
+public final class TestFragment extends TabFragment {
 	private static final String KEY_CONTENT = "TestFragment:Content";
 	private String mContent = "???";
 	
@@ -38,6 +37,8 @@ public final class TestFragment extends Fragment {
 		}
 		builder.deleteCharAt(builder.length() - 1);
 		fragment.mContent = builder.toString();
+		
+		fragment.setTitle(content);
 		
 		return fragment;
 	}

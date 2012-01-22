@@ -15,33 +15,34 @@
  */
 package com.meiste.greg.ptw;
 
-import com.viewpagerindicator.TitleProvider;
+import java.util.List;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-class TestFragmentAdapter extends FragmentPagerAdapter implements TitleProvider {
-	protected static final String[] CONTENT = new String[] {"Rules", "Questions", "Standings", "Schedule", "Suggest"};
-	
-	private int mCount = CONTENT.length;
+import com.viewpagerindicator.TitleProvider;
 
-	public TestFragmentAdapter(FragmentManager fm) {
+class TabFragmentAdapter extends FragmentPagerAdapter implements TitleProvider {
+	private List<TabFragment> mFragments;
+	
+	public TabFragmentAdapter(FragmentManager fm, List<TabFragment> fragments) {
 		super(fm);
+		mFragments = fragments;
 	}
 
 	@Override
 	public Fragment getItem(int position) {
-		return TestFragment.newInstance(CONTENT[position % CONTENT.length]);
+		return this.mFragments.get(position);
 	}
 
 	@Override
 	public int getCount() {
-		return mCount;
+		return mFragments.size();
 	}
 	
 	@Override
 	public String getTitle(int position) {
-		return CONTENT[position % CONTENT.length];
+		return mFragments.get(position).getTitle();
 	}
 }
