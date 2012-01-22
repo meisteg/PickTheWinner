@@ -55,7 +55,7 @@ public class MainActivity extends FragmentActivity {
         		Activity.MODE_PRIVATE);
         
         List<TabFragment> fragments = new Vector<TabFragment>();
-        fragments.add(TestFragment.newInstance("RULE BOOK"));
+        fragments.add(RuleBook.newInstance(getApplicationContext()));
         fragments.add(TestFragment.newInstance("QUESTIONS"));
         fragments.add(TestFragment.newInstance("STANDINGS"));
         fragments.add(TestFragment.newInstance("SCHEDULE"));
