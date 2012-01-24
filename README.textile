@@ -1,0 +1,25 @@
+h1. Pick The Winner
+
+Pick The Winner is an Android game that allows NASCAR fans from around the world compete weekly for points which are earned by correctly answering questions about that week's race.
+
+h2. Getting Started
+
+This is the source code to the game. If you are interested in playing the game, you'll need to download it from the Android Market (it's free).
+
+Pick The Winner is built using three Eclipse projects, which are all included in this repo. You should be able to point the Eclipse project import tool to this directory, and Eclipse will prompt you to import all three projects. Once imported, simply build the PickTheWinner project, which will automatically build and include the other two library projects.
+
+h2. License
+
+Copyright 2012 Gregory S. Meiste
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
