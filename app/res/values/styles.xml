@@ -17,6 +17,20 @@
 
 <resources>
 
+    <style name="TabTitles">
+        <item name="android:padding">10dip</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:background">@color/tab_bg</item>
+        <item name="footerColor">@color/tab_footer</item>
+        <item name="footerLineHeight">1dp</item>
+        <item name="footerIndicatorHeight">3dp</item>
+        <item name="footerIndicatorStyle">underline</item>
+        <item name="textColor">@color/tab_text</item>
+        <item name="selectedColor">@color/tab_selected</item>
+        <item name="selectedBold">true</item>
+    </style>
+    
     <style name="RuleBookHeader">
         <item name="android:textSize">26sp</item>
         <item name="android:textStyle">bold</item>

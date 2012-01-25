@@ -30,7 +30,6 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 
 import com.viewpagerindicator.TitlePageIndicator;
-import com.viewpagerindicator.TitlePageIndicator.IndicatorStyle;
 
 public class MainActivity extends FragmentActivity {
 	private final String TAG = "PickTheWinner";
@@ -68,17 +67,6 @@ public class MainActivity extends FragmentActivity {
 		mIndicator = (TitlePageIndicator)findViewById(R.id.indicator);
 		mIndicator.setViewPager(mPager);
 		mIndicator.setCurrentItem(prefs.getInt(PREFERENCE_LAST_TAB, 0));
-
-		/** TODO: Move style to layout */
-		final float density = getResources().getDisplayMetrics().density;
-		mIndicator.setBackgroundColor(0x18FF0000);
-		mIndicator.setFooterColor(0xFFAA2222);
-		mIndicator.setFooterLineHeight(1 * density); //1dp
-		mIndicator.setFooterIndicatorHeight(3 * density); //3dp
-		mIndicator.setFooterIndicatorStyle(IndicatorStyle.Underline);
-		mIndicator.setTextColor(0xAA000000);
-		mIndicator.setSelectedColor(0xFF000000);
-		mIndicator.setSelectedBold(true);
     }
     
     @Override
