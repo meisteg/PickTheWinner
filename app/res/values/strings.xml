@@ -33,8 +33,10 @@
     <string name="remind_questions_summary">Show when new questions are available</string>
     <string name="remind_race">Race reminders</string>
     <string name="remind_race_summary">Show when it is time to watch the race</string>
+    <string name="send">Send</string>
     <string name="settings">Settings</string>
     <string name="tab_rule_book">RULE BOOK</string>
+    <string name="tab_suggest">SUGGEST</string>
     <string name="version">1.0</string>
     
     <!-- Rule Book Strings -->
@@ -67,4 +69,11 @@
         \n\nWhen selecting the two wild cards for The Chase, if there are multiple players tied
         with the same number of wins, the player(s) higher in the standings will be qualified
         for The Chase.</string>
+        
+    <!-- Suggest Strings -->
+    <string name="suggest_para1">You can submit question ideas for the next race at:</string>
+    <string name="suggest_para2">It is optional and does not earn you any points.</string>
+    <string name="suggest_hint">Enter question suggestion here</string>
+    <string name="suggest_no_race">Thanks for all your question suggestions this season.</string>
+    
 </resources>

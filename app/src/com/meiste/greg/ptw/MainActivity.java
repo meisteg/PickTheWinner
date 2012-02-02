@@ -58,7 +58,7 @@ public class MainActivity extends FragmentActivity {
         fragments.add(TestFragment.newInstance("QUESTIONS"));
         fragments.add(TestFragment.newInstance("STANDINGS"));
         fragments.add(TestFragment.newInstance("SCHEDULE"));
-        fragments.add(TestFragment.newInstance("SUGGEST"));
+        fragments.add(Suggest.newInstance(getApplicationContext()));
         mAdapter = new TabFragmentAdapter(getSupportFragmentManager(), fragments);
 
 		mPager = (ViewPager)findViewById(R.id.pager);
