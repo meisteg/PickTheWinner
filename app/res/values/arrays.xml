@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2012 Gregory S. Meiste <http://gregmeiste.com>
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<resources>
+    <!-- All "schedule" arrays must be of R.integer.num_races size -->
+    <string-array name="schedule_tracks" translatable="false">
+        <item>Daytona International Speedway</item>
+        <item>Daytona International Speedway</item>
+        <item>Daytona International Speedway</item>
+        <item>Daytona International Speedway</item>
+        <item>Phoenix International Raceway</item>
+        <item>Las Vegas Motor Speedway</item>
+        <item>Bristol Motor Speedway</item>
+        <item>Auto Club Speedway</item>
+        <item>Martinsville Speedway</item>
+        <item>Texas Motor Speedway</item>
+        <item>Kansas Speedway</item>
+        <item>Richmond International Raceway</item>
+        <item>Talladega Superspeedway</item>
+        <item>Darlington Raceway</item>
+        <item>Charlotte Motor Speedway</item>
+        <item>Charlotte Motor Speedway</item>
+        <item>Charlotte Motor Speedway</item>
+        <item>Dover International Speedway</item>
+        <item>Pocono Raceway</item>
+        <item>Michigan International Speedway</item>
+        <item>Infineon Raceway</item>
+        <item>Kentucky Speedway</item>
+        <item>Daytona International Speedway</item>
+        <item>New Hampshire Motor Speedway</item>
+        <item>Indianapolis Motor Speedway</item>
+        <item>Pocono Raceway</item>
+        <item>Watkins Glen International</item>
+        <item>Michigan International Speedway</item>
+        <item>Bristol Motor Speedway</item>
+        <item>Atlanta Motor Speedway</item>
+        <item>Richmond International Raceway</item>
+        <item>Chicagoland Speedway</item>
+        <item>New Hampshire Motor Speedway</item>
+        <item>Dover International Speedway</item>
+        <item>Talladega Superspeedway</item>
+        <item>Charlotte Motor Speedway</item>
+        <item>Kansas Speedway</item>
+        <item>Martinsville Speedway</item>
+        <item>Texas Motor Speedway</item>
+        <item>Phoenix International Raceway</item>
+        <item>Homestead-Miami Speedway</item>
+    </string-array>
+    
+    <string-array name="schedule_races" translatable="false">
+        <item>Budweiser Shootout</item>
+        <item>Gatorade Duel 1</item>
+        <item>Gatorade Duel 2</item>
+        <item>Daytona 500</item>
+        <item>Subway Fresh Fit 500</item>
+        <item>Kobalt Tools 400</item>
+        <item>Food City 500</item>
+        <item>Auto Club 400</item>
+        <item>Goody\'s Fast Relief 500</item>
+        <item>Samsung Mobile 500</item>
+        <item>STP 400</item>
+        <item>Richmond</item> <!-- TODO: Update when announced -->
+        <item>Aaron\'s 499</item>
+        <item>Southern 500</item>
+        <item>Sprint Showdown</item>
+        <item>Sprint All-Star Race</item>
+        <item>Coca-Cola 600</item>
+        <item>Dover</item> <!-- TODO: Update when announced -->
+        <item>Pocono 400</item> <!-- TODO: Update when announced -->
+        <item>Heluva Good! Sour Cream Dips 400</item>
+        <item>Toyota/Save Mart 350</item>
+        <item>Quaker State 400</item>
+        <item>Coke Zero 400 powered by Coca-Cola</item>
+        <item>Lenox Industrial Tools 301</item>
+        <item>Crown Royal presents the "Your Hero's Name Here" 400 at the Brickyard</item>  <!-- TODO: Update when announced -->
+        <item>Pennsylvania 400</item> <!-- TODO: Update when announced -->
+        <item>Watkins Glen</item> <!-- TODO: Update when announced -->
+        <item>Pure Michigan 400</item>
+        <item>Irwin Tools Night Race</item> <!-- TODO: Update when announced -->
+        <item>AdvoCare 500</item>
+        <item>Wonderful Pistachios 400</item>
+        <item>Geico 400</item>
+        <item>Sylvania 300</item>
+        <item>AAA 400</item>
+        <item>Talladega</item> <!-- TODO: Update when announced -->
+        <item>Bank of America 500</item>
+        <item>Hollywood Casino 400</item>
+        <item>Tums Fast Relief 500</item>
+        <item>AAA Texas 500</item>
+        <item>Kobalt Tools 500</item>
+        <item>Ford 400</item>
+    </string-array>
+    
+    <string-array name="schedule_tv" translatable="false">
+        <item>FOX</item>
+        <item>SPEED</item>
+        <item>SPEED</item>
+        <item>FOX</item>
+        <item>FOX</item>
+        <item>FOX</item>
+        <item>FOX</item>
+        <item>FOX</item>
+        <item>FOX</item>
+        <item>FOX</item>
+        <item>FOX</item>
+        <item>FOX</item>
+        <item>FOX</item>
+        <item>FOX</item>
+        <item>SPEED</item>
+        <item>SPEED</item>
+        <item>FOX</item>
+        <item>FOX</item>
+        <item>TNT</item>
+        <item>TNT</item>
+        <item>TNT</item>
+        <item>TNT</item>
+        <item>TNT</item>
+        <item>TNT</item>
+        <item>ESPN</item>
+        <item>ESPN</item>
+        <item>ESPN</item>
+        <item>ESPN</item>
+        <item>ABC</item>
+        <item>ESPN</item>
+        <item>ABC</item>
+        <item>ESPN</item>
+        <item>ESPN</item>
+        <item>ESPN</item>
+        <item>ESPN</item>
+        <item>ABC</item>
+        <item>ESPN</item>
+        <item>ESPN</item>
+        <item>ESPN</item>
+        <item>ESPN</item>
+        <item>ESPN</item>
+    </string-array>
+    
+    <!-- TODO: Finish setting times after posted on nascar.com -->
+    <string-array name="schedule_start_times" translatable="false">
+        <item>20120219T010000Z</item>
+        <item>20120223T190000Z</item>
+        <item>20120223T210000Z</item>
+        <item>20120226T180000Z</item>
+        <item>20120304T200000Z</item>
+        <!-- Daylight Saving Time begins -->
+        <item>20120311T190000Z</item>
+        <item>20120318T000000Z</item>
+        <item>20120325T000000Z</item>
+        <item>20120401T000000Z</item>
+        <item>20120414T000000Z</item>
+        <item>20120422T000000Z</item>
+        <item>20120428T000000Z</item>
+        <item>20120506T000000Z</item>
+        <item>20120512T000000Z</item>
+        <item>20120519T000000Z</item>
+        <item>20120519T000000Z</item>
+        <item>20120527T000000Z</item>
+        <item>20120603T000000Z</item>
+        <item>20120610T000000Z</item>
+        <item>20120617T000000Z</item>
+        <item>20120624T000000Z</item>
+        <item>20120630T000000Z</item>
+        <item>20120707T000000Z</item>
+        <item>20120715T000000Z</item>
+        <item>20120729T000000Z</item>
+        <item>20120805T000000Z</item>
+        <item>20120812T000000Z</item>
+        <item>20120819T000000Z</item>
+        <item>20120825T000000Z</item>
+        <item>20120902T000000Z</item>
+        <item>20120908T000000Z</item>
+        <item>20120916T000000Z</item>
+        <item>20120923T000000Z</item>
+        <item>20120930T000000Z</item>
+        <item>20121007T000000Z</item>
+        <item>20121013T000000Z</item>
+        <item>20121021T000000Z</item>
+        <item>20121028T000000Z</item>
+        <!-- Daylight Saving Time ends -->
+        <item>20121104T000000Z</item>
+        <item>20121111T000000Z</item>
+        <item>20121118T000000Z</item>
+    </string-array>
+    
+    <!-- Questions available at 1:00 Eastern time Thursday before race. -->
+    <!-- Note: No questions for exhibitions, so set time to start time. -->
+    <string-array name="schedule_question_times" translatable="false">
+        <item>20120219T010000Z</item>
+        <item>20120223T190000Z</item>
+        <item>20120223T210000Z</item>
+        <item>20120223T180000Z</item>
+        <item>20120301T180000Z</item>
+        <!-- Daylight Saving Time begins -->
+        <item>20120308T170000Z</item>
+        <item>20120315T170000Z</item>
+        <item>20120322T170000Z</item>
+        <item>20120329T170000Z</item>
+        <item>20120412T170000Z</item>
+        <item>20120419T170000Z</item>
+        <item>20120426T170000Z</item>
+        <item>20120503T170000Z</item>
+        <item>20120510T170000Z</item>
+        <item>20120519T000000Z</item> <!-- TODO: Update when announced -->
+        <item>20120519T000000Z</item> <!-- TODO: Update when announced -->
+        <item>20120524T170000Z</item>
+        <item>20120531T170000Z</item>
+        <item>20120607T170000Z</item>
+        <item>20120614T170000Z</item>
+        <item>20120621T170000Z</item>
+        <item>20120628T170000Z</item>
+        <item>20120705T170000Z</item>
+        <item>20120712T170000Z</item>
+        <item>20120726T170000Z</item>
+        <item>20120802T170000Z</item>
+        <item>20120809T170000Z</item>
+        <item>20120816T170000Z</item>
+        <item>20120823T170000Z</item>
+        <item>20120830T170000Z</item>
+        <item>20120906T170000Z</item>
+        <item>20120913T170000Z</item>
+        <item>20120920T170000Z</item>
+        <item>20120927T170000Z</item>
+        <item>20121004T170000Z</item>
+        <item>20121011T170000Z</item>
+        <item>20121018T170000Z</item>
+        <item>20121025T170000Z</item>
+        <!-- Daylight Saving Time ends -->
+        <item>20121101T180000Z</item>
+        <item>20121108T180000Z</item>
+        <item>20121115T180000Z</item>
+    </string-array>
+    
+    <integer-array name="schedule_race_nums" translatable="false">
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>0</item>
+        <item>0</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+        <item>21</item>
+        <item>22</item>
+        <item>23</item>
+        <item>24</item>
+        <item>25</item>
+        <item>26</item>
+        <item>27</item>
+        <item>28</item>
+        <item>29</item>
+        <item>30</item>
+        <item>31</item>
+        <item>32</item>
+        <item>33</item>
+        <item>34</item>
+        <item>35</item>
+        <item>36</item>
+    </integer-array>
+
+</resources>
