@@ -18,6 +18,9 @@ package com.meiste.greg.ptw;
 import android.content.Context;
 import android.content.res.Resources;
 import android.text.format.Time;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 
 public final class Race {
 	private int mRaceNum;
@@ -36,14 +39,16 @@ public final class Race {
 		mTv = res.getStringArray(R.array.schedule_tv)[id];
 		
 		mStartTime = new Time();
+		String localTimeZone = mStartTime.timezone;
 		mStartTime.parse(res.getStringArray(R.array.schedule_start_times)[id]);
+		mStartTime.switchTimezone(localTimeZone);
 		
 		mQuestionTime = new Time();
 		mQuestionTime.parse(res.getStringArray(R.array.schedule_question_times)[id]);
 	}
 	
 	public static Race getNext(Context context, boolean allowExhibition, boolean allowInProgress) {
-		for (int i = 0; i < R.integer.num_races; ++i) {
+		for (int i = 0; i < getNumRaces(context); ++i) {
 			Race race = new Race(context, i);
 			
 			if (race.isFuture()) {
@@ -58,6 +63,10 @@ public final class Race {
 		}
 		
 		return null;
+	}
+	
+	public static int getNumRaces(Context context) {
+		return context.getResources().getInteger(R.integer.num_races);
 	}
 	
 	public boolean isFuture() {
@@ -84,5 +93,20 @@ public final class Race {
 	
 	public String getName() {
 		return mName;
+	}
+	
+	public View getView(LayoutInflater inflater) {
+		View v = inflater.inflate(R.layout.schedule_row, null);
+		
+		TextView raceNum = (TextView) v.findViewById(R.id.race_num);
+		raceNum.setText(isExhibition() ? "-" : Integer.toString(mRaceNum));
+		
+		TextView startTime = (TextView) v.findViewById(R.id.race_date);
+		startTime.setText(mStartTime.format3339(true));
+		
+		TextView track = (TextView) v.findViewById(R.id.race_track);
+		track.setText(mTrack);
+		
+		return v;
 	}
 }

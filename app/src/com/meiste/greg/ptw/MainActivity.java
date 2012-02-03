@@ -57,7 +57,7 @@ public class MainActivity extends FragmentActivity {
         fragments.add(RuleBook.newInstance(getApplicationContext()));
         fragments.add(TestFragment.newInstance("QUESTIONS"));
         fragments.add(TestFragment.newInstance("STANDINGS"));
-        fragments.add(TestFragment.newInstance("SCHEDULE"));
+        fragments.add(Schedule.newInstance(getApplicationContext()));
         fragments.add(Suggest.newInstance(getApplicationContext()));
         mAdapter = new TabFragmentAdapter(getSupportFragmentManager(), fragments);
 
