@@ -20,7 +20,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TableLayout;
+import android.widget.ListView;
 
 public final class Schedule extends TabFragment {
 	public static Schedule newInstance(Context context) {
@@ -34,12 +34,9 @@ public final class Schedule extends TabFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.schedule, container, false);
 		
-		TableLayout raceTable = (TableLayout) v.findViewById(R.id.race_table);
-		
-		for (int i = 0; i < Race.getNumRaces(getActivity()); ++i) {
-			Race race = new Race(getActivity(), i);
-			raceTable.addView(race.getView(inflater));
-		}
+		Race[] races = new Race[Race.getNumRaces(getActivity())];
+		ListView lv = (ListView) v.findViewById(R.id.schedule);
+		lv.setAdapter(new RaceItemAdapter(getActivity(), android.R.layout.simple_list_item_1, races));
 		
 		return v;
 	}

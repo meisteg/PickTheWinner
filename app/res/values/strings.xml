@@ -71,12 +71,6 @@
         with the same number of wins, the player(s) higher in the standings will be qualified
         for The Chase.</string>
         
-    <!-- Schedule Strings -->
-    <string name="schedule_title">2012 Sprint Cup Series</string>
-    <string name="schedule_no">No.</string>
-    <string name="schedule_date">Date</string>
-    <string name="schedule_race">Race</string>
-        
     <!-- Suggest Strings -->
     <string name="suggest_para1">You can submit question ideas for the next race at:</string>
     <string name="suggest_para2">It is optional and does not earn you any points.</string>
