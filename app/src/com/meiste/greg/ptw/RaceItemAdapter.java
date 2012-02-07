@@ -45,13 +45,18 @@ public final class RaceItemAdapter extends ArrayAdapter<Race> {
         }
         
     	TextView raceNum = (TextView) v.findViewById(R.id.race_num);
-    	TextView startTime = (TextView) v.findViewById(R.id.race_date);
+    	TextView startDate = (TextView) v.findViewById(R.id.race_date);
+    	TextView startTime = (TextView) v.findViewById(R.id.race_time);
     	TextView name = (TextView) v.findViewById(R.id.race_name);
     	TextView track = (TextView) v.findViewById(R.id.race_track);
     	TextView tv = (TextView) v.findViewById(R.id.race_tv);
     	
     	if (raceNum != null) {
     		raceNum.setText(mRaces[pos].getRaceNum());
+    	}
+    	
+    	if (startDate != null) {
+    		startDate.setText(mRaces[pos].getStartDate());
     	}
     	
     	if (startTime != null) {

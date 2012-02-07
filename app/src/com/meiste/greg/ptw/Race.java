@@ -17,28 +17,28 @@ package com.meiste.greg.ptw;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.text.format.DateUtils;
 import android.text.format.Time;
 
 public final class Race {
+	private Context mContext;
+	
 	private int mRaceNum;
 	private String mTrack;
 	private String mName;
 	private String mTv;
-	private Time mStartTime;
-	private Time mQuestionTime;
+	private long mStart;
+	private Time mQuestionTime;  // TODO: Switch to millis like start time
 	
 	public Race(Context context, int id) {
+		mContext = context;
 		Resources res = context.getResources();
 		
 		mRaceNum = res.getIntArray(R.array.schedule_race_nums)[id];
 		mTrack = res.getStringArray(R.array.schedule_tracks)[id];
 		mName = res.getStringArray(R.array.schedule_races)[id];
 		mTv = res.getStringArray(R.array.schedule_tv)[id];
-		
-		mStartTime = new Time();
-		String localTimeZone = mStartTime.timezone;
-		mStartTime.parse(res.getStringArray(R.array.schedule_start_times)[id]);
-		mStartTime.switchTimezone(localTimeZone);
+		mStart = res.getIntArray(R.array.schedule_start_times)[id] * DateUtils.SECOND_IN_MILLIS;
 		
 		mQuestionTime = new Time();
 		mQuestionTime.parse(res.getStringArray(R.array.schedule_question_times)[id]);
@@ -67,10 +67,7 @@ public final class Race {
 	}
 	
 	public boolean isFuture() {
-		Time now = new Time();
-		now.setToNow();
-		
-		return now.before(mStartTime);
+		return System.currentTimeMillis() < mStart;
 	}
 	
 	public boolean inProgress() {
@@ -100,7 +97,13 @@ public final class Race {
 		return mTv;
 	}
 	
+	public String getStartDate() {
+		int flags = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_YEAR;
+		return DateUtils.formatDateTime(mContext, mStart, flags);
+	}
+	
 	public String getStartTime() {
-		return mStartTime.format3339(true);
+		int flags = DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_NO_NOON_MIDNIGHT;
+		return DateUtils.formatDateTime(mContext, mStart, flags);
 	}
 }
