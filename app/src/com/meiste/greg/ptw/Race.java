@@ -18,7 +18,6 @@ package com.meiste.greg.ptw;
 import android.content.Context;
 import android.content.res.Resources;
 import android.text.format.DateUtils;
-import android.text.format.Time;
 
 public final class Race {
 	private Context mContext;
@@ -28,7 +27,7 @@ public final class Race {
 	private String mName;
 	private String mTv;
 	private long mStart;
-	private Time mQuestionTime;  // TODO: Switch to millis like start time
+	private long mQuestion;
 	
 	public Race(Context context, int id) {
 		mContext = context;
@@ -39,9 +38,7 @@ public final class Race {
 		mName = res.getStringArray(R.array.schedule_races)[id];
 		mTv = res.getStringArray(R.array.schedule_tv)[id];
 		mStart = res.getIntArray(R.array.schedule_start_times)[id] * DateUtils.SECOND_IN_MILLIS;
-		
-		mQuestionTime = new Time();
-		mQuestionTime.parse(res.getStringArray(R.array.schedule_question_times)[id]);
+		mQuestion = res.getIntArray(R.array.schedule_question_times)[id] * DateUtils.SECOND_IN_MILLIS;
 	}
 	
 	public static Race getNext(Context context, boolean allowExhibition, boolean allowInProgress) {
@@ -71,10 +68,7 @@ public final class Race {
 	}
 	
 	public boolean inProgress() {
-		Time now = new Time();
-		now.setToNow();
-		
-		return now.after(mQuestionTime) && isFuture();
+		return (mQuestion < System.currentTimeMillis()) && isFuture();
 	}
 	
 	public boolean isExhibition() {

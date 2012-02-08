@@ -196,51 +196,49 @@
     
     <!-- Questions available at 1:00 Eastern time Thursday before race. -->
     <!-- Note: No questions for exhibitions, so set time to start time. -->
-    <string-array name="schedule_question_times" translatable="false">
-        <item>20120219T010000Z</item>
-        <item>20120223T190000Z</item>
-        <item>20120223T210000Z</item>
-        <item>20120223T180000Z</item>
-        <item>20120301T180000Z</item>
-        <!-- Daylight Saving Time begins -->
-        <item>20120308T170000Z</item>
-        <item>20120315T170000Z</item>
-        <item>20120322T170000Z</item>
-        <item>20120329T170000Z</item>
-        <item>20120412T170000Z</item>
-        <item>20120419T170000Z</item>
-        <item>20120426T170000Z</item>
-        <item>20120503T170000Z</item>
-        <item>20120510T170000Z</item>
-        <item>20120519T000000Z</item> <!-- TODO: Update when announced -->
-        <item>20120519T000000Z</item> <!-- TODO: Update when announced -->
-        <item>20120524T170000Z</item>
-        <item>20120531T170000Z</item>
-        <item>20120607T170000Z</item>
-        <item>20120614T170000Z</item>
-        <item>20120621T170000Z</item>
-        <item>20120628T170000Z</item>
-        <item>20120705T170000Z</item>
-        <item>20120712T170000Z</item>
-        <item>20120726T170000Z</item>
-        <item>20120802T170000Z</item>
-        <item>20120809T170000Z</item>
-        <item>20120816T170000Z</item>
-        <item>20120823T170000Z</item>
-        <item>20120830T170000Z</item>
-        <item>20120906T170000Z</item>
-        <item>20120913T170000Z</item>
-        <item>20120920T170000Z</item>
-        <item>20120927T170000Z</item>
-        <item>20121004T170000Z</item>
-        <item>20121011T170000Z</item>
-        <item>20121018T170000Z</item>
-        <item>20121025T170000Z</item>
-        <!-- Daylight Saving Time ends -->
-        <item>20121101T180000Z</item>
-        <item>20121108T180000Z</item>
-        <item>20121115T180000Z</item>
-    </string-array>
+    <integer-array name="schedule_question_times" translatable="false">
+        <item>1329613200</item>
+        <item>1330020000</item>
+        <item>1330020000</item>
+        <item>1330020000</item>
+        <item>1330624800</item>
+        <item>1331229600</item>
+        <item>1331830800</item>
+        <item>1332435600</item>
+        <item>1333040400</item>
+        <item>1334250000</item>
+        <item>1334854800</item>
+        <item>1335459600</item>
+        <item>1336064400</item>
+        <item>1336669200</item>
+        <item>1337468400</item>
+        <item>1337468400</item>
+        <item>1337878800</item>
+        <item>1338483600</item>
+        <item>1339088400</item>
+        <item>1339693200</item>
+        <item>1340298000</item>
+        <item>1340902800</item>
+        <item>1341507600</item>
+        <item>1342112400</item>
+        <item>1343322000</item>
+        <item>1343926800</item>
+        <item>1344531600</item>
+        <item>1345136400</item>
+        <item>1345741200</item>
+        <item>1346346000</item>
+        <item>1346950800</item>
+        <item>1347555600</item>
+        <item>1348160400</item>
+        <item>1348765200</item>
+        <item>1349370000</item>
+        <item>1349974800</item>
+        <item>1350579600</item>
+        <item>1351184400</item>
+        <item>1351789200</item>
+        <item>1352397600</item>
+        <item>1353002400</item>
+    </integer-array>
     
     <integer-array name="schedule_race_nums" translatable="false">
         <item>0</item>
