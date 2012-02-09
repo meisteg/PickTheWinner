@@ -36,7 +36,7 @@ public final class Schedule extends TabFragment {
 		
 		Race[] races = new Race[Race.getNumRaces(getActivity())];
 		ListView lv = (ListView) v.findViewById(R.id.schedule);
-		lv.setAdapter(new RaceItemAdapter(getActivity(), android.R.layout.simple_list_item_1, races));
+		lv.setAdapter(new RaceItemAdapter(getActivity(), R.layout.schedule_row, races));
 		
 		return v;
 	}
