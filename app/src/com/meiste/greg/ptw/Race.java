@@ -75,6 +75,10 @@ public final class Race {
 		return mRaceNum <= 0;
 	}
 	
+	public boolean isInChase() {
+		return mRaceNum >= 27;
+	}
+	
 	public String getRaceNum() {
 		return isExhibition() ? "-" : Integer.toString(mRaceNum);
 	}
