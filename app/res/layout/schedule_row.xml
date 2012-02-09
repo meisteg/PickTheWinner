@@ -22,17 +22,20 @@
     
     <TextView
         android:id="@+id/race_num"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content" />
+		android:layout_width="0px"
+		android:layout_height="wrap_content"
+		android:layout_weight="0.1" />
     
     <TextView
         android:id="@+id/race_date"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content" />
+		android:layout_width="0px"
+		android:layout_height="wrap_content"
+		android:layout_weight="0.4" />
     
     <TextView
-        android:id="@+id/race_track"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content" />
+        android:id="@+id/race_track_short"
+		android:layout_width="0px"
+		android:layout_height="wrap_content"
+		android:layout_weight="0.5" />
     
 </LinearLayout>

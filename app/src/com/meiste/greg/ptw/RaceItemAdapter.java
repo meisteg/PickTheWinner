@@ -25,6 +25,7 @@ import android.widget.TextView;
 public final class RaceItemAdapter extends ArrayAdapter<Race> {
 	private Race[] mRaces;
 	private Context mContext;
+	private boolean mEnabled = true;
 	
 	public RaceItemAdapter(Context context, int textViewResourceId, Race[] races) {
 		super(context, textViewResourceId, races);
@@ -48,7 +49,8 @@ public final class RaceItemAdapter extends ArrayAdapter<Race> {
     	TextView startDate = (TextView) v.findViewById(R.id.race_date);
     	TextView startTime = (TextView) v.findViewById(R.id.race_time);
     	TextView name = (TextView) v.findViewById(R.id.race_name);
-    	TextView track = (TextView) v.findViewById(R.id.race_track);
+    	TextView trackLong = (TextView) v.findViewById(R.id.race_track);
+    	TextView trackShort = (TextView) v.findViewById(R.id.race_track_short);
     	TextView tv = (TextView) v.findViewById(R.id.race_tv);
     	
     	if (raceNum != null) {
@@ -65,10 +67,15 @@ public final class RaceItemAdapter extends ArrayAdapter<Race> {
     	
     	if (name != null) {
     		name.setText(mRaces[pos].getName());
+    		mEnabled = false;
     	}
     	
-    	if (track != null) {
-    		track.setText(mRaces[pos].getTrack());
+    	if (trackLong != null) {
+    		trackLong.setText(mRaces[pos].getTrack(Race.NAME_LONG));
+    	}
+    	
+    	if (trackShort != null) {
+    		trackShort.setText(mRaces[pos].getTrack(Race.NAME_SHORT));
     	}
     	
     	if (tv != null) {
@@ -77,4 +84,9 @@ public final class RaceItemAdapter extends ArrayAdapter<Race> {
         
         return v;
     }
+	
+	@Override
+	public boolean isEnabled(int position) {
+		return mEnabled;
+	}
 }

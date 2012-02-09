@@ -20,10 +20,14 @@ import android.content.res.Resources;
 import android.text.format.DateUtils;
 
 public final class Race {
+	public static final int NAME_SHORT = 0;
+	public static final int NAME_LONG = 1;
+	
 	private Context mContext;
 	
 	private int mRaceNum;
-	private String mTrack;
+	private String mTrackLong;
+	private String mTrackShort;
 	private String mName;
 	private String mTv;
 	private long mStart;
@@ -34,7 +38,8 @@ public final class Race {
 		Resources res = context.getResources();
 		
 		mRaceNum = res.getIntArray(R.array.schedule_race_nums)[id];
-		mTrack = res.getStringArray(R.array.schedule_tracks)[id];
+		mTrackLong = res.getStringArray(R.array.schedule_tracks)[id];
+		mTrackShort = res.getStringArray(R.array.schedule_tracks_short)[id];
 		mName = res.getStringArray(R.array.schedule_races)[id];
 		mTv = res.getStringArray(R.array.schedule_tv)[id];
 		mStart = res.getIntArray(R.array.schedule_start_times)[id] * DateUtils.SECOND_IN_MILLIS;
@@ -83,8 +88,8 @@ public final class Race {
 		return isExhibition() ? "-" : Integer.toString(mRaceNum);
 	}
 	
-	public String getTrack() {
-		return mTrack;
+	public String getTrack(int length) {
+		return (length == NAME_SHORT) ? mTrackShort : mTrackLong;
 	}
 	
 	public String getName() {

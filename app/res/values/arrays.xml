@@ -61,6 +61,50 @@
         <item>Homestead-Miami Speedway</item>
     </string-array>
     
+    <string-array name="schedule_tracks_short" translatable="false">
+        <item>Budweiser Shootout</item>
+        <item>Gatorade Duel 1</item>
+        <item>Gatorade Duel 2</item>
+        <item>Daytona</item>
+        <item>Phoenix</item>
+        <item>Las Vegas</item>
+        <item>Bristol</item>
+        <item>Fontana</item>
+        <item>Martinsville</item>
+        <item>Texas</item>
+        <item>Kansas</item>
+        <item>Richmond</item>
+        <item>Talladega</item>
+        <item>Darlington</item>
+        <item>Sprint Showdown</item>
+        <item>Sprint All-Star Race</item>
+        <item>Charlotte</item>
+        <item>Dover</item>
+        <item>Pocono</item>
+        <item>Michigan</item>
+        <item>Sonoma</item>
+        <item>Kentucky</item>
+        <item>Daytona</item>
+        <item>Loudon</item>
+        <item>Indianapolis</item>
+        <item>Pocono</item>
+        <item>Watkins Glen</item>
+        <item>Michigan</item>
+        <item>Bristol</item>
+        <item>Atlanta</item>
+        <item>Richmond</item>
+        <item>Chicagoland</item>
+        <item>Loudon</item>
+        <item>Dover</item>
+        <item>Talladega</item>
+        <item>Charlotte</item>
+        <item>Kansas</item>
+        <item>Martinsville</item>
+        <item>Texas</item>
+        <item>Phoenix</item>
+        <item>Homestead</item>
+    </string-array>
+    
     <string-array name="schedule_races" translatable="false">
         <item>Budweiser Shootout</item>
         <item>Gatorade Duel 1</item>
@@ -86,7 +130,7 @@
         <item>Quaker State 400</item>
         <item>Coke Zero 400 powered by Coca-Cola</item>
         <item>Lenox Industrial Tools 301</item>
-        <item>Crown Royal presents the "Your Hero's Name Here" 400 at the Brickyard</item>  <!-- TODO: Update when announced -->
+        <item>Crown Royal presents the \'\'Your Hero\'s Name Here\'\' 400 at the Brickyard</item>  <!-- TODO: Update when announced -->
         <item>Pennsylvania 400</item> <!-- TODO: Update when announced -->
         <item>Watkins Glen</item> <!-- TODO: Update when announced -->
         <item>Pure Michigan 400</item>

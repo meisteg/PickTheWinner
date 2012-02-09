@@ -46,7 +46,7 @@ public final class Suggest extends TabFragment implements View.OnClickListener {
 		View v = inflater.inflate(R.layout.suggest, container, false);
 		
 		TextView track = (TextView) v.findViewById(R.id.racetrack);
-		track.setText(race.getTrack());
+		track.setText(race.getTrack(Race.NAME_LONG));
 		
 		mQuestion = (EditText) v.findViewById(R.id.question);
 		
