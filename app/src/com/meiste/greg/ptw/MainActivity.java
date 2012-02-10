@@ -41,6 +41,7 @@ public class MainActivity extends FragmentActivity {
 	private TabFragmentAdapter mAdapter;
 	private ViewPager mPager;
 	private TitlePageIndicator mIndicator;
+	private AlertDialog mLegalDialog;
 	
     /** Called when the activity is first created. */
     @Override
@@ -78,6 +79,12 @@ public class MainActivity extends FragmentActivity {
 		final SharedPreferences prefs = getSharedPreferences(PREFERENCES_STATE,
         		Activity.MODE_PRIVATE);
 		prefs.edit().putInt(PREFERENCE_LAST_TAB, mPager.getCurrentItem()).commit();
+		
+		// Hide dialogs to prevent window leaks on orientation changes
+		Eula.hide();
+		if ((mLegalDialog != null) && (mLegalDialog.isShowing())) {
+			mLegalDialog.dismiss();
+		}
 	}
     
     @Override
@@ -99,7 +106,8 @@ public class MainActivity extends FragmentActivity {
 	            builder.setCancelable(true);
 	            builder.setPositiveButton(R.string.ok, null);
 	            builder.setMessage(R.string.legal_content);
-	            builder.create().show();
+	            mLegalDialog = builder.create();
+	            mLegalDialog.show();
 				return true;
 		}
 		return super.onOptionsItemSelected(item);

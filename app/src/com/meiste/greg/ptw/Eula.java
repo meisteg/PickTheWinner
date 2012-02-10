@@ -37,6 +37,8 @@ class Eula {
     private static final String ASSET_EULA = "EULA";
     private static final String PREFERENCE_EULA_ACCEPTED = "eula.accepted";
     private static final String PREFERENCES_EULA = "eula";
+    
+    private static AlertDialog mDialog = null;
 
     /**
      * callback to let the activity know when the user has accepted the EULA.
@@ -82,10 +84,25 @@ class Eula {
                 }
             });
             builder.setMessage(readEula(activity));
-            builder.create().show();
+            mDialog = builder.create();
+            mDialog.show();
             return false;
         }
         return true;
+    }
+    
+    /**
+     * Hides the EULA if necessary. This method should be called from the onPause()
+     * method of your main Activity to prevent the activity from leaking the window.
+     *
+     * @return Whether the dialog was actually dismissed.
+     */
+    static boolean hide() {
+    	if ((mDialog != null) && (mDialog.isShowing())) {
+    		mDialog.dismiss();
+    		return true;
+    	}
+    	return false;
     }
 
     private static void accept(SharedPreferences preferences) {
