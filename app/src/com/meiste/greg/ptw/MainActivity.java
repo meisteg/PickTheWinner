@@ -27,14 +27,10 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 
 import com.viewpagerindicator.TitlePageIndicator;
 
-public class MainActivity extends FragmentActivity {
-	private final String TAG = "PickTheWinner";
-	private final boolean DEBUG = true;
-	
+public class MainActivity extends FragmentActivity implements Eula.OnEulaAgreedTo {
 	public static final String PREFERENCES_STATE = "state";
 	private final String PREFERENCE_LAST_TAB = "tab.last";
 	
@@ -47,7 +43,10 @@ public class MainActivity extends FragmentActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Eula.show(this);
+        
+        if (Eula.show(this)) {
+            RaceAlarm.set(this);
+        }
         
         setContentView(R.layout.main);
         
@@ -74,7 +73,7 @@ public class MainActivity extends FragmentActivity {
 	public void onPause() {
 		super.onPause();
 
-		if (DEBUG) Log.d(TAG, "Saving state: tab=" + mPager.getCurrentItem());
+		Util.log("Saving state: tab=" + mPager.getCurrentItem());
 		
 		final SharedPreferences prefs = getSharedPreferences(PREFERENCES_STATE,
         		Activity.MODE_PRIVATE);
@@ -111,5 +110,10 @@ public class MainActivity extends FragmentActivity {
 				return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onEulaAgreedTo() {
+		RaceAlarm.set(this);
 	}
 }

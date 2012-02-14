@@ -25,6 +25,7 @@ public final class Race {
 	
 	private Context mContext;
 	
+	private int mId;
 	private int mRaceNum;
 	private String mTrackLong;
 	private String mTrackShort;
@@ -37,6 +38,7 @@ public final class Race {
 		mContext = context;
 		Resources res = context.getResources();
 		
+		mId = id;
 		mRaceNum = res.getIntArray(R.array.schedule_race_nums)[id];
 		mTrackLong = res.getStringArray(R.array.schedule_tracks)[id];
 		mTrackShort = res.getStringArray(R.array.schedule_tracks_short)[id];
@@ -84,6 +86,10 @@ public final class Race {
 		return mRaceNum >= 27;
 	}
 	
+	public int getId() {
+		return mId;
+	}
+	
 	public String getRaceNum() {
 		return isExhibition() ? "-" : Integer.toString(mRaceNum);
 	}
@@ -108,5 +114,9 @@ public final class Race {
 	public String getStartTime() {
 		int flags = DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_NO_NOON_MIDNIGHT;
 		return DateUtils.formatDateTime(mContext, mStart, flags);
+	}
+	
+	public long getStartTimestamp() {
+		return mStart;
 	}
 }
