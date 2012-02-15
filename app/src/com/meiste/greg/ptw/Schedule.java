@@ -20,6 +20,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 public final class Schedule extends TabFragment {
@@ -37,6 +39,13 @@ public final class Schedule extends TabFragment {
 		Race[] races = new Race[Race.getNumRaces(getActivity())];
 		ListView lv = (ListView) v.findViewById(R.id.schedule);
 		lv.setAdapter(new RaceItemAdapter(getActivity(), R.layout.schedule_row, races));
+		
+		lv.setOnItemClickListener(new OnItemClickListener() {
+		    public void onItemClick(AdapterView<?> parent, View v, int pos, long id) {
+		    	Util.log("Starting activity for race " + pos);
+		    	// TODO: Show race detail activity
+		    }
+		});
 		
 		return v;
 	}
