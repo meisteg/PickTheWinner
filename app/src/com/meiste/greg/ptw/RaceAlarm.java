@@ -32,7 +32,7 @@ public final class RaceAlarm extends BroadcastReceiver {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		Race race = Race.getNext(context, true, true);
 		
-		if (!alarm_set && prefs.getBoolean("remind.race", true) && (race != null)) {
+		if (!alarm_set && prefs.getBoolean(EditPreferences.KEY_REMIND_RACE, true) && (race != null)) {
 			Util.log("Setting race alarm for race " + race.getId());
 		
 			AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
@@ -54,7 +54,7 @@ public final class RaceAlarm extends BroadcastReceiver {
 		
 		// Verify user didn't turn off race reminders after alarm was set
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		if (prefs.getBoolean("remind.race", true)) {
+		if (prefs.getBoolean(EditPreferences.KEY_REMIND_RACE, true)) {
 			Util.log("Received race alarm for race " + intent.getIntExtra(RACE_ID, 0));
 			
 			// TODO: Send notification to user

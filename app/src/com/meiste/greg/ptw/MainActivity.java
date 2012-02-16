@@ -45,7 +45,7 @@ public class MainActivity extends FragmentActivity implements Eula.OnEulaAgreedT
         super.onCreate(savedInstanceState);
         
         if (Eula.show(this)) {
-            RaceAlarm.set(this);
+            onEulaAgreedTo();
         }
         
         setContentView(R.layout.main);

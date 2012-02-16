@@ -15,13 +15,46 @@
  */
 package com.meiste.greg.ptw;
 
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 
-public class EditPreferences extends PreferenceActivity {
+public class EditPreferences extends PreferenceActivity implements OnSharedPreferenceChangeListener {
+	public static final String KEY_REMIND_QUESTIONS = "remind.questions";
+	public static final String KEY_REMIND_RACE = "remind.race";
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
     }
+    
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Util.log("EditPreferences.onResume");
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
+    }
+    
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Util.log("EditPreferences.onPause");
+        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+		Util.log(key + "=" + prefs.getBoolean(key, true));
+		
+		if (key.equals(KEY_REMIND_QUESTIONS)) {
+			// TODO: Implement when question reminder code ready
+		} else if (key.equals(KEY_REMIND_RACE)) {
+			if (prefs.getBoolean(key, true)) {
+				RaceAlarm.set(this);
+			}
+		}
+	}
 }
