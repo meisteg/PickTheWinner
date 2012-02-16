@@ -29,6 +29,7 @@
         property of their respective owners.</string>
     <string name="notifications">Notifications</string>
     <string name="ok">OK</string>
+    <string name="race_details">Race Details</string>
     <string name="remind_questions">Question reminders</string>
     <string name="remind_questions_summary">Show when new questions are available</string>
     <string name="remind_race">Race reminders</string>

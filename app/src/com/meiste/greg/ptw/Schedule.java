@@ -16,6 +16,7 @@
 package com.meiste.greg.ptw;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,7 +44,10 @@ public final class Schedule extends TabFragment {
 		lv.setOnItemClickListener(new OnItemClickListener() {
 		    public void onItemClick(AdapterView<?> parent, View v, int pos, long id) {
 		    	Util.log("Starting activity for race " + pos);
-		    	// TODO: Show race detail activity
+		    	
+		    	Intent intent = new Intent(getActivity(), RaceActivity.class);
+		    	intent.putExtra(RaceActivity.INTENT_ID, pos);
+		    	startActivity(intent);
 		    }
 		});
 		

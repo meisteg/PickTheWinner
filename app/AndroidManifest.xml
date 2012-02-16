@@ -39,6 +39,10 @@
         <activity
             android:label="@string/app_name"
             android:name=".EditPreferences" />
+        <activity
+            android:label="@string/race_details"
+            android:name=".RaceActivity"
+            android:theme="@style/Theme.Sherlock.Light" />
         <receiver android:name=".RaceAlarm" />
         <receiver android:name=".BootSetup">  
             <intent-filter>  
