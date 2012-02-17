@@ -16,6 +16,8 @@
 package com.meiste.greg.ptw;
 
 import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -55,9 +57,34 @@ public final class RaceAlarm extends BroadcastReceiver {
 		// Verify user didn't turn off race reminders after alarm was set
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		if (prefs.getBoolean(EditPreferences.KEY_REMIND_RACE, true)) {
-			Util.log("Received race alarm for race " + intent.getIntExtra(RACE_ID, 0));
+			Race race = new Race(context, intent.getIntExtra(RACE_ID, 0));
+			Util.log("Received race alarm for race " + race.getId());
 			
-			// TODO: Send notification to user
+			String ns = Context.NOTIFICATION_SERVICE;
+			NotificationManager nm = (NotificationManager) context.getSystemService(ns);
+			
+			// TODO: Replace with custom icon
+			int icon = android.R.drawable.stat_sys_warning;
+			CharSequence tickerText = context.getString(R.string.remind_race_ticker, race.getName());
+			long when = System.currentTimeMillis();
+			Notification notification = new Notification(icon, tickerText, when);
+			
+			CharSequence contentTitle = context.getString(R.string.remind_race_notify);
+			CharSequence contentText = race.getName();
+			Intent notificationIntent = new Intent(context, RaceActivity.class);
+			notificationIntent.putExtra(RaceActivity.INTENT_ID, race.getId());
+			PendingIntent pi = PendingIntent.getActivity(context, 0, notificationIntent,
+					PendingIntent.FLAG_CANCEL_CURRENT);
+
+			// TODO: Set defaults based on user settings
+			notification.defaults = Notification.DEFAULT_ALL;
+			//notification.defaults |= Notification.DEFAULT_SOUND;
+			//notification.defaults |= Notification.DEFAULT_VIBRATE;
+			//notification.defaults |= Notification.DEFAULT_LIGHTS;
+			notification.flags |= Notification.FLAG_AUTO_CANCEL;
+			notification.setLatestEventInfo(context, contentTitle, contentText, pi);
+			
+			nm.notify(R.string.remind_race_ticker, notification);
 			
 			// Reset alarm for the next race
 			set(context);

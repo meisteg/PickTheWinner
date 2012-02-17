@@ -33,7 +33,9 @@
     <string name="remind_questions">Question reminders</string>
     <string name="remind_questions_summary">Show when new questions are available</string>
     <string name="remind_race">Race reminders</string>
+    <string name="remind_race_notify">Race reminder</string>
     <string name="remind_race_summary">Show when it is time to watch the race</string>
+    <string name="remind_race_ticker">Time to watch the %s</string>
     <string name="send">Send</string>
     <string name="settings">Settings</string>
     <string name="tab_rule_book">RULE BOOK</string>
