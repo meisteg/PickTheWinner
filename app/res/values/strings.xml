@@ -22,6 +22,8 @@
     <string name="eula_title">License</string>
     <string name="eula_accept">Accept</string>
     <string name="eula_refuse">Refuse</string>
+    <string name="led">Phone LED</string>
+    <string name="led_summary">Flash LED for reminders</string>
     <string name="legal">Legal</string>
     <string name="legal_content">This application is NOT affiliated with or endorsed by NASCAR®.
         NASCAR® and Sprint Cup® are registered trademarks of the National Association for Stock
@@ -36,12 +38,17 @@
     <string name="remind_race_notify">Race reminder</string>
     <string name="remind_race_summary">Show when it is time to watch the race</string>
     <string name="remind_race_ticker">Time to watch the %s</string>
+    <string name="reminder_settings">Reminder Settings</string>
+    <string name="ringtone">Ringtone</string>
+    <string name="ringtone_summary">Set a ringtone for reminders</string>
     <string name="send">Send</string>
     <string name="settings">Settings</string>
     <string name="tab_rule_book">RULE BOOK</string>
     <string name="tab_schedule">SCHEDULE</string>
     <string name="tab_suggest">SUGGEST</string>
-    <string name="version">1.0</string>
+    <string name="version">1.0.0</string>
+    <string name="vibrate">Vibrate</string>
+    <string name="vibrate_summary">Vibrate for reminders</string>
     
     <!-- Rule Book Strings -->
     <string name="scoring_header">Weekly Scoring</string>

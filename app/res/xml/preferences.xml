@@ -1,18 +1,35 @@
-<PreferenceScreen
-  xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
   <PreferenceCategory android:title="@string/notifications">
     <CheckBoxPreference
       android:key="remind.questions"
       android:title="@string/remind_questions"
       android:summary="@string/remind_questions_summary"
-      android:defaultValue="true"
-    />
+      android:defaultValue="true" />
     <CheckBoxPreference
       android:key="remind.race"
       android:title="@string/remind_race"
       android:summary="@string/remind_race_summary"
-      android:defaultValue="true"
-    />
+      android:defaultValue="true" />
+  </PreferenceCategory>
+  <PreferenceCategory android:title="@string/reminder_settings">
+    <CheckBoxPreference
+      android:key="remind.vibrate"
+      android:title="@string/vibrate"
+      android:summary="@string/vibrate_summary"
+      android:defaultValue="true" />
+    <CheckBoxPreference
+      android:key="remind.led"
+      android:title="@string/led"
+      android:summary="@string/led_summary"
+      android:defaultValue="true" />
+    <RingtonePreference
+      android:key="remind.ringtone"
+      android:title="@string/ringtone"
+      android:summary="@string/ringtone_summary"
+      android:ringtoneType="notification"
+      android:showDefault="true"
+      android:showSilent="true"
+      android:defaultValue="content://settings/system/notification_sound" />
   </PreferenceCategory>
   <PreferenceCategory android:title="@string/about">
     <Preference

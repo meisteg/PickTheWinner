@@ -23,6 +23,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 
 public final class RaceAlarm extends BroadcastReceiver {
@@ -76,11 +77,12 @@ public final class RaceAlarm extends BroadcastReceiver {
 			PendingIntent pi = PendingIntent.getActivity(context, 0, notificationIntent,
 					PendingIntent.FLAG_CANCEL_CURRENT);
 
-			// TODO: Set defaults based on user settings
-			notification.defaults = Notification.DEFAULT_ALL;
-			//notification.defaults |= Notification.DEFAULT_SOUND;
-			//notification.defaults |= Notification.DEFAULT_VIBRATE;
-			//notification.defaults |= Notification.DEFAULT_LIGHTS;
+			notification.sound = Uri.parse(prefs.getString(EditPreferences.KEY_REMIND_RINGTONE,
+					"content://settings/system/notification_sound"));
+			if (prefs.getBoolean(EditPreferences.KEY_REMIND_VIBRATE, true))
+				notification.defaults |= Notification.DEFAULT_VIBRATE;
+			if (prefs.getBoolean(EditPreferences.KEY_REMIND_LED, true))
+				notification.defaults |= Notification.DEFAULT_LIGHTS;
 			notification.flags |= Notification.FLAG_AUTO_CANCEL;
 			notification.setLatestEventInfo(context, contentTitle, contentText, pi);
 			

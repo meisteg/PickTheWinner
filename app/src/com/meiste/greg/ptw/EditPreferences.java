@@ -24,6 +24,9 @@ import android.preference.PreferenceManager;
 public class EditPreferences extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 	public static final String KEY_REMIND_QUESTIONS = "remind.questions";
 	public static final String KEY_REMIND_RACE = "remind.race";
+	public static final String KEY_REMIND_VIBRATE = "remind.vibrate";
+	public static final String KEY_REMIND_LED = "remind.led";
+	public static final String KEY_REMIND_RINGTONE = "remind.ringtone";
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,7 +38,10 @@ public class EditPreferences extends PreferenceActivity implements OnSharedPrefe
     protected void onResume() {
         super.onResume();
         Util.log("EditPreferences.onResume");
-        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
+        
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.registerOnSharedPreferenceChangeListener(this);
+        reminderCheck(prefs);
     }
     
     @Override
@@ -47,14 +53,32 @@ public class EditPreferences extends PreferenceActivity implements OnSharedPrefe
 
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-		Util.log(key + "=" + prefs.getBoolean(key, true));
+		if (!key.equals(KEY_REMIND_RINGTONE))
+			Util.log(key + "=" + prefs.getBoolean(key, true));
 		
 		if (key.equals(KEY_REMIND_QUESTIONS)) {
-			// TODO: Implement when question reminder code ready
+			if (prefs.getBoolean(key, true)) {
+				// TODO: Implement when question reminder code ready
+			}
+			reminderCheck(prefs);
 		} else if (key.equals(KEY_REMIND_RACE)) {
 			if (prefs.getBoolean(key, true)) {
 				RaceAlarm.set(this);
 			}
+			reminderCheck(prefs);
+		}
+	}
+	
+	private void reminderCheck(SharedPreferences prefs) {
+		if (prefs.getBoolean(KEY_REMIND_QUESTIONS, true) ||
+			prefs.getBoolean(KEY_REMIND_RACE, true)) {
+			findPreference(KEY_REMIND_VIBRATE).setEnabled(true);
+			findPreference(KEY_REMIND_LED).setEnabled(true);
+			findPreference(KEY_REMIND_RINGTONE).setEnabled(true);
+		} else {
+			findPreference(KEY_REMIND_VIBRATE).setEnabled(false);
+			findPreference(KEY_REMIND_LED).setEnabled(false);
+			findPreference(KEY_REMIND_RINGTONE).setEnabled(false);
 		}
 	}
 }
