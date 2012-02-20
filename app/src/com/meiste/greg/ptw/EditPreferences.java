@@ -15,10 +15,15 @@
  */
 package com.meiste.greg.ptw;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Vibrator;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
 
 public class EditPreferences extends PreferenceActivity implements OnSharedPreferenceChangeListener {
@@ -27,11 +32,23 @@ public class EditPreferences extends PreferenceActivity implements OnSharedPrefe
 	public static final String KEY_REMIND_VIBRATE = "remind.vibrate";
 	public static final String KEY_REMIND_LED = "remind.led";
 	public static final String KEY_REMIND_RINGTONE = "remind.ringtone";
+	public static final String KEY_REMINDER_SETTINGS = "reminder_settings_category";
+	
+	private Preference mVibrate;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
+        
+        mVibrate = findPreference(KEY_REMIND_VIBRATE);
+        boolean methodAvailable = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
+        Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        if (methodAvailable && (vibrator == null || !vibrator.hasVibrator())) {
+        	Util.log("Remove vibrator option since vibrator not present");
+        	PreferenceCategory pc = (PreferenceCategory)findPreference(KEY_REMINDER_SETTINGS);
+            pc.removePreference(mVibrate);
+        }
     }
     
     @Override
@@ -72,13 +89,15 @@ public class EditPreferences extends PreferenceActivity implements OnSharedPrefe
 	private void reminderCheck(SharedPreferences prefs) {
 		if (prefs.getBoolean(KEY_REMIND_QUESTIONS, true) ||
 			prefs.getBoolean(KEY_REMIND_RACE, true)) {
-			findPreference(KEY_REMIND_VIBRATE).setEnabled(true);
 			findPreference(KEY_REMIND_LED).setEnabled(true);
 			findPreference(KEY_REMIND_RINGTONE).setEnabled(true);
+			if (mVibrate != null)
+				mVibrate.setEnabled(true);
 		} else {
-			findPreference(KEY_REMIND_VIBRATE).setEnabled(false);
 			findPreference(KEY_REMIND_LED).setEnabled(false);
 			findPreference(KEY_REMIND_RINGTONE).setEnabled(false);
+			if (mVibrate != null)
+				mVibrate.setEnabled(false);
 		}
 	}
 }

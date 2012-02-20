@@ -11,7 +11,9 @@
       android:summary="@string/remind_race_summary"
       android:defaultValue="true" />
   </PreferenceCategory>
-  <PreferenceCategory android:title="@string/reminder_settings">
+  <PreferenceCategory
+    android:key="reminder_settings_category"
+    android:title="@string/reminder_settings">
     <CheckBoxPreference
       android:key="remind.vibrate"
       android:title="@string/vibrate"
@@ -35,7 +37,6 @@
     <Preference
       android:key="build"
       android:title="@string/build_version"
-      android:summary="@string/version"
-    />
+      android:summary="@string/version" />
   </PreferenceCategory>
 </PreferenceScreen>
