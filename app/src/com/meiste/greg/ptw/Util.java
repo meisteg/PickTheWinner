@@ -15,14 +15,22 @@
  */
 package com.meiste.greg.ptw;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 public final class Util {
 	
 	private final static String TAG = "PickTheWinner";
 	private final static boolean DEBUG = true;
+	private final static String PREFS_STATE = "state";
 	
 	public static void log(String msg) {
 		if (DEBUG) Log.d(TAG, msg);
+	}
+	
+	public static SharedPreferences getState(Context context) {
+		return context.getSharedPreferences(PREFS_STATE, Activity.MODE_PRIVATE);
 	}
 }

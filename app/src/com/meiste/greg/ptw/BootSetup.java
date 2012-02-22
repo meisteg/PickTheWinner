@@ -25,6 +25,7 @@ public final class BootSetup extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		Util.log("Running boot setup");
 		RaceAlarm.set(context);
+		QuestionAlarm.set(context);
 	}
 
 }

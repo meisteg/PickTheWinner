@@ -119,4 +119,8 @@ public final class Race {
 	public long getStartTimestamp() {
 		return mStart;
 	}
+	
+	public long getQuestionTimestamp() {
+		return mQuestion;
+	}
 }

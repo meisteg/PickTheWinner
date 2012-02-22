@@ -45,6 +45,7 @@
             android:name=".RaceActivity"
             android:theme="@style/Theme.Sherlock.Light" />
         <receiver android:name=".RaceAlarm" />
+        <receiver android:name=".QuestionAlarm" />
         <receiver android:name=".BootSetup">  
             <intent-filter>  
                 <action android:name="android.intent.action.BOOT_COMPLETED" />  

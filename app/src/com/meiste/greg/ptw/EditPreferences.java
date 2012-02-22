@@ -75,7 +75,7 @@ public class EditPreferences extends PreferenceActivity implements OnSharedPrefe
 		
 		if (key.equals(KEY_REMIND_QUESTIONS)) {
 			if (prefs.getBoolean(key, true)) {
-				// TODO: Implement when question reminder code ready
+				QuestionAlarm.set(this);
 			}
 			reminderCheck(prefs);
 		} else if (key.equals(KEY_REMIND_RACE)) {

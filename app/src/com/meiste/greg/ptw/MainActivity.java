@@ -18,10 +18,8 @@ package com.meiste.greg.ptw;
 import java.util.List;
 import java.util.Vector;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.Menu;
@@ -31,8 +29,9 @@ import android.support.v4.view.ViewPager;
 import com.viewpagerindicator.TitlePageIndicator;
 
 public class MainActivity extends FragmentActivity implements Eula.OnEulaAgreedTo {
-	public static final String PREFERENCES_STATE = "state";
-	private final String PREFERENCE_LAST_TAB = "tab.last";
+	
+	public static final String INTENT_TAB = "tab_select";
+	private final String LAST_TAB = "tab.last";
 	
 	private TabFragmentAdapter mAdapter;
 	private ViewPager mPager;
@@ -50,9 +49,6 @@ public class MainActivity extends FragmentActivity implements Eula.OnEulaAgreedT
         
         setContentView(R.layout.main);
         
-        final SharedPreferences prefs = getSharedPreferences(PREFERENCES_STATE,
-        		Activity.MODE_PRIVATE);
-        
         List<TabFragment> fragments = new Vector<TabFragment>();
         fragments.add(RuleBook.newInstance(getApplicationContext()));
         fragments.add(TestFragment.newInstance("QUESTIONS"));
@@ -66,7 +62,7 @@ public class MainActivity extends FragmentActivity implements Eula.OnEulaAgreedT
 
 		mIndicator = (TitlePageIndicator)findViewById(R.id.indicator);
 		mIndicator.setViewPager(mPager);
-		mIndicator.setCurrentItem(prefs.getInt(PREFERENCE_LAST_TAB, 0));
+		mIndicator.setCurrentItem(getTab(getIntent()));
     }
     
     @Override
@@ -74,10 +70,7 @@ public class MainActivity extends FragmentActivity implements Eula.OnEulaAgreedT
 		super.onPause();
 
 		Util.log("Saving state: tab=" + mPager.getCurrentItem());
-		
-		final SharedPreferences prefs = getSharedPreferences(PREFERENCES_STATE,
-        		Activity.MODE_PRIVATE);
-		prefs.edit().putInt(PREFERENCE_LAST_TAB, mPager.getCurrentItem()).commit();
+		Util.getState(this).edit().putInt(LAST_TAB, mPager.getCurrentItem()).commit();
 		
 		// Hide dialogs to prevent window leaks on orientation changes
 		Eula.hide();
@@ -115,5 +108,19 @@ public class MainActivity extends FragmentActivity implements Eula.OnEulaAgreedT
 	@Override
 	public void onEulaAgreedTo() {
 		RaceAlarm.set(this);
+		QuestionAlarm.set(this);
+	}
+	
+	private int getTab(Intent intent) {
+		// Recent applications caches intent with extras. Only want to listen
+		// to INTENT_TAB extra if launched from notification.
+		if ((intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) == 0) {
+			int intent_tab = intent.getIntExtra(INTENT_TAB, -1);
+			if (intent_tab >= 0) {
+				return intent_tab;
+			}
+		}
+		
+		return Util.getState(this).getInt(LAST_TAB, 0);
 	}
 }
