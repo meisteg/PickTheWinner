@@ -47,6 +47,7 @@
     <string name="tab_questions">QUESTIONS</string>
     <string name="tab_rule_book">RULE BOOK</string>
     <string name="tab_schedule">SCHEDULE</string>
+    <string name="tab_standings">STANDINGS</string>
     <string name="tab_suggest">SUGGEST</string>
     <string name="version">1.0.0</string>
     <string name="vibrate">Vibrate</string>

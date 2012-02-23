@@ -52,7 +52,7 @@ public class MainActivity extends FragmentActivity implements Eula.OnEulaAgreedT
         List<TabFragment> fragments = new Vector<TabFragment>();
         fragments.add(RuleBook.newInstance(getApplicationContext()));
         fragments.add(Questions.newInstance(getApplicationContext()));
-        fragments.add(TestFragment.newInstance("STANDINGS"));
+        fragments.add(Standings.newInstance(getApplicationContext()));
         fragments.add(Schedule.newInstance(getApplicationContext()));
         fragments.add(Suggest.newInstance(getApplicationContext()));
         mAdapter = new TabFragmentAdapter(getSupportFragmentManager(), fragments);
