@@ -22,6 +22,9 @@
     android:paddingLeft="20sp"
     android:paddingRight="20sp" >
     
-    <TextView style="@style/NoRaceText" android:text="@string/suggest_no_race" />
+    <TextView style="@style/QuestionsRaceName" android:id="@+id/racename" />
+    <TextView style="@style/QuestionsTrack" android:id="@+id/racetrack" />
+    <TextView style="@style/QuestionsText" android:text="@string/questions_soon" />
+    <TextView style="@style/QuestionsTime" android:id="@+id/questiontime" />
 
 </LinearLayout>

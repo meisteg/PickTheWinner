@@ -22,6 +22,6 @@
     android:paddingLeft="20sp"
     android:paddingRight="20sp" >
     
-    <TextView style="@style/NoRaceText" android:text="@string/suggest_no_race" />
+    <TextView style="@style/NoRaceText" android:text="@string/questions_no_race" />
 
 </LinearLayout>

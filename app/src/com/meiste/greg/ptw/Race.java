@@ -120,6 +120,12 @@ public final class Race {
 		return mStart;
 	}
 	
+	public String getQuestionDateTime() {
+		int flags = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_YEAR;
+		flags |= DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_NO_NOON_MIDNIGHT;
+		return DateUtils.formatDateTime(mContext, mQuestion, flags);
+	}
+	
 	public long getQuestionTimestamp() {
 		return mQuestion;
 	}

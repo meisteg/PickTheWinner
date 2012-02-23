@@ -50,6 +50,35 @@
         <item name="android:paddingBottom">10sp</item>
     </style>
     
+    <style name="QuestionsText">
+        <item name="android:textSize">18sp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:paddingTop">20sp</item>
+    </style>
+    
+    <style name="QuestionsRaceName">
+        <item name="android:textSize">18sp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingTop">20sp</item>
+    </style>
+    
+    <style name="QuestionsTrack">
+        <item name="android:textSize">18sp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    
+    <style name="QuestionsTime">
+        <item name="android:textSize">18sp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    
     <style name="SuggestText">
         <item name="android:textSize">18sp</item>
         <item name="android:layout_height">wrap_content</item>
@@ -64,7 +93,7 @@
         <item name="android:textStyle">bold</item>
     </style>
     
-    <style name="SuggestNoRaceText">
+    <style name="NoRaceText">
         <item name="android:textSize">18sp</item>
         <item name="android:layout_height">fill_parent</item>
         <item name="android:layout_width">fill_parent</item>
