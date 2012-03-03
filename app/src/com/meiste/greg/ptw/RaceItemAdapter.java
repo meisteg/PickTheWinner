@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public final class RaceItemAdapter extends ArrayAdapter<Race> {
@@ -45,6 +46,7 @@ public final class RaceItemAdapter extends ArrayAdapter<Race> {
         	mRaces[pos] = new Race(mContext, pos);
         }
         
+        LinearLayout row = (LinearLayout) v.findViewById(R.id.row);
     	TextView raceNum = (TextView) v.findViewById(R.id.race_num);
     	TextView startDate = (TextView) v.findViewById(R.id.race_date);
     	TextView startTime = (TextView) v.findViewById(R.id.race_time);
@@ -52,6 +54,13 @@ public final class RaceItemAdapter extends ArrayAdapter<Race> {
     	TextView trackLong = (TextView) v.findViewById(R.id.race_track);
     	TextView trackShort = (TextView) v.findViewById(R.id.race_track_short);
     	TextView tv = (TextView) v.findViewById(R.id.race_tv);
+    	
+    	if (!mRaces[pos].isFuture())
+    		row.setBackgroundResource(R.drawable.schedule_past);
+    	else if (mRaces[pos].isInChase())
+    		row.setBackgroundResource(R.drawable.schedule_chase);
+    	else
+    		row.setBackgroundResource(R.drawable.schedule_future);
     	
     	if (raceNum != null) {
     		raceNum.setText(mRaces[pos].getRaceNum());

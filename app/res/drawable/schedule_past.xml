@@ -15,15 +15,9 @@
      limitations under the License.
 -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
-    
-    <ListView 
-        android:id="@+id/schedule"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:cacheColorHint="@android:color/white" />
-    
-</LinearLayout>
+<selector xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:state_window_focused="false" android:state_selected="true" android:drawable="@android:color/transparent" /> 
+    <item android:state_selected="true" android:drawable="@android:color/transparent" /> 
+    <item android:state_pressed="true" android:state_selected="false" android:drawable="@android:color/transparent" />
+    <item android:state_selected="false" android:drawable="@color/schedule_past" /> 
+</selector>

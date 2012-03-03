@@ -20,4 +20,8 @@
     <color name="tab_footer">#FFAA2222</color>
     <color name="tab_text">#AA000000</color>
     <color name="tab_selected">#FF000000</color>
+    
+    <color name="schedule_past">#FFCCCCCC</color>
+    <color name="schedule_future">#FFFFFFFF</color>
+    <color name="schedule_chase">#88FFFF00</color>
 </resources>
