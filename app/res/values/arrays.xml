@@ -446,5 +446,15 @@
         <item>260</item>
         <item>249</item>
     </integer-array>
+    
+    <string-array name="num_leaders">
+        <item>1 &#8211; 5</item>
+        <item>6 &#8211; 10</item>
+        <item>11 &#8211; 15</item>
+        <item>16 &#8211; 20</item>
+        <item>21 &#8211; 25</item>
+        <item>26 &#8211; 30</item>
+        <item>31 &#8211; 43</item>
+    </string-array>
 
 </resources>

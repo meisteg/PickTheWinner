@@ -15,34 +15,66 @@
      limitations under the License.
 -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingLeft="20sp"
-    android:paddingRight="20sp" >
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:scrollbars="vertical"
+    android:fillViewport="true" >
     
-    <TextView style="@style/QuestionsRaceName" android:id="@+id/racename" />
-    <TextView style="@style/QuestionsTrack" android:id="@+id/racetrack" />
-    
-    <TextView style="@style/QuestionsText" android:text="@string/questions_1" />
-    <Spinner
-        android:id="@+id/winner"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:prompt="@string/questions_prompt_drivers" />
-    
-    <TextView style="@style/QuestionsText" android:text="TODO" />
-    <TextView style="@style/QuestionsText" android:text="TODO" />
-    <TextView style="@style/QuestionsText" android:text="TODO" />
-    <TextView style="@style/QuestionsText" android:text="TODO" />
-    
-    <Button
-        android:id="@+id/send"
-        android:layout_marginTop="20sp"
-        android:layout_width="160dip"
-        android:layout_height="wrap_content"
-        android:text="@string/send"
-        android:layout_gravity="center_horizontal" />
+        android:orientation="vertical"
+        android:paddingLeft="20sp"
+        android:paddingRight="20sp"
+        android:paddingBottom="20sp">
+        
+        <TextView style="@style/QuestionsRaceName" android:id="@+id/racename" />
+        <TextView style="@style/QuestionsTrack" android:id="@+id/racetrack" />
+        
+        <TextView style="@style/QuestionsText" android:text="@string/questions_1" />
+        <Spinner
+            android:id="@+id/winner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:prompt="@string/questions_prompt_drivers" />
+        
+        <TextView style="@style/QuestionsText" android:id="@+id/question2" />
+        <Spinner
+            android:id="@+id/question2a"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:prompt="@string/questions_prompt_q2q3" />
+        
+        <TextView style="@style/QuestionsText" android:id="@+id/question3" />
+        <Spinner
+            android:id="@+id/question3a"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:prompt="@string/questions_prompt_q2q3" />
+        
+        <TextView style="@style/QuestionsText" android:text="@string/questions_4" />
+        <Spinner
+            android:id="@+id/mostlaps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:prompt="@string/questions_prompt_drivers" />
+        
+        <TextView style="@style/QuestionsText" android:text="@string/questions_5" />
+        <Spinner
+            android:id="@+id/numleaders"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:prompt="@string/questions_prompt_numleaders" />
+        
+        <Button
+            android:id="@+id/send"
+            android:layout_marginTop="20sp"
+            android:layout_width="160dip"
+            android:layout_height="wrap_content"
+            android:text="@string/send"
+            android:layout_gravity="center_horizontal" />
+        
+    </LinearLayout>
 
-</LinearLayout>
+</ScrollView>

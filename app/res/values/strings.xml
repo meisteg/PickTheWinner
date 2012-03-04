@@ -57,12 +57,12 @@
     <string name="scoring_header">Weekly Scoring</string>
     <string name="scoring">Every week that there is a point paying Sprint Cup Series event,
         five questions related to the event will be asked on Thursday. Each question has its
-        own individual point value, for a total of 195 points:\n\n
+        own individual point value, for a total of 200 points:\n\n
         &#8226; <b>100 points</b>: Pick The Winner of the race\n
         &#8226; <b>50 points</b>: Answer Question 2 correctly\n
         &#8226; <b>35 points</b>: Answer Question 3 correctly\n
-        &#8226; <b>5 points</b>: Pick number of lap leaders\n
-        &#8226; <b>5 points</b>: Pick the leader of most laps
+        &#8226; <b>10 points</b>: Pick the leader of most laps\n
+        &#8226; <b>5 points</b>: Pick number of lap leaders
         \n\nYou can make your picks until one hour prior to the scheduled green flag. Once the
         race is completed the points will be calculated within 24 hours of the race results
         being made official by NASCAR.</string>
@@ -86,9 +86,15 @@
         
     <!-- Questions Strings -->
     <string name="questions_1">Pick The Winner (100 points)</string>
+    <string name="questions_2">%s (50 points)</string>
+    <string name="questions_3">%s (35 points)</string>
+    <string name="questions_4">Which driver will lead the most laps? (10 points)</string>
+    <string name="questions_5">How many drivers will lead a lap? (5 points)</string>
     <string name="questions_no_race">Thanks for playing Pick The Winner this season. See you
         next year!</string>
     <string name="questions_prompt_drivers">Choose a driver</string>
+    <string name="questions_prompt_numleaders">Choose a range</string>
+    <string name="questions_prompt_q2q3">Choose your answer</string>
     <string name="questions_soon">Questions will be available at</string>
     
     <!-- Suggest Strings -->

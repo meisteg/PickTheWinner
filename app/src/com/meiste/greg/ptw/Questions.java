@@ -23,11 +23,15 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public final class Questions extends TabFragment {
+public final class Questions extends TabFragment implements View.OnClickListener {
 	private int mWinner;
+	private int mMostLaps;
+	private int mNumLeaders;
 	
 	public static Questions newInstance(Context context) {
 		Questions fragment = new Questions();
@@ -50,6 +54,26 @@ public final class Questions extends TabFragment {
 			Spinner winner = (Spinner) v.findViewById(R.id.winner);
 			winner.setAdapter(new DriverAdapter(getActivity(), android.R.layout.simple_spinner_item));
 			winner.setOnItemSelectedListener(new WinnerSelectedListener());
+			
+			TextView q2 = (TextView) v.findViewById(R.id.question2);
+			q2.setText(getActivity().getString(R.string.questions_2, "TODO"));
+			
+			TextView q3 = (TextView) v.findViewById(R.id.question3);
+			q3.setText(getActivity().getString(R.string.questions_3, "TODO"));
+			
+			Spinner mostlaps = (Spinner) v.findViewById(R.id.mostlaps);
+			mostlaps.setAdapter(new DriverAdapter(getActivity(), android.R.layout.simple_spinner_item));
+			mostlaps.setOnItemSelectedListener(new MostLapsSelectedListener());
+			
+			Spinner numleaders = (Spinner) v.findViewById(R.id.numleaders);
+		    ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+		    		getActivity(), R.array.num_leaders, android.R.layout.simple_spinner_item);
+		    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		    numleaders.setAdapter(adapter);
+		    numleaders.setOnItemSelectedListener(new NumLeadersSelectedListener());
+		    
+		    Button send = (Button) v.findViewById(R.id.send);
+			send.setOnClickListener(this);
 		} else {
 			v = inflater.inflate(R.layout.questions_not_yet, container, false);
 			
@@ -96,5 +120,34 @@ public final class Questions extends TabFragment {
 	    public void onNothingSelected(AdapterView<?> parent) {
 	        // Do nothing.
 	    }
+	}
+	
+	private class MostLapsSelectedListener implements OnItemSelectedListener {
+	    public void onItemSelected(AdapterView<?> parent, View v, int pos, long id) {
+	    	Driver driver = (Driver) parent.getItemAtPosition(pos);
+	    	mMostLaps = driver.getNumber();
+	    }
+
+	    public void onNothingSelected(AdapterView<?> parent) {
+	        // Do nothing.
+	    }
+	}
+	
+	private class NumLeadersSelectedListener implements OnItemSelectedListener {
+	    public void onItemSelected(AdapterView<?> parent, View v, int pos, long id) {
+	    	mNumLeaders = pos;
+	    }
+
+	    public void onNothingSelected(AdapterView<?> parent) {
+	        // Do nothing.
+	    }
+	}
+	
+	@Override
+	public void onClick(View v) {
+		// TODO Auto-generated method stub
+		Util.log("Sending: a1=" + mWinner + ", a4=" + mMostLaps + ", a5=" + mNumLeaders);
+		Toast.makeText(getActivity(), "TODO: Actually send answers",
+				Toast.LENGTH_SHORT).show();
 	}
 }
