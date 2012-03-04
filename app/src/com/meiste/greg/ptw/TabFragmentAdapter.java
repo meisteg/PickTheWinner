@@ -16,7 +16,9 @@
 package com.meiste.greg.ptw;
 
 import java.util.List;
+import java.util.Vector;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -26,9 +28,19 @@ import com.viewpagerindicator.TitleProvider;
 class TabFragmentAdapter extends FragmentPagerAdapter implements TitleProvider {
 	private List<TabFragment> mFragments;
 	
-	public TabFragmentAdapter(FragmentManager fm, List<TabFragment> fragments) {
+	public interface FragmentListener {
+	    void onChangedFragment();
+	}
+	
+	public TabFragmentAdapter(FragmentManager fm, Context context) {
 		super(fm);
-		mFragments = fragments;
+		
+		mFragments = new Vector<TabFragment>();
+		mFragments.add(RuleBook.newInstance(context));
+		mFragments.add(Questions.newInstance(context, new MyFragmentListener()));
+		mFragments.add(Standings.newInstance(context));
+		mFragments.add(Schedule.newInstance(context));
+		mFragments.add(Suggest.newInstance(context));
 	}
 
 	@Override
@@ -42,7 +54,18 @@ class TabFragmentAdapter extends FragmentPagerAdapter implements TitleProvider {
 	}
 	
 	@Override
+	public int getItemPosition(Object object) {
+		return (object instanceof Questions) ? POSITION_NONE : POSITION_UNCHANGED;
+	}
+	
+	@Override
 	public String getTitle(int position) {
 		return mFragments.get(position).getTitle();
+	}
+	
+	private class MyFragmentListener implements FragmentListener {
+		public void onChangedFragment() {
+			notifyDataSetChanged();
+		}
 	}
 }

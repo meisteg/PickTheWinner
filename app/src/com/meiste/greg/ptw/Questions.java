@@ -28,14 +28,19 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.meiste.greg.ptw.TabFragmentAdapter.FragmentListener;
+
 public final class Questions extends TabFragment implements View.OnClickListener {
 	private int mWinner;
 	private int mMostLaps;
 	private int mNumLeaders;
 	
-	public static Questions newInstance(Context context) {
+	private FragmentListener mFragmentListener;
+	
+	public static Questions newInstance(Context context, FragmentListener fl) {
 		Questions fragment = new Questions();
 		fragment.setTitle(context.getString(R.string.tab_questions));
+		fragment.mFragmentListener = fl;
 		
 		return fragment;
 	}
@@ -149,5 +154,6 @@ public final class Questions extends TabFragment implements View.OnClickListener
 		Util.log("Sending: a1=" + mWinner + ", a4=" + mMostLaps + ", a5=" + mNumLeaders);
 		Toast.makeText(getActivity(), "TODO: Actually send answers",
 				Toast.LENGTH_SHORT).show();
+		mFragmentListener.onChangedFragment();
 	}
 }

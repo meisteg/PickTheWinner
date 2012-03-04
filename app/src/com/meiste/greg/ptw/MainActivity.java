@@ -15,9 +15,6 @@
  */
 package com.meiste.greg.ptw;
 
-import java.util.List;
-import java.util.Vector;
-
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -33,7 +30,6 @@ public class MainActivity extends FragmentActivity implements Eula.OnEulaAgreedT
 	public static final String INTENT_TAB = "tab_select";
 	private final String LAST_TAB = "tab.last";
 	
-	private TabFragmentAdapter mAdapter;
 	private ViewPager mPager;
 	private TitlePageIndicator mIndicator;
 	private AlertDialog mLegalDialog;
@@ -48,17 +44,9 @@ public class MainActivity extends FragmentActivity implements Eula.OnEulaAgreedT
         }
         
         setContentView(R.layout.main);
-        
-        List<TabFragment> fragments = new Vector<TabFragment>();
-        fragments.add(RuleBook.newInstance(getApplicationContext()));
-        fragments.add(Questions.newInstance(getApplicationContext()));
-        fragments.add(Standings.newInstance(getApplicationContext()));
-        fragments.add(Schedule.newInstance(getApplicationContext()));
-        fragments.add(Suggest.newInstance(getApplicationContext()));
-        mAdapter = new TabFragmentAdapter(getSupportFragmentManager(), fragments);
 
 		mPager = (ViewPager)findViewById(R.id.pager);
-		mPager.setAdapter(mAdapter);
+		mPager.setAdapter(new TabFragmentAdapter(getSupportFragmentManager(), this));
 
 		mIndicator = (TitlePageIndicator)findViewById(R.id.indicator);
 		mIndicator.setViewPager(mPager);
