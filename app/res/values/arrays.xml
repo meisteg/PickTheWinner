@@ -327,5 +327,124 @@
         <item>35</item>
         <item>36</item>
     </integer-array>
+    
+    <!-- Must remain in sync with driver_nums array below. -->
+    <string-array name="driver_names" translatable="false">
+        <item>A.J. Allmendinger</item>
+        <item>Aric Almirola</item>
+        <item>Marcos Ambrose</item>
+        <item>Trevor Bayne</item>
+        <item>Greg Biffle</item>
+        <item>Dave Blaney</item>
+        <item>Mike Bliss</item>
+        <item>Clint Bowyer</item>
+        <item>Jeff Burton</item>
+        <item>Kurt Busch</item>
+        <item>Kyle Busch</item>
+        <item>Landon Cassill</item>
+        <item>Dale Earnhardt Jr.</item>
+        <item>Carl Edwards</item>
+        <item>Bill Elliott</item>
+        <item>Brendan Gaughan</item>
+        <item>David Gilliland</item>
+        <item>Jeff Gordon</item>
+        <item>Robby Gordon</item>
+        <item>Denny Hamlin</item>
+        <item>Kevin Harvick</item>
+        <item>Timmy Hill</item>
+        <item>Jimmie Johnson</item>
+        <item>Kasey Kahne</item>
+        <item>Matt Kenseth</item>
+        <item>Brad Keselowski</item>
+        <item>Travis Kvapil</item>
+        <item>Terry Labonte</item>
+        <item>Bobby Labonte</item>
+        <item>Joey Logano</item>
+        <item>Mark Martin</item>
+        <item>Michael McDowell</item>
+        <item>Jamie McMurray</item>
+        <item>Casey Mears</item>
+        <item>Paul Menard</item>
+        <item>Juan Montoya</item>
+        <item>Joe Nemechek</item>
+        <item>Ryan Newman</item>
+        <item>Danica Patrick</item>
+        <item>David Ragan</item>
+        <item>Tony Raines</item>
+        <item>David Reutimann</item>
+        <item>Robert Richardson Jr.</item>
+        <item>Scott Riggs</item>
+        <item>Elliott Sadler</item>
+        <item>Regan Smith</item>
+        <item>Ricky Stenhouse Jr.</item>
+        <item>Tony Stewart</item>
+        <item>David Stremme</item>
+        <item>Martin Truex Jr.</item>
+        <item>Kenny Wallace</item>
+        <item>Mike Wallace</item>
+        <item>Michael Waltrip</item>
+        <item>Josh Wise</item>
+        <item>J.J. Yeley</item>
+    </string-array>
+    
+    <!-- Each item MUST be unique! Should NOT change a number during season. -->
+    <!-- Must remain in sync with driver_names array above. -->
+    <integer-array name="driver_nums" translatable="false">
+        <item>22</item>
+        <item>43</item>
+        <item>9</item>
+        <item>21</item>
+        <item>16</item>
+        <item>36</item>
+        <item>32</item>
+        <item>15</item>
+        <item>31</item>
+        <item>51</item>
+        <item>18</item>
+        <item>83</item>
+        <item>88</item>
+        <item>99</item>
+        <item>97</item>
+        <item>33</item>
+        <item>38</item>
+        <item>24</item>
+        <item>7</item>
+        <item>11</item>
+        <item>29</item>
+        <item>37</item>
+        <item>48</item>
+        <item>5</item>
+        <item>17</item>
+        <item>2</item>
+        <item>93</item>
+        <item>320</item>
+        <item>47</item>
+        <item>20</item>
+        <item>55</item>
+        <item>98</item>
+        <item>1</item>
+        <item>13</item>
+        <item>27</item>
+        <item>42</item>
+        <item>87</item>
+        <item>39</item>
+        <item>100</item>
+        <item>34</item>
+        <item>26</item>
+        <item>10</item>
+        <item>23</item>
+        <item>230</item>
+        <item>330</item>
+        <item>78</item>
+        <item>6</item>
+        <item>14</item>
+        <item>30</item>
+        <item>56</item>
+        <item>109</item>
+        <item>370</item>
+        <item>140</item>
+        <item>260</item>
+        <item>249</item>
+    </integer-array>
 
 </resources>

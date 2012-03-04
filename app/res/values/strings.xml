@@ -85,8 +85,10 @@
         for The Chase.</string>
         
     <!-- Questions Strings -->
+    <string name="questions_1">Pick The Winner (100 points)</string>
     <string name="questions_no_race">Thanks for playing Pick The Winner this season. See you
         next year!</string>
+    <string name="questions_prompt_drivers">Choose a driver</string>
     <string name="questions_soon">Questions will be available at</string>
     
     <!-- Suggest Strings -->

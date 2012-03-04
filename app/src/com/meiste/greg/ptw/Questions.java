@@ -20,9 +20,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 public final class Questions extends TabFragment {
+	private int mWinner;
 	
 	public static Questions newInstance(Context context) {
 		Questions fragment = new Questions();
@@ -41,6 +46,10 @@ public final class Questions extends TabFragment {
 		} else if (race.inProgress()) {
 			// TODO: Only show form if user hasn't submitted answers yet
 			v = inflater.inflate(R.layout.questions, container, false);
+			
+			Spinner winner = (Spinner) v.findViewById(R.id.winner);
+			winner.setAdapter(new DriverAdapter(getActivity(), android.R.layout.simple_spinner_item));
+			winner.setOnItemSelectedListener(new WinnerSelectedListener());
 		} else {
 			v = inflater.inflate(R.layout.questions_not_yet, container, false);
 			
@@ -55,5 +64,37 @@ public final class Questions extends TabFragment {
 		track.setText(race.getTrack(Race.NAME_LONG));
 		
 		return v;
+	}
+	
+	private class DriverAdapter extends ArrayAdapter<Driver> {
+		private Context mContext;
+		
+		public DriverAdapter(Context context, int textViewResourceId) {
+			super(context, textViewResourceId);
+			mContext = context;
+			
+			setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		}
+		
+		@Override
+		public int getCount() {
+			return Driver.getNumDrivers(mContext);
+		}
+		
+		@Override
+		public Driver getItem(int position) {
+			return new Driver(mContext, position);
+		}
+	}
+	
+	private class WinnerSelectedListener implements OnItemSelectedListener {
+	    public void onItemSelected(AdapterView<?> parent, View v, int pos, long id) {
+	    	Driver driver = (Driver) parent.getItemAtPosition(pos);
+	    	mWinner = driver.getNumber();
+	    }
+
+	    public void onNothingSelected(AdapterView<?> parent) {
+	        // Do nothing.
+	    }
 	}
 }

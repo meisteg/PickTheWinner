@@ -24,6 +24,25 @@
     
     <TextView style="@style/QuestionsRaceName" android:id="@+id/racename" />
     <TextView style="@style/QuestionsTrack" android:id="@+id/racetrack" />
+    
+    <TextView style="@style/QuestionsText" android:text="@string/questions_1" />
+    <Spinner
+        android:id="@+id/winner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:prompt="@string/questions_prompt_drivers" />
+    
     <TextView style="@style/QuestionsText" android:text="TODO" />
+    <TextView style="@style/QuestionsText" android:text="TODO" />
+    <TextView style="@style/QuestionsText" android:text="TODO" />
+    <TextView style="@style/QuestionsText" android:text="TODO" />
+    
+    <Button
+        android:id="@+id/send"
+        android:layout_marginTop="20sp"
+        android:layout_width="160dip"
+        android:layout_height="wrap_content"
+        android:text="@string/send"
+        android:layout_gravity="center_horizontal" />
 
 </LinearLayout>
