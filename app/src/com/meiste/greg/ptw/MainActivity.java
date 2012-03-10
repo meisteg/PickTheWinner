@@ -18,14 +18,14 @@ package com.meiste.greg.ptw;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.Menu;
-import android.support.v4.view.MenuItem;
 import android.support.v4.view.ViewPager;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.viewpagerindicator.TitlePageIndicator;
 
-public class MainActivity extends FragmentActivity implements Eula.OnEulaAgreedTo {
+public class MainActivity extends SherlockFragmentActivity implements Eula.OnEulaAgreedTo {
 	
 	public static final String INTENT_TAB = "tab_select";
 	private final String LAST_TAB = "tab.last";
@@ -68,8 +68,15 @@ public class MainActivity extends FragmentActivity implements Eula.OnEulaAgreedT
 	}
     
     @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // There is a bug in the Android compatibility library that causes
+    	// a null pointer exception when the super's onSaveInstanceState is
+    	// called. See: http://stackoverflow.com/questions/8748064
+    }
+    
+    @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.menu, menu);
+		getSupportMenuInflater().inflate(R.menu.menu, menu);
 		return true;
 	}
 

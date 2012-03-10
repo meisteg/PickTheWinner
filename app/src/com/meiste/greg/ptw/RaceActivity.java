@@ -16,11 +16,12 @@
 package com.meiste.greg.ptw;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.TextView;
 
-public class RaceActivity extends FragmentActivity {
+import com.actionbarsherlock.app.SherlockActivity;
+
+public class RaceActivity extends SherlockActivity {
 	public static final String INTENT_ID = "race_id";
 	private Race mRace;
 	
