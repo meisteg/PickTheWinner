@@ -16,17 +16,20 @@
 package com.meiste.greg.ptw;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
 
-public class EditPreferences extends PreferenceActivity implements OnSharedPreferenceChangeListener {
+import com.actionbarsherlock.app.SherlockPreferenceActivity;
+import com.actionbarsherlock.view.MenuItem;
+
+public class EditPreferences extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener {
 	public static final String KEY_REMIND_QUESTIONS = "remind.questions";
 	public static final String KEY_REMIND_RACE = "remind.race";
 	public static final String KEY_REMIND_VIBRATE = "remind.vibrate";
@@ -40,6 +43,8 @@ public class EditPreferences extends PreferenceActivity implements OnSharedPrefe
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
+        
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         
         mVibrate = findPreference(KEY_REMIND_VIBRATE);
         boolean methodAvailable = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
@@ -100,4 +105,15 @@ public class EditPreferences extends PreferenceActivity implements OnSharedPrefe
 				mVibrate.setEnabled(false);
 		}
 	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+    	if (item.getItemId() == android.R.id.home) {
+            Intent homeIntent = new Intent(this, MainActivity.class);
+            homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(homeIntent);
+            return true;
+    	}
+    	return super.onOptionsItemSelected(item);
+    }
 }

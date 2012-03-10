@@ -39,7 +39,8 @@
         </activity>
         <activity
             android:label="@string/app_name"
-            android:name=".EditPreferences" />
+            android:name=".EditPreferences"
+            android:theme="@style/Theme.Sherlock" />
         <activity
             android:label="@string/race_details"
             android:name=".RaceActivity"
