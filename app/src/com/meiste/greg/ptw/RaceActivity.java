@@ -15,20 +15,25 @@
  */
 package com.meiste.greg.ptw;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.MenuItem;
 
 public class RaceActivity extends SherlockActivity {
 	public static final String INTENT_ID = "race_id";
+	public static final String INTENT_ALARM = "from_alarm";
 	private Race mRace;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.race_details);
+        
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         
         mRace = new Race(this, getIntent().getIntExtra(INTENT_ID, 0));
         
@@ -49,5 +54,21 @@ public class RaceActivity extends SherlockActivity {
 		name.setText(mRace.getName());
 		trackLong.setText(mRace.getTrack(Race.NAME_LONG));
 		tv.setText(mRace.getTv());
+    }
+    
+    @Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+    	if (item.getItemId() == android.R.id.home) {
+            Intent homeIntent = new Intent(this, MainActivity.class);
+            homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(homeIntent);
+            
+            if (getIntent().getBooleanExtra(INTENT_ALARM, false)) {
+            	// Finish activity so back button works as expected
+                finish();
+            }
+            return true;
+    	}
+    	return super.onOptionsItemSelected(item);
     }
 }

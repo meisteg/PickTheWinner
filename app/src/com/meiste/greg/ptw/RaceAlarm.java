@@ -74,6 +74,7 @@ public final class RaceAlarm extends BroadcastReceiver {
 			CharSequence contentText = race.getName();
 			Intent notificationIntent = new Intent(context, RaceActivity.class);
 			notificationIntent.putExtra(RaceActivity.INTENT_ID, race.getId());
+			notificationIntent.putExtra(RaceActivity.INTENT_ALARM, true);
 			PendingIntent pi = PendingIntent.getActivity(context, 0, notificationIntent,
 					PendingIntent.FLAG_CANCEL_CURRENT);
 
