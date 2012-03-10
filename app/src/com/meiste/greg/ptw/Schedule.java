@@ -47,6 +47,7 @@ public final class Schedule extends TabFragment {
 		    	
 		    	Intent intent = new Intent(getActivity(), RaceActivity.class);
 		    	intent.putExtra(RaceActivity.INTENT_ID, pos);
+		    	intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
 		    	startActivity(intent);
 		    }
 		});
