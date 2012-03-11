@@ -26,7 +26,6 @@ import android.widget.TextView;
 public final class RaceItemAdapter extends ArrayAdapter<Race> {
 	private Race[] mRaces;
 	private Context mContext;
-	private boolean mEnabled = true;
 	
 	public RaceItemAdapter(Context context, int textViewResourceId, Race[] races) {
 		super(context, textViewResourceId, races);
@@ -62,40 +61,27 @@ public final class RaceItemAdapter extends ArrayAdapter<Race> {
     	else
     		row.setBackgroundResource(R.drawable.schedule_future);
     	
-    	if (raceNum != null) {
+    	if (raceNum != null)
     		raceNum.setText(mRaces[pos].getRaceNum());
-    	}
     	
-    	if (startDate != null) {
+    	if (startDate != null)
     		startDate.setText(mRaces[pos].getStartDate());
-    	}
     	
-    	if (startTime != null) {
+    	if (startTime != null)
     		startTime.setText(mRaces[pos].getStartTime());
-    	}
     	
-    	if (name != null) {
+    	if (name != null)
     		name.setText(mRaces[pos].getName());
-    		mEnabled = false;
-    	}
     	
-    	if (trackLong != null) {
+    	if (trackLong != null)
     		trackLong.setText(mRaces[pos].getTrack(Race.NAME_LONG));
-    	}
     	
-    	if (trackShort != null) {
+    	if (trackShort != null)
     		trackShort.setText(mRaces[pos].getTrack(Race.NAME_SHORT));
-    	}
     	
-    	if (tv != null) {
+    	if (tv != null)
     		tv.setText(mRaces[pos].getTv());
-    	}
         
         return v;
     }
-	
-	@Override
-	public boolean isEnabled(int position) {
-		return mEnabled;
-	}
 }
