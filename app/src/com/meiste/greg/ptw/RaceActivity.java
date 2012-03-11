@@ -18,6 +18,7 @@ package com.meiste.greg.ptw;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockActivity;
@@ -43,6 +44,7 @@ public class RaceActivity extends SherlockActivity {
     	TextView name = (TextView) findViewById(R.id.race_name);
     	TextView trackLong = (TextView) findViewById(R.id.race_track);
     	TextView tv = (TextView) findViewById(R.id.race_tv);
+    	ImageView img = (ImageView) findViewById(R.id.race_img);
     	
     	if (mRace.isExhibition()) {
     		raceNum.setVisibility(View.GONE);
@@ -54,6 +56,7 @@ public class RaceActivity extends SherlockActivity {
 		name.setText(mRace.getName());
 		trackLong.setText(mRace.getTrack(Race.NAME_LONG));
 		tv.setText(mRace.getTv());
+		img.setImageDrawable(mRace.getLayout());
     }
     
     @Override

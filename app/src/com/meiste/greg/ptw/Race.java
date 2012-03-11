@@ -17,6 +17,8 @@ package com.meiste.greg.ptw;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.text.format.DateUtils;
 
 public final class Race {
@@ -33,6 +35,7 @@ public final class Race {
 	private String mTv;
 	private long mStart;
 	private long mQuestion;
+	private Drawable mLayout;
 	
 	public Race(Context context, int id) {
 		mContext = context;
@@ -46,6 +49,9 @@ public final class Race {
 		mTv = res.getStringArray(R.array.schedule_tv)[id];
 		mStart = res.getIntArray(R.array.schedule_start_times)[id] * DateUtils.SECOND_IN_MILLIS;
 		mQuestion = res.getIntArray(R.array.schedule_question_times)[id] * DateUtils.SECOND_IN_MILLIS;
+		
+		TypedArray layouts = res.obtainTypedArray(R.array.schedule_layouts);
+		mLayout = layouts.getDrawable(id);
 	}
 	
 	public static Race getNext(Context context, boolean allowExhibition, boolean allowInProgress) {
@@ -128,5 +134,9 @@ public final class Race {
 	
 	public long getQuestionTimestamp() {
 		return mQuestion;
+	}
+	
+	public Drawable getLayout() {
+		return mLayout;
 	}
 }

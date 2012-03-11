@@ -50,4 +50,12 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content" />
     
+    <ImageView
+        android:id="@+id/race_img"
+        android:layout_width="235dp"
+        android:layout_height="177dp"
+        android:scaleType="fitCenter"
+        android:layout_gravity="center"
+        android:contentDescription="@string/track_layout" />
+    
 </LinearLayout>
