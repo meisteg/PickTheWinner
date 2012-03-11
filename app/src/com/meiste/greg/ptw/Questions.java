@@ -28,13 +28,15 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.meiste.greg.ptw.ObservableScrollView.ScrollViewListener;
 import com.meiste.greg.ptw.TabFragmentAdapter.FragmentListener;
 
-public final class Questions extends TabFragment implements View.OnClickListener {
+public final class Questions extends TabFragment implements View.OnClickListener, ScrollViewListener {
 	private int mWinner;
 	private int mMostLaps;
 	private int mNumLeaders;
 	
+	private int mScroll = 0;
 	private FragmentListener mFragmentListener;
 	
 	public static Questions newInstance(Context context, FragmentListener fl) {
@@ -79,6 +81,10 @@ public final class Questions extends TabFragment implements View.OnClickListener
 		    
 		    Button send = (Button) v.findViewById(R.id.send);
 			send.setOnClickListener(this);
+			
+			ObservableScrollView sv = (ObservableScrollView) v.findViewById(R.id.scroll_questions);
+			sv.postScrollTo(0, mScroll);
+			sv.setScrollViewListener(this);
 		} else {
 			v = inflater.inflate(R.layout.questions_not_yet, container, false);
 			
@@ -154,6 +160,13 @@ public final class Questions extends TabFragment implements View.OnClickListener
 		Util.log("Sending: a1=" + mWinner + ", a4=" + mMostLaps + ", a5=" + mNumLeaders);
 		Toast.makeText(getActivity(), "TODO: Actually send answers",
 				Toast.LENGTH_SHORT).show();
+		
+		mScroll = 0;
 		mFragmentListener.onChangedFragment();
+	}
+	
+	@Override
+	public void onScrollChanged(ObservableScrollView sv, int x, int y, int oldx, int oldy) {
+		mScroll = y;
 	}
 }

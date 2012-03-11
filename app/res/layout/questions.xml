@@ -15,7 +15,9 @@
      limitations under the License.
 -->
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.meiste.greg.ptw.ObservableScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scroll_questions"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:scrollbars="vertical"
@@ -77,4 +79,4 @@
         
     </LinearLayout>
 
-</ScrollView>
+</com.meiste.greg.ptw.ObservableScrollView>
