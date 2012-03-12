@@ -25,8 +25,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public final class Suggest extends TabFragment implements View.OnClickListener {
+import com.meiste.greg.ptw.ObservableScrollView.ScrollViewListener;
+
+public final class Suggest extends TabFragment implements View.OnClickListener, ScrollViewListener {
 	private EditText mQuestion;
+	private int mScroll = 0;
 	
 	public static Suggest newInstance(Context context) {
 		Suggest fragment = new Suggest();
@@ -53,6 +56,10 @@ public final class Suggest extends TabFragment implements View.OnClickListener {
 		Button send = (Button) v.findViewById(R.id.send);
 		send.setOnClickListener(this);
 		
+		ObservableScrollView sv = (ObservableScrollView) v.findViewById(R.id.scroll_suggest);
+		sv.postScrollTo(0, mScroll);
+		sv.setScrollViewListener(this);
+		
 		return v;
 	}
 
@@ -62,5 +69,10 @@ public final class Suggest extends TabFragment implements View.OnClickListener {
 		Toast.makeText(getActivity(), "TODO: Actually send suggestion",
 				Toast.LENGTH_SHORT).show();
 		mQuestion.setText("");
+	}
+	
+	@Override
+	public void onScrollChanged(ObservableScrollView sv, int x, int y, int oldx, int oldy) {
+		mScroll = y;
 	}
 }

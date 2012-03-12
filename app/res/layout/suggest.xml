@@ -15,33 +15,44 @@
      limitations under the License.
 -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingLeft="20sp"
-    android:paddingRight="20sp" >
+<com.meiste.greg.ptw.ObservableScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scroll_suggest"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:scrollbars="vertical"
+    android:fillViewport="true" >
     
-    <TextView style="@style/SuggestText" android:text="@string/suggest_para1" />
-    <TextView style="@style/SuggestTrack" android:id="@+id/racetrack" />
-    <TextView style="@style/SuggestText" android:text="@string/suggest_para2" />
-
-    <EditText
-        android:id="@+id/question"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/suggest_hint"
-        android:layout_marginTop="20sp"
-        android:maxLines="3" >
-
-        <requestFocus />
-    </EditText>
-
-    <Button
-        android:id="@+id/send"
-        android:layout_width="160dip"
-        android:layout_height="wrap_content"
-        android:text="@string/send"
-        android:layout_gravity="center_horizontal" />
-
-</LinearLayout>
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="20sp"
+        android:paddingRight="20sp"
+        android:paddingBottom="20sp" >
+        
+        <TextView style="@style/SuggestText" android:text="@string/suggest_para1" />
+        <TextView style="@style/SuggestTrack" android:id="@+id/racetrack" />
+        <TextView style="@style/SuggestText" android:text="@string/suggest_para2" />
+        
+        <EditText
+            android:id="@+id/question"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/suggest_hint"
+            android:layout_marginTop="20sp"
+            android:maxLines="3" >
+    
+            <requestFocus />
+        </EditText>
+        
+        <Button
+            android:id="@+id/send"
+            android:layout_width="160dip"
+            android:layout_height="wrap_content"
+            android:text="@string/send"
+            android:layout_gravity="center_horizontal" />
+        
+    </LinearLayout>
+    
+</com.meiste.greg.ptw.ObservableScrollView>
