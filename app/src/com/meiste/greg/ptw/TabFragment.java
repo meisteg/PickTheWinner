@@ -15,9 +15,11 @@
  */
 package com.meiste.greg.ptw;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
 public class TabFragment extends Fragment {
+	private static final String KEY_TITLE = "TabFragment:Title";
 	private String mTitle = "???";
 	
 	public void setTitle(String title) {
@@ -26,5 +28,20 @@ public class TabFragment extends Fragment {
 	
 	public String getTitle() {
 		return mTitle;
+	}
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		
+		if ((savedInstanceState != null) && savedInstanceState.containsKey(KEY_TITLE)) {
+			setTitle(savedInstanceState.getString(KEY_TITLE));
+		}
+	}
+	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putString(KEY_TITLE, getTitle());
 	}
 }

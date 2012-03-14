@@ -68,13 +68,6 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
 	}
     
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        // There is a bug in the Android compatibility library that causes
-    	// a null pointer exception when the super's onSaveInstanceState is
-    	// called. See: http://stackoverflow.com/questions/8748064
-    }
-    
-    @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getSupportMenuInflater().inflate(R.menu.menu, menu);
 		return true;
