@@ -39,6 +39,7 @@ public class RaceActivity extends SherlockActivity {
         mRace = new Race(this, getIntent().getIntExtra(INTENT_ID, 0));
         
         TextView raceNum = (TextView) findViewById(R.id.race_num);
+        TextView inTheChase = (TextView) findViewById(R.id.race_in_chase);
     	TextView startDate = (TextView) findViewById(R.id.race_date);
     	TextView startTime = (TextView) findViewById(R.id.race_time);
     	TextView name = (TextView) findViewById(R.id.race_name);
@@ -49,7 +50,10 @@ public class RaceActivity extends SherlockActivity {
     	if (mRace.isExhibition()) {
     		raceNum.setVisibility(View.GONE);
     	} else {
-    		raceNum.setText(mRace.getRaceNum());
+    		raceNum.setText(getString(R.string.race_num, mRace.getRaceNum()));
+    		
+    		if (mRace.isInChase())
+    			inTheChase.setVisibility(View.VISIBLE);
     	}
 		startDate.setText(mRace.getStartDate());
 		startTime.setText(mRace.getStartTime());

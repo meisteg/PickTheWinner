@@ -22,6 +22,7 @@
     <string name="eula_title">License</string>
     <string name="eula_accept">Accept</string>
     <string name="eula_refuse">Refuse</string>
+    <string name="in_the_chase">In The Chase</string>
     <string name="led">Phone LED</string>
     <string name="led_summary">Flash LED for reminders</string>
     <string name="legal">Legal</string>
@@ -32,6 +33,7 @@
     <string name="notifications">Notifications</string>
     <string name="ok">OK</string>
     <string name="race_details">Race Details</string>
+    <string name="race_num">Race %s</string>
     <string name="remind_questions">Question reminders</string>
     <string name="remind_questions_summary">Show when new questions are available</string>
     <string name="remind_questions_ticker">Questions available for the %s</string>
