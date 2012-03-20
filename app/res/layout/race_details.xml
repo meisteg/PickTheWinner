@@ -38,15 +38,17 @@
                 android:id="@+id/race_num"
 		        android:layout_width="0px"
 		        android:layout_height="wrap_content"
-		        android:layout_weight="0.5" />
+		        android:layout_weight="1" />
             
             <TextView
                 android:id="@+id/race_in_chase"
-		        android:layout_width="0px"
+		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:layout_weight="0.5"
 		        android:gravity="right"
 		        android:text="@string/in_the_chase"
+		        android:background="@drawable/inthechase"
+		        android:paddingLeft="20sp"
+		        android:paddingRight="20sp"
 		        android:visibility="gone" />
             
         </LinearLayout>
