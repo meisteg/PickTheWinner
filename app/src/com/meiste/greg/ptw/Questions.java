@@ -39,12 +39,15 @@ public final class Questions extends TabFragment implements View.OnClickListener
 	private int mScroll = 0;
 	private FragmentListener mFragmentListener;
 	
-	public static Questions newInstance(Context context, FragmentListener fl) {
+	public static Questions newInstance(Context context) {
 		Questions fragment = new Questions();
 		fragment.setTitle(context.getString(R.string.tab_questions));
-		fragment.mFragmentListener = fl;
 		
 		return fragment;
+	}
+	
+	public void setFragmentListener(FragmentListener fl) {
+		mFragmentListener = fl;
 	}
 	
 	@Override
@@ -162,7 +165,8 @@ public final class Questions extends TabFragment implements View.OnClickListener
 				Toast.LENGTH_SHORT).show();
 		
 		mScroll = 0;
-		mFragmentListener.onChangedFragment();
+		if (mFragmentListener != null)
+			mFragmentListener.onChangedFragment();
 	}
 	
 	@Override

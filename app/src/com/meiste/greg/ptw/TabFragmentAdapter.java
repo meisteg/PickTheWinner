@@ -22,11 +22,13 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.view.ViewGroup;
 
 import com.viewpagerindicator.TitleProvider;
 
 class TabFragmentAdapter extends FragmentPagerAdapter implements TitleProvider {
 	private List<TabFragment> mFragments;
+	private FragmentListener mFragmentListener;
 	
 	public interface FragmentListener {
 	    void onChangedFragment();
@@ -35,12 +37,29 @@ class TabFragmentAdapter extends FragmentPagerAdapter implements TitleProvider {
 	public TabFragmentAdapter(FragmentManager fm, Context context) {
 		super(fm);
 		
+		mFragmentListener = new MyFragmentListener();
+		
 		mFragments = new Vector<TabFragment>();
 		mFragments.add(RuleBook.newInstance(context));
-		mFragments.add(Questions.newInstance(context, new MyFragmentListener()));
+		mFragments.add(Questions.newInstance(context));
 		mFragments.add(Standings.newInstance(context));
 		mFragments.add(Schedule.newInstance(context));
 		mFragments.add(Suggest.newInstance(context));
+	}
+	
+	@Override
+	public Object instantiateItem(ViewGroup container, int position) {
+		Object o = super.instantiateItem(container, position);
+		if (o instanceof Questions) {
+			// HACK: On an orientation change, even though we created new
+			// fragments, FragmentManager still has the old fragments, which
+			// FragmentPagerAdapter checks for and uses instead of calling
+			// getItem to get the new fragments. Need to give Questions
+			// tab updated FragmentListener since old one is now invalid.
+			((Questions)o).setFragmentListener(mFragmentListener);
+		}
+		
+		return o;
 	}
 
 	@Override
