@@ -39,7 +39,8 @@ public class EditPreferences extends SherlockPreferenceActivity implements OnSha
 	
 	private Preference mVibrate;
 	
-    @Override
+	@SuppressWarnings("deprecation")
+	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
@@ -91,6 +92,7 @@ public class EditPreferences extends SherlockPreferenceActivity implements OnSha
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
 	private void reminderCheck(SharedPreferences prefs) {
 		if (prefs.getBoolean(KEY_REMIND_QUESTIONS, true) ||
 			prefs.getBoolean(KEY_REMIND_RACE, true)) {

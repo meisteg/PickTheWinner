@@ -37,7 +37,7 @@ public final class Standings extends TabFragment {
 		TextView text = new TextView(getActivity());
 		text.setGravity(Gravity.CENTER);
 		text.setText("TODO");
-		text.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
+		text.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		return text;
 	}
 }

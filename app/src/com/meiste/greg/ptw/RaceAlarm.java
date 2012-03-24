@@ -25,6 +25,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
 
 public final class RaceAlarm extends BroadcastReceiver {
 	
@@ -61,33 +62,33 @@ public final class RaceAlarm extends BroadcastReceiver {
 			Race race = new Race(context, intent.getIntExtra(RACE_ID, 0));
 			Util.log("Received race alarm for race " + race.getId());
 			
-			String ns = Context.NOTIFICATION_SERVICE;
-			NotificationManager nm = (NotificationManager) context.getSystemService(ns);
-			
-			// TODO: Replace with custom icon
-			int icon = android.R.drawable.stat_sys_warning;
-			CharSequence tickerText = context.getString(R.string.remind_race_ticker, race.getName());
-			long when = System.currentTimeMillis();
-			Notification notification = new Notification(icon, tickerText, when);
-			
-			CharSequence contentTitle = context.getString(R.string.remind_race_notify);
-			CharSequence contentText = race.getName();
 			Intent notificationIntent = new Intent(context, RaceActivity.class);
 			notificationIntent.putExtra(RaceActivity.INTENT_ID, race.getId());
 			notificationIntent.putExtra(RaceActivity.INTENT_ALARM, true);
 			PendingIntent pi = PendingIntent.getActivity(context, 0, notificationIntent,
 					PendingIntent.FLAG_CANCEL_CURRENT);
-
-			notification.sound = Uri.parse(prefs.getString(EditPreferences.KEY_REMIND_RINGTONE,
-					"content://settings/system/notification_sound"));
-			if (prefs.getBoolean(EditPreferences.KEY_REMIND_VIBRATE, true))
-				notification.defaults |= Notification.DEFAULT_VIBRATE;
-			if (prefs.getBoolean(EditPreferences.KEY_REMIND_LED, true))
-				notification.defaults |= Notification.DEFAULT_LIGHTS;
-			notification.flags |= Notification.FLAG_AUTO_CANCEL;
-			notification.setLatestEventInfo(context, contentTitle, contentText, pi);
 			
-			nm.notify(R.string.remind_race_ticker, notification);
+			int defaults = 0;
+			if (prefs.getBoolean(EditPreferences.KEY_REMIND_VIBRATE, true))
+				defaults |= Notification.DEFAULT_VIBRATE;
+			if (prefs.getBoolean(EditPreferences.KEY_REMIND_LED, true))
+				defaults |= Notification.DEFAULT_LIGHTS;
+			
+			// TODO: Replace with custom icon
+			NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+				.setSmallIcon(android.R.drawable.stat_sys_warning)
+				.setTicker(context.getString(R.string.remind_race_ticker, race.getName()))
+				.setContentTitle(context.getString(R.string.remind_race_notify))
+				.setContentText(race.getName())
+				.setContentIntent(pi)
+				.setAutoCancel(true)
+				.setDefaults(defaults)
+				.setSound(Uri.parse(prefs.getString(EditPreferences.KEY_REMIND_RINGTONE,
+						  "content://settings/system/notification_sound")));
+			
+			String ns = Context.NOTIFICATION_SERVICE;
+			NotificationManager nm = (NotificationManager) context.getSystemService(ns);
+			nm.notify(R.string.remind_race_ticker, builder.getNotification());
 			
 			// Reset alarm for the next race
 			set(context);
