@@ -36,7 +36,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@color/ad_background"
-        googleads:adSize="BANNER"
+        googleads:adSize="IAB_BANNER"
         googleads:adUnitId="@string/admob_id" />
 
 </LinearLayout>

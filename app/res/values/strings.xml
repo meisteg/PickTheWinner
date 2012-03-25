@@ -17,6 +17,7 @@
 
 <resources>
     <string name="about">About</string>
+    <string name="admob_id">a14f6e08f942b9e</string>
     <string name="app_name">Pick The Winner</string>
     <string name="build_version">Build version</string>
     <string name="eula_title">License</string>

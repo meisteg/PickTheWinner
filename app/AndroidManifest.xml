@@ -23,6 +23,8 @@
     <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="15" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:icon="@drawable/ic_launcher"
@@ -52,6 +54,9 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />  
             </intent-filter>  
         </receiver>
+        <activity
+            android:name="com.google.ads.AdActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
     </application>
 
 </manifest>

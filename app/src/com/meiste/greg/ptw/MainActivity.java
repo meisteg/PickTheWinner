@@ -23,6 +23,11 @@ import android.support.v4.view.ViewPager;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.google.ads.Ad;
+import com.google.ads.AdListener;
+import com.google.ads.AdRequest;
+import com.google.ads.AdRequest.ErrorCode;
+import com.google.ads.AdView;
 import com.viewpagerindicator.TitlePageIndicator;
 
 public class MainActivity extends SherlockFragmentActivity implements Eula.OnEulaAgreedTo {
@@ -32,6 +37,7 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
 	
 	private ViewPager mPager;
 	private TitlePageIndicator mIndicator;
+	private AdView mAdView;
 	private AlertDialog mLegalDialog;
 	
     /** Called when the activity is first created. */
@@ -51,6 +57,19 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
 		mIndicator = (TitlePageIndicator)findViewById(R.id.indicator);
 		mIndicator.setViewPager(mPager);
 		mIndicator.setCurrentItem(getTab(getIntent()));
+		
+		AdRequest adRequest = new AdRequest();
+		adRequest.addKeyword("NASCAR");
+		adRequest.addKeyword("racing");
+		
+		if (BuildConfig.DEBUG) {
+			adRequest.addTestDevice("CB529BCBD1E778FAD10EE145EE29045F"); // Atrix 4G
+			adRequest.addTestDevice("3BF57CB8B267C7B43814616E651CCF5A"); // XOOM
+		}
+		
+		mAdView = (AdView)findViewById(R.id.ad);
+		mAdView.setAdListener(new MyAdListener());
+		mAdView.loadAd(adRequest);
     }
     
     @Override
@@ -66,6 +85,12 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
 			mLegalDialog.dismiss();
 		}
 	}
+    
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mAdView.destroy();
+    }
     
     @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -110,5 +135,27 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
 		}
 		
 		return Util.getState(this).getInt(LAST_TAB, 0);
+	}
+	
+	private class MyAdListener implements AdListener {
+
+		@Override
+		public void onReceiveAd(Ad ad) {
+			Util.log("onReceiveAd");
+		}
+
+		@Override
+		public void onFailedToReceiveAd(Ad ad, ErrorCode err) {
+			Util.log("onFailedToReceiveAd: " + err);
+		}
+
+		@Override
+		public void onLeaveApplication(Ad ad) {}
+
+		@Override
+		public void onPresentScreen(Ad ad) {}
+		
+		@Override
+		public void onDismissScreen(Ad ad) {}
 	}
 }

@@ -24,4 +24,6 @@
     <color name="schedule_past">#FFCCCCCC</color>
     <color name="schedule_future">#FFFFFFFF</color>
     <color name="schedule_chase">#88FFFF00</color>
+    
+    <color name="ad_background">#FF222222</color>
 </resources>
