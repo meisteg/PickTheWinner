@@ -40,7 +40,7 @@ public class RaceActivity extends SherlockActivity {
         
         TextView raceNum = (TextView) findViewById(R.id.race_num);
         TextView inTheChase = (TextView) findViewById(R.id.race_in_chase);
-    	TextView startDate = (TextView) findViewById(R.id.race_date);
+    	TextView trackSize = (TextView) findViewById(R.id.race_track_size);
     	TextView startTime = (TextView) findViewById(R.id.race_time);
     	TextView name = (TextView) findViewById(R.id.race_name);
     	TextView trackLong = (TextView) findViewById(R.id.race_track);
@@ -55,11 +55,11 @@ public class RaceActivity extends SherlockActivity {
     		if (mRace.isInChase())
     			inTheChase.setVisibility(View.VISIBLE);
     	}
-		startDate.setText(mRace.getStartDate());
-		startTime.setText(mRace.getStartTime());
+		trackSize.setText(mRace.getTrackSize());
+		startTime.setText(mRace.getStartDateTime());
 		name.setText(mRace.getName());
 		trackLong.setText(mRace.getTrack(Race.NAME_LONG));
-		tv.setText(mRace.getTv());
+		tv.setText(getString(R.string.details_tv, mRace.getTv()));
 		img.setImageDrawable(mRace.getLayout());
     }
     

@@ -33,6 +33,7 @@ public final class Race {
 	private String mTrackShort;
 	private String mName;
 	private String mTv;
+	private String mSize;
 	private long mStart;
 	private long mQuestion;
 	private Drawable mLayout;
@@ -47,6 +48,7 @@ public final class Race {
 		mTrackShort = res.getStringArray(R.array.schedule_tracks_short)[id];
 		mName = res.getStringArray(R.array.schedule_races)[id];
 		mTv = res.getStringArray(R.array.schedule_tv)[id];
+		mSize = res.getStringArray(R.array.schedule_tracks_size)[id];
 		mStart = res.getIntArray(R.array.schedule_start_times)[id] * DateUtils.SECOND_IN_MILLIS;
 		mQuestion = res.getIntArray(R.array.schedule_question_times)[id] * DateUtils.SECOND_IN_MILLIS;
 		
@@ -122,6 +124,12 @@ public final class Race {
 		return DateUtils.formatDateTime(mContext, mStart, flags);
 	}
 	
+	public String getStartDateTime() {
+		int flags = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_YEAR;
+		flags |= DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_NO_NOON_MIDNIGHT;
+		return DateUtils.formatDateTime(mContext, mStart, flags);
+	}
+	
 	public long getStartTimestamp() {
 		return mStart;
 	}
@@ -138,5 +146,9 @@ public final class Race {
 	
 	public Drawable getLayout() {
 		return mLayout;
+	}
+	
+	public String getTrackSize() {
+		return mContext.getString(R.string.details_size, mSize);
 	}
 }

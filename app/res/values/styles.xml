@@ -57,12 +57,8 @@
         <item name="android:paddingTop">20sp</item>
     </style>
     
-    <style name="QuestionsRaceName">
-        <item name="android:textSize">18sp</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">fill_parent</item>
+    <style name="QuestionsRaceName" parent="QuestionsText">
         <item name="android:textStyle">bold</item>
-        <item name="android:paddingTop">20sp</item>
     </style>
     
     <style name="QuestionsTrack">
@@ -98,6 +94,17 @@
         <item name="android:layout_height">fill_parent</item>
         <item name="android:layout_width">fill_parent</item>
         <item name="android:gravity">center</item>
+    </style>
+    
+    <style name="RaceDetailsText">
+        <item name="android:textSize">@dimen/DetailsText</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+    </style>
+    
+    <style name="RaceDetailsName" parent="RaceDetailsText">
+        <item name="android:textSize">@dimen/DetailsName</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
 </resources>

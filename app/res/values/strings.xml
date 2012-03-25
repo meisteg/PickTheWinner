@@ -107,4 +107,8 @@
     <string name="suggest_hint">Enter question suggestion here</string>
     <string name="suggest_no_race">Thanks for all your question suggestions this season.</string>
     
+    <!-- Race Details -->
+    <string name="details_tv">TV: %s</string>
+    <string name="details_size">Track Size: %s miles</string>
+    
 </resources>

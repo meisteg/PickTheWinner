@@ -105,6 +105,50 @@
         <item>Homestead</item>
     </string-array>
     
+    <string-array name="schedule_tracks_size" translatable="false">
+        <item>2.5</item>
+        <item>2.5</item>
+        <item>2.5</item>
+        <item>2.5</item>
+        <item>1.0</item>
+        <item>1.5</item>
+        <item>0.533</item>
+        <item>2.0</item>
+        <item>0.526</item>
+        <item>1.5</item>
+        <item>1.5</item>
+        <item>0.75</item>
+        <item>2.66</item>
+        <item>1.366</item>
+        <item>1.5</item>
+        <item>1.5</item>
+        <item>1.5</item>
+        <item>1.0</item>
+        <item>2.5</item>
+        <item>2.0</item>
+        <item>1.99</item>
+        <item>1.5</item>
+        <item>2.5</item>
+        <item>1.058</item>
+        <item>2.5</item>
+        <item>2.5</item>
+        <item>2.45</item>
+        <item>2.0</item>
+        <item>0.533</item>
+        <item>1.54</item>
+        <item>0.75</item>
+        <item>1.5</item>
+        <item>1.058</item>
+        <item>1.0</item>
+        <item>2.66</item>
+        <item>1.5</item>
+        <item>1.5</item>
+        <item>0.526</item>
+        <item>1.5</item>
+        <item>1.0</item>
+        <item>1.5</item>
+    </string-array>
+    
     <string-array name="schedule_races" translatable="false">
         <item>Budweiser Shootout</item>
         <item>Gatorade Duel 1</item>
@@ -119,11 +163,11 @@
         <item>STP 400</item>
         <item>Richmond</item> <!-- TODO: Update when announced -->
         <item>Aaron\'s 499</item>
-        <item>Southern 500</item>
+        <item>Bojangles\' Southern 500</item>
         <item>Sprint Showdown</item>
         <item>Sprint All-Star Race</item>
         <item>Coca-Cola 600</item>
-        <item>Dover</item> <!-- TODO: Update when announced -->
+        <item>FedEx 400 benefiting Autism Speaks</item>
         <item>Pocono 400</item> <!-- TODO: Update when announced -->
         <item>Heluva Good! Sour Cream Dips 400</item>
         <item>Toyota/Save Mart 350</item>
@@ -134,7 +178,7 @@
         <item>Pennsylvania 400</item> <!-- TODO: Update when announced -->
         <item>Watkins Glen</item> <!-- TODO: Update when announced -->
         <item>Pure Michigan 400</item>
-        <item>Irwin Tools Night Race</item> <!-- TODO: Update when announced -->
+        <item>Irwin Tools Night Race</item>
         <item>AdvoCare 500</item>
         <item>Wonderful Pistachios 400</item>
         <item>Geico 400</item>

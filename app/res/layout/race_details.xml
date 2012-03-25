@@ -26,9 +26,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingTop="20sp"
-        android:paddingLeft="20sp"
-        android:paddingRight="20sp" >
+        android:padding="20sp" >
         
         <LinearLayout
             android:layout_width="fill_parent"
@@ -38,7 +36,9 @@
                 android:id="@+id/race_num"
 		        android:layout_width="0px"
 		        android:layout_height="wrap_content"
-		        android:layout_weight="1" />
+		        android:layout_weight="1"
+		        android:layout_marginBottom="14sp"
+		        android:textSize="@dimen/DetailsTop" />
             
             <TextView
                 android:id="@+id/race_in_chase"
@@ -46,6 +46,7 @@
 		        android:layout_height="wrap_content"
 		        android:gravity="right"
 		        android:text="@string/in_the_chase"
+		        android:textSize="@dimen/DetailsTop"
 		        android:background="@drawable/inthechase"
 		        android:paddingLeft="20sp"
 		        android:paddingRight="20sp"
@@ -53,30 +54,12 @@
             
         </LinearLayout>
         
-        <TextView
-            android:id="@+id/race_name"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content" />
+        <TextView android:id="@+id/race_name" style="@style/RaceDetailsName" />
+        <TextView android:id="@+id/race_track" style="@style/RaceDetailsText"
+            android:paddingBottom="20sp" />
         
-        <TextView
-            android:id="@+id/race_track"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content" />
-        
-        <TextView
-            android:id="@+id/race_date"
-		    android:layout_width="wrap_content"
-    		android:layout_height="wrap_content" />
-        
-        <TextView
-            android:id="@+id/race_time"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content" />
-        
-        <TextView
-            android:id="@+id/race_tv"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content" />
+        <TextView android:id="@+id/race_time" style="@style/RaceDetailsText" />
+        <TextView android:id="@+id/race_tv" style="@style/RaceDetailsText" />
         
         <ImageView
             android:id="@+id/race_img"
@@ -85,6 +68,8 @@
             android:scaleType="fitCenter"
             android:layout_gravity="center"
             android:contentDescription="@string/track_layout" />
+        
+        <TextView android:id="@+id/race_track_size" style="@style/RaceDetailsText" />
         
     </LinearLayout>
     
