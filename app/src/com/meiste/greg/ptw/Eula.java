@@ -23,6 +23,7 @@ import java.io.InputStreamReader;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 
@@ -50,6 +51,14 @@ class Eula {
          */
         void onEulaAgreedTo();
     }
+    
+    private static SharedPreferences getEulaPrefs(Context context) {
+    	return context.getSharedPreferences(PREFERENCES_EULA, Activity.MODE_PRIVATE);
+    }
+    
+    static boolean hasAccepted(Context context) {
+    	return getEulaPrefs(context).getBoolean(PREFERENCE_EULA_ACCEPTED, false);
+    }
 
     /**
      * Displays the EULA if necessary. This method should be called from the onCreate()
@@ -59,15 +68,13 @@ class Eula {
      * @return Whether the user has agreed already.
      */
     static boolean show(final Activity activity) {
-        final SharedPreferences preferences = activity.getSharedPreferences(PREFERENCES_EULA,
-                Activity.MODE_PRIVATE);
-        if (!preferences.getBoolean(PREFERENCE_EULA_ACCEPTED, false)) {
+        if (!hasAccepted(activity)) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             builder.setTitle(R.string.eula_title);
             builder.setCancelable(true);
             builder.setPositiveButton(R.string.eula_accept, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
-                    accept(preferences);
+                    accept(getEulaPrefs(activity));
                     if (activity instanceof OnEulaAgreedTo) {
                         ((OnEulaAgreedTo) activity).onEulaAgreedTo();
                     }
