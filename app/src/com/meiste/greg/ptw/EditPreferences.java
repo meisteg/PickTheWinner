@@ -30,12 +30,16 @@ import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
 
 public class EditPreferences extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener {
+	public static final String KEY_ACCOUNT_EMAIL = "account.email";
+	
 	public static final String KEY_REMIND_QUESTIONS = "remind.questions";
 	public static final String KEY_REMIND_RACE = "remind.race";
 	public static final String KEY_REMIND_VIBRATE = "remind.vibrate";
 	public static final String KEY_REMIND_LED = "remind.led";
 	public static final String KEY_REMIND_RINGTONE = "remind.ringtone";
-	public static final String KEY_REMINDER_SETTINGS = "reminder_settings_category";
+	
+	private static final String KEY_ACCOUNT_SCREEN = "account_screen";
+	private static final String KEY_REMINDER_SETTINGS = "reminder_settings_category";
 	
 	private Preference mVibrate;
 	
@@ -57,7 +61,8 @@ public class EditPreferences extends SherlockPreferenceActivity implements OnSha
         }
     }
     
-    @Override
+    @SuppressWarnings("deprecation")
+	@Override
     protected void onResume() {
         super.onResume();
         Util.log("EditPreferences.onResume");
@@ -65,6 +70,9 @@ public class EditPreferences extends SherlockPreferenceActivity implements OnSha
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.registerOnSharedPreferenceChangeListener(this);
         reminderCheck(prefs);
+        
+        Preference account = findPreference(KEY_ACCOUNT_SCREEN);
+        account.setSummary(prefs.getString(KEY_ACCOUNT_EMAIL, getString(R.string.account_needed)));
     }
     
     @Override

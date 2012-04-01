@@ -1,42 +1,65 @@
+<!--
+     Copyright (C) 2012 Gregory S. Meiste <http://gregmeiste.com>
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-  <PreferenceCategory android:title="@string/notifications">
-    <CheckBoxPreference
-      android:key="remind.questions"
-      android:title="@string/remind_questions"
-      android:summary="@string/remind_questions_summary"
-      android:defaultValue="true" />
-    <CheckBoxPreference
-      android:key="remind.race"
-      android:title="@string/remind_race"
-      android:summary="@string/remind_race_summary"
-      android:defaultValue="true" />
-  </PreferenceCategory>
-  <PreferenceCategory
-    android:key="reminder_settings_category"
-    android:title="@string/reminder_settings">
-    <CheckBoxPreference
-      android:key="remind.vibrate"
-      android:title="@string/vibrate"
-      android:summary="@string/vibrate_summary"
-      android:defaultValue="true" />
-    <CheckBoxPreference
-      android:key="remind.led"
-      android:title="@string/led"
-      android:summary="@string/led_summary"
-      android:defaultValue="true" />
-    <RingtonePreference
-      android:key="remind.ringtone"
-      android:title="@string/ringtone"
-      android:summary="@string/ringtone_summary"
-      android:ringtoneType="notification"
-      android:showDefault="true"
-      android:showSilent="true"
-      android:defaultValue="content://settings/system/notification_sound" />
-  </PreferenceCategory>
-  <PreferenceCategory android:title="@string/about">
-    <Preference
-      android:key="build"
-      android:title="@string/build_version"
-      android:summary="@string/version" />
-  </PreferenceCategory>
+    <PreferenceCategory android:title="@string/personal">
+        <PreferenceScreen android:key="account_screen" android:title="@string/account">
+            <intent
+                android:targetPackage="com.meiste.greg.ptw"
+                android:targetClass="com.meiste.greg.ptw.AccountsActivity" />
+        </PreferenceScreen>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/notifications">
+        <CheckBoxPreference
+            android:key="remind.questions"
+            android:title="@string/remind_questions"
+            android:summary="@string/remind_questions_summary"
+            android:defaultValue="true" />
+        <CheckBoxPreference
+            android:key="remind.race"
+            android:title="@string/remind_race"
+            android:summary="@string/remind_race_summary"
+            android:defaultValue="true" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="reminder_settings_category"
+        android:title="@string/reminder_settings">
+        <CheckBoxPreference
+            android:key="remind.vibrate"
+            android:title="@string/vibrate"
+            android:summary="@string/vibrate_summary"
+            android:defaultValue="true" />
+        <CheckBoxPreference
+            android:key="remind.led"
+            android:title="@string/led"
+            android:summary="@string/led_summary"
+            android:defaultValue="true" />
+        <RingtonePreference
+            android:key="remind.ringtone"
+            android:title="@string/ringtone"
+            android:summary="@string/ringtone_summary"
+            android:ringtoneType="notification"
+            android:showDefault="true"
+            android:showSilent="true"
+            android:defaultValue="content://settings/system/notification_sound" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/about">
+        <Preference
+            android:key="build"
+            android:title="@string/build_version"
+            android:summary="@string/version" />
+    </PreferenceCategory>
 </PreferenceScreen>

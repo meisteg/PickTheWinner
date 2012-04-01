@@ -17,12 +17,21 @@
 
 <resources>
     <string name="about">About</string>
+    <string name="account">Account</string>
+    <string name="account_needed">Please select an account</string>
+    <string name="add_account">Add account&#8230;</string>
     <string name="admob_id">a14f6e08f942b9e</string>
     <string name="app_name">Pick The Winner</string>
+    <string name="attention">Attention</string>
     <string name="build_version">Build version</string>
+    <string name="connect">Connect</string>
+    <string name="connect_text">This application requests permission to connect your mobile device to the cloud.</string>
+    <string name="contacting_server">Contacting server&#8230;</string>
     <string name="eula_title">License</string>
     <string name="eula_accept">Accept</string>
     <string name="eula_refuse">Refuse</string>
+    <string name="exit">Close</string>
+    <string name="failed_connect">Failed to connect. Please try again.</string>
     <string name="in_the_chase">In The Chase</string>
     <string name="led">Phone LED</string>
     <string name="led_summary">Flash LED for reminders</string>
@@ -31,8 +40,10 @@
         NASCAR® and Sprint Cup® are registered trademarks of the National Association for Stock
         Car Auto Racing, Inc. All other trademarks, names or logos in this application are the
         property of their respective owners.</string>
+    <string name="needs_account">To play Pick The Winner, you must first create a Google account.</string>
     <string name="notifications">Notifications</string>
     <string name="ok">OK</string>
+    <string name="personal">Personal</string>
     <string name="race_details">Race Details</string>
     <string name="race_num">Race %s</string>
     <string name="remind_questions">Question reminders</string>
@@ -45,8 +56,10 @@
     <string name="reminder_settings">Reminder Settings</string>
     <string name="ringtone">Ringtone</string>
     <string name="ringtone_summary">Set a ringtone for reminders</string>
+    <string name="select_account">Select the account you wish to authorize:</string>
     <string name="send">Send</string>
     <string name="settings">Settings</string>
+    <string name="skip">Skip</string>
     <string name="tab_questions">QUESTIONS</string>
     <string name="tab_rule_book">RULE BOOK</string>
     <string name="tab_schedule">SCHEDULE</string>
