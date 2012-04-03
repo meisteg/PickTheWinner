@@ -29,7 +29,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.meiste.greg.ptw.ObservableScrollView.ScrollViewListener;
-import com.meiste.greg.ptw.TabFragmentAdapter.FragmentListener;
 
 public final class Questions extends TabFragment implements View.OnClickListener, ScrollViewListener {
 	private int mWinner;
@@ -37,7 +36,8 @@ public final class Questions extends TabFragment implements View.OnClickListener
 	private int mNumLeaders;
 	
 	private int mScroll = 0;
-	private FragmentListener mFragmentListener;
+	private boolean mSetupNeeded;
+	private boolean mChanged = false;
 	
 	public static Questions newInstance(Context context) {
 		Questions fragment = new Questions();
@@ -46,17 +46,17 @@ public final class Questions extends TabFragment implements View.OnClickListener
 		return fragment;
 	}
 	
-	public void setFragmentListener(FragmentListener fl) {
-		mFragmentListener = fl;
-	}
-	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v;
 		Race race = Race.getNext(getActivity(), false, true);
+		mSetupNeeded = Util.isAccountSetupNeeded(getActivity());
+		mChanged = false;
 		
 		if (race == null) {
 			return inflater.inflate(R.layout.questions_no_race, container, false);
+		} else if (mSetupNeeded) {
+			return inflater.inflate(R.layout.no_account, container, false);
 		} else if (race.inProgress()) {
 			// TODO: Only show form if user hasn't submitted answers yet
 			v = inflater.inflate(R.layout.questions, container, false);
@@ -102,6 +102,21 @@ public final class Questions extends TabFragment implements View.OnClickListener
 		track.setText(race.getTrack(Race.NAME_LONG));
 		
 		return v;
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		
+		if (mSetupNeeded != Util.isAccountSetupNeeded(getActivity())) {
+			mChanged = true;
+			notifyChanged();
+		}
+	}
+	
+	@Override
+	public boolean isChanged() {
+		return mChanged;
 	}
 	
 	private class DriverAdapter extends ArrayAdapter<Driver> {
@@ -165,8 +180,8 @@ public final class Questions extends TabFragment implements View.OnClickListener
 				Toast.LENGTH_SHORT).show();
 		
 		mScroll = 0;
-		if (mFragmentListener != null)
-			mFragmentListener.onChangedFragment();
+		mChanged = true;
+		notifyChanged();
 	}
 	
 	@Override

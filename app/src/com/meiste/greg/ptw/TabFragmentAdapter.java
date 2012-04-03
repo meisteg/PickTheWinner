@@ -50,14 +50,13 @@ class TabFragmentAdapter extends FragmentPagerAdapter implements TitleProvider {
 	@Override
 	public Object instantiateItem(ViewGroup container, int position) {
 		Object o = super.instantiateItem(container, position);
-		if (o instanceof Questions) {
-			// HACK: On an orientation change, even though we created new
-			// fragments, FragmentManager still has the old fragments, which
-			// FragmentPagerAdapter checks for and uses instead of calling
-			// getItem to get the new fragments. Need to give Questions
-			// tab updated FragmentListener since old one is now invalid.
-			((Questions)o).setFragmentListener(mFragmentListener);
-		}
+		
+		// HACK: On an orientation change, even though we created new
+		// fragments, FragmentManager still has the old fragments, which
+		// FragmentPagerAdapter checks for and uses instead of calling
+		// getItem to get the new fragments. Need to give tabs updated
+		// FragmentListener since old one is now invalid.
+		((TabFragment)o).setFragmentListener(mFragmentListener);
 		
 		return o;
 	}
@@ -74,7 +73,7 @@ class TabFragmentAdapter extends FragmentPagerAdapter implements TitleProvider {
 	
 	@Override
 	public int getItemPosition(Object object) {
-		return (object instanceof Questions) ? POSITION_NONE : POSITION_UNCHANGED;
+		return ((TabFragment)object).isChanged() ? POSITION_NONE : POSITION_UNCHANGED;
 	}
 	
 	@Override

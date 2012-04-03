@@ -15,12 +15,15 @@
  */
 package com.meiste.greg.ptw;
 
+import com.meiste.greg.ptw.TabFragmentAdapter.FragmentListener;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
 public class TabFragment extends Fragment {
 	private static final String KEY_TITLE = "TabFragment:Title";
 	private String mTitle = "???";
+	private FragmentListener mFragmentListener;
 	
 	public void setTitle(String title) {
 		mTitle = title;
@@ -28,6 +31,19 @@ public class TabFragment extends Fragment {
 	
 	public String getTitle() {
 		return mTitle;
+	}
+	
+	public void setFragmentListener(FragmentListener fl) {
+		mFragmentListener = fl;
+	}
+	
+	protected void notifyChanged() {
+		if (mFragmentListener != null)
+			mFragmentListener.onChangedFragment();
+	}
+	
+	public boolean isChanged() {
+		return false;
 	}
 	
 	@Override

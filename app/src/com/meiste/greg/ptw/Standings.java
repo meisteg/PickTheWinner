@@ -25,6 +25,8 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 public final class Standings extends TabFragment {
+	private boolean mSetupNeeded;
+	
 	public static Standings newInstance(Context context) {
 		Standings fragment = new Standings();
 		fragment.setTitle(context.getString(R.string.tab_standings));
@@ -34,10 +36,28 @@ public final class Standings extends TabFragment {
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		mSetupNeeded = Util.isAccountSetupNeeded(getActivity());
+		
+		if (mSetupNeeded)
+			return inflater.inflate(R.layout.no_account, container, false);
+		
 		TextView text = new TextView(getActivity());
 		text.setGravity(Gravity.CENTER);
 		text.setText("TODO");
 		text.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		return text;
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		
+		if (mSetupNeeded != Util.isAccountSetupNeeded(getActivity()))
+			notifyChanged();
+	}
+	
+	@Override
+	public boolean isChanged() {
+		return mSetupNeeded != Util.isAccountSetupNeeded(getActivity());
 	}
 }
