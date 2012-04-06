@@ -23,6 +23,8 @@ import android.util.Log;
 
 public final class Util {
 	
+	public static final String PROD_URL = "https://ptwgame.appspot.com";
+	
 	private final static String TAG = "PickTheWinner";
 	private final static String PREFS_STATE = "state";
 	

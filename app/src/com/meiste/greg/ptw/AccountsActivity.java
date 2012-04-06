@@ -15,8 +15,19 @@
  */
 package com.meiste.greg.ptw;
 
+import java.net.URI;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.params.HttpClientParams;
+import org.apache.http.cookie.Cookie;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpParams;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -27,6 +38,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
@@ -44,8 +56,10 @@ import com.actionbarsherlock.view.MenuItem;
 public class AccountsActivity extends SherlockActivity {
 	
 	private static final int REQUEST_LAUNCH_INTENT = 0;
+	private static final String AUTH_COOKIE_NAME = "SACSID";
 	private int mAccountSelectedPosition = 0;
 	private String mAccountName;
+	private boolean mNeedInvalidate = true;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -125,7 +139,7 @@ public class AccountsActivity extends SherlockActivity {
     	final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		SharedPreferences.Editor editor = prefs.edit();
 		editor.putString(EditPreferences.KEY_ACCOUNT_EMAIL, null);
-		// TODO: Need to null cookie as well
+		editor.putString(EditPreferences.KEY_ACCOUNT_COOKIE, null);
 		editor.commit();
     	
     	// Obtain an auth token and register
@@ -166,19 +180,74 @@ public class AccountsActivity extends SherlockActivity {
     			}
     			
     			String authToken = result.getString(AccountManager.KEY_AUTHTOKEN);
-    			Util.log("authToken=" + authToken);
-    			
-    			// TODO: Next step is to get authCookie, but for now, report success!
-    			final SharedPreferences prefs =
-    					PreferenceManager.getDefaultSharedPreferences(AccountsActivity.this);
-    			SharedPreferences.Editor editor = prefs.edit();
-    			editor.putString(EditPreferences.KEY_ACCOUNT_EMAIL, mAccountName);
-    			editor.commit();
+    			if (mNeedInvalidate) {
+    				Util.log("Invalidating token and starting over");
+    				mNeedInvalidate = false;
+    				
+    				AccountManager mgr = AccountManager.get(AccountsActivity.this);
+    				mgr.invalidateAuthToken("com.google", authToken);
+    				register();
+    			} else {
+	    			Util.log("authToken=" + authToken);
+	    			
+	    			// Phase 2: get authCookie from PTW server
+	    			new GetCookieTask().execute(authToken);
+    			}
     		} catch (Exception e) {
     			Util.log("Get auth token failed with exception " + e);
     			failedConnect(AccountsActivity.this);
+    			finish();
     		}
-    		
+    	}
+    }
+    
+    private class GetCookieTask extends AsyncTask<String, Integer, Boolean> {
+    	protected Boolean doInBackground(String... tokens) {
+	    	String authCookie = null;
+	    	
+	    	try {
+	    		DefaultHttpClient client = new DefaultHttpClient();
+	    		String continueURL = Util.PROD_URL;
+	    		URI uri = new URI(Util.PROD_URL + "/_ah/login?continue="
+	    				+ URLEncoder.encode(continueURL, "UTF-8") + "&auth=" + tokens[0]);
+	    		HttpGet method = new HttpGet(uri);
+	    		final HttpParams getParams = new BasicHttpParams();
+	    		HttpClientParams.setRedirecting(getParams, false);
+	    		method.setParams(getParams);
+	    		
+	    		HttpResponse res = client.execute(method);
+	    		Header[] headers = res.getHeaders("Set-Cookie");
+	    		int statusCode = res.getStatusLine().getStatusCode();
+	    		if (statusCode != 302 || headers.length == 0) {
+	    			Util.log("Get auth cookie failed: statusCode=" + statusCode);
+	    			return false;
+	    		}
+	    		
+	    		for (Cookie cookie : client.getCookieStore().getCookies()) {
+	    			if (AUTH_COOKIE_NAME.equals(cookie.getName())) {
+	    				authCookie = AUTH_COOKIE_NAME + "=" + cookie.getValue();
+	    				Util.log(authCookie);
+	    			}
+	    		}
+	    	} catch (Exception e) {
+	    		Util.log("Get auth cookie failed with exception " + e);
+	    		return false;
+	    	}
+	    	
+	    	final SharedPreferences prefs =
+	    			PreferenceManager.getDefaultSharedPreferences(AccountsActivity.this);
+			SharedPreferences.Editor editor = prefs.edit();
+			editor.putString(EditPreferences.KEY_ACCOUNT_EMAIL, mAccountName);
+			editor.putString(EditPreferences.KEY_ACCOUNT_COOKIE, authCookie);
+			editor.commit();
+			
+			return true;
+	    }
+    	
+    	protected void onPostExecute(Boolean result) {
+    		if (!result)
+				failedConnect(AccountsActivity.this);
+
     		finish();
     	}
     }

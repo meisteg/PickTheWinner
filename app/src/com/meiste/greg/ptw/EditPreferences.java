@@ -31,6 +31,7 @@ import com.actionbarsherlock.view.MenuItem;
 
 public class EditPreferences extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener {
 	public static final String KEY_ACCOUNT_EMAIL = "account.email";
+	public static final String KEY_ACCOUNT_COOKIE = "account.cookie";
 	
 	public static final String KEY_REMIND_QUESTIONS = "remind.questions";
 	public static final String KEY_REMIND_RACE = "remind.race";
