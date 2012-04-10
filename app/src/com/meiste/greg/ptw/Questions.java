@@ -50,7 +50,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v;
 		Race race = Race.getNext(getActivity(), false, true);
-		mSetupNeeded = Util.isAccountSetupNeeded(getActivity());
+		mSetupNeeded = GAE.isAccountSetupNeeded(getActivity());
 		mChanged = false;
 		
 		if (race == null) {
@@ -108,7 +108,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
 	public void onResume() {
 		super.onResume();
 		
-		if (mSetupNeeded != Util.isAccountSetupNeeded(getActivity())) {
+		if (mSetupNeeded != GAE.isAccountSetupNeeded(getActivity())) {
 			mChanged = true;
 			notifyChanged();
 		}

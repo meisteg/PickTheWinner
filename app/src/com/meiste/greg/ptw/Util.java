@@ -18,12 +18,9 @@ package com.meiste.greg.ptw;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 public final class Util {
-	
-	public static final String PROD_URL = "https://ptwgame.appspot.com";
 	
 	private final static String TAG = "PickTheWinner";
 	private final static String PREFS_STATE = "state";
@@ -34,10 +31,5 @@ public final class Util {
 	
 	public static SharedPreferences getState(Context context) {
 		return context.getSharedPreferences(PREFS_STATE, Activity.MODE_PRIVATE);
-	}
-	
-	public static boolean isAccountSetupNeeded(Context context) {
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		return prefs.getString(EditPreferences.KEY_ACCOUNT_EMAIL, "").length() == 0;
 	}
 }

@@ -15,32 +15,12 @@
  */
 package com.meiste.greg.ptw;
 
-import java.net.URI;
-import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.params.HttpClientParams;
-import org.apache.http.cookie.Cookie;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
-
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.accounts.AccountManagerCallback;
-import android.accounts.AccountManagerFuture;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -52,14 +32,14 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.MenuItem;
+import com.meiste.greg.ptw.GAE.GaeListener;
 
-public class AccountsActivity extends SherlockActivity {
+public class AccountsActivity extends SherlockActivity implements GaeListener {
 	
 	private static final int REQUEST_LAUNCH_INTENT = 0;
-	private static final String AUTH_COOKIE_NAME = "SACSID";
 	private int mAccountSelectedPosition = 0;
 	private String mAccountName;
-	private boolean mNeedInvalidate = true;
+	private GAE mGae;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -67,7 +47,8 @@ public class AccountsActivity extends SherlockActivity {
         setContentView(R.layout.connect);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         
-        List<String> accounts = getGoogleAccounts();
+        mGae = new GAE(this, this);
+        List<String> accounts = mGae.getGoogleAccounts();
         if (accounts.size() == 0) {
         	// Show a dialog and invoke the "Add Account" activity if requested
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -99,7 +80,7 @@ public class AccountsActivity extends SherlockActivity {
                     TextView account = (TextView) listView.getChildAt(mAccountSelectedPosition);
                     mAccountName = (String) account.getText();
                     setContentView(R.layout.connecting);
-                    register();
+                    mGae.connect(mAccountName);
                 }
             });
         	
@@ -124,131 +105,26 @@ public class AccountsActivity extends SherlockActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     	if (requestCode == REQUEST_LAUNCH_INTENT) {
-    		if (resultCode == RESULT_OK) {
-    			register();
-    		} else {
-    			failedConnect(this);
-    			finish();
-    		}
+    		if (resultCode == RESULT_OK)
+    			mGae.connect(mAccountName);
+    		else
+    			onFailedConnect();
     	}
     }
     
-    private void register() {
-    	Util.log("Connect using " + mAccountName);
-    	
-    	final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		SharedPreferences.Editor editor = prefs.edit();
-		editor.putString(EditPreferences.KEY_ACCOUNT_EMAIL, null);
-		editor.putString(EditPreferences.KEY_ACCOUNT_COOKIE, null);
-		editor.commit();
-    	
-    	// Obtain an auth token and register
-        AccountManager mgr = AccountManager.get(this);
-        Account[] accts = mgr.getAccountsByType("com.google");
-        for (Account acct : accts) {
-            if (acct.name.equals(mAccountName)) {
-            	mgr.getAuthToken(acct, "ah", null, this, new AuthTokenCallback(), null);
-            	break;
-            }
-        }
-    }
-    
-    private List<String> getGoogleAccounts() {
-        ArrayList<String> result = new ArrayList<String>();
-        Account[] accounts = AccountManager.get(this).getAccountsByType("com.google");
-        for (Account account : accounts) {
-        	result.add(account.name);
-        }
+	@Override
+	public void onFailedConnect() {
+		Toast.makeText(this, R.string.failed_connect, Toast.LENGTH_SHORT).show();
+		finish();
+	}
 
-        return result;
-    }
-    
-    private void failedConnect(Context context) {
-    	Toast.makeText(context, R.string.failed_connect, Toast.LENGTH_SHORT).show();
-    }
-    
-    private class AuthTokenCallback implements AccountManagerCallback<Bundle> {
-    	public void run(AccountManagerFuture<Bundle> future) {
-    		try {
-    			Bundle result = future.getResult();
-    			
-    			Intent launch = (Intent) result.get(AccountManager.KEY_INTENT);
-    			if (launch != null) {
-    				Util.log("Need to launch activity before getting authToken");
-    				startActivityForResult(launch, REQUEST_LAUNCH_INTENT);
-    				return;
-    			}
-    			
-    			String authToken = result.getString(AccountManager.KEY_AUTHTOKEN);
-    			if (mNeedInvalidate) {
-    				Util.log("Invalidating token and starting over");
-    				mNeedInvalidate = false;
-    				
-    				AccountManager mgr = AccountManager.get(AccountsActivity.this);
-    				mgr.invalidateAuthToken("com.google", authToken);
-    				register();
-    			} else {
-	    			Util.log("authToken=" + authToken);
-	    			
-	    			// Phase 2: get authCookie from PTW server
-	    			new GetCookieTask().execute(authToken);
-    			}
-    		} catch (Exception e) {
-    			Util.log("Get auth token failed with exception " + e);
-    			failedConnect(AccountsActivity.this);
-    			finish();
-    		}
-    	}
-    }
-    
-    private class GetCookieTask extends AsyncTask<String, Integer, Boolean> {
-    	protected Boolean doInBackground(String... tokens) {
-	    	String authCookie = null;
-	    	
-	    	try {
-	    		DefaultHttpClient client = new DefaultHttpClient();
-	    		String continueURL = Util.PROD_URL;
-	    		URI uri = new URI(Util.PROD_URL + "/_ah/login?continue="
-	    				+ URLEncoder.encode(continueURL, "UTF-8") + "&auth=" + tokens[0]);
-	    		HttpGet method = new HttpGet(uri);
-	    		final HttpParams getParams = new BasicHttpParams();
-	    		HttpClientParams.setRedirecting(getParams, false);
-	    		method.setParams(getParams);
-	    		
-	    		HttpResponse res = client.execute(method);
-	    		Header[] headers = res.getHeaders("Set-Cookie");
-	    		int statusCode = res.getStatusLine().getStatusCode();
-	    		if (statusCode != 302 || headers.length == 0) {
-	    			Util.log("Get auth cookie failed: statusCode=" + statusCode);
-	    			return false;
-	    		}
-	    		
-	    		for (Cookie cookie : client.getCookieStore().getCookies()) {
-	    			if (AUTH_COOKIE_NAME.equals(cookie.getName())) {
-	    				authCookie = AUTH_COOKIE_NAME + "=" + cookie.getValue();
-	    				Util.log(authCookie);
-	    			}
-	    		}
-	    	} catch (Exception e) {
-	    		Util.log("Get auth cookie failed with exception " + e);
-	    		return false;
-	    	}
-	    	
-	    	final SharedPreferences prefs =
-	    			PreferenceManager.getDefaultSharedPreferences(AccountsActivity.this);
-			SharedPreferences.Editor editor = prefs.edit();
-			editor.putString(EditPreferences.KEY_ACCOUNT_EMAIL, mAccountName);
-			editor.putString(EditPreferences.KEY_ACCOUNT_COOKIE, authCookie);
-			editor.commit();
-			
-			return true;
-	    }
-    	
-    	protected void onPostExecute(Boolean result) {
-    		if (!result)
-				failedConnect(AccountsActivity.this);
+	@Override
+	public void onLaunchIntent(Intent launch) {
+		startActivityForResult(launch, REQUEST_LAUNCH_INTENT);
+	}
 
-    		finish();
-    	}
-    }
+	@Override
+	public void onConnectSuccess() {
+		finish();
+	}
 }

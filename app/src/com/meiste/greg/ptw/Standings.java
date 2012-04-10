@@ -36,7 +36,7 @@ public final class Standings extends TabFragment {
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		mSetupNeeded = Util.isAccountSetupNeeded(getActivity());
+		mSetupNeeded = GAE.isAccountSetupNeeded(getActivity());
 		
 		if (mSetupNeeded)
 			return inflater.inflate(R.layout.no_account, container, false);
@@ -52,12 +52,12 @@ public final class Standings extends TabFragment {
 	public void onResume() {
 		super.onResume();
 		
-		if (mSetupNeeded != Util.isAccountSetupNeeded(getActivity()))
+		if (mSetupNeeded != GAE.isAccountSetupNeeded(getActivity()))
 			notifyChanged();
 	}
 	
 	@Override
 	public boolean isChanged() {
-		return mSetupNeeded != Util.isAccountSetupNeeded(getActivity());
+		return mSetupNeeded != GAE.isAccountSetupNeeded(getActivity());
 	}
 }
