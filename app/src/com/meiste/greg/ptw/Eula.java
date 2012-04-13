@@ -38,7 +38,7 @@ class Eula {
     private static final String ASSET_EULA = "EULA";
     private static final String PREFERENCE_EULA_ACCEPTED = "eula.accepted";
     private static final String PREFERENCES_EULA = "eula";
-    
+
     private static AlertDialog mDialog = null;
 
     /**
@@ -51,13 +51,13 @@ class Eula {
          */
         void onEulaAgreedTo();
     }
-    
+
     private static SharedPreferences getEulaPrefs(Context context) {
-    	return context.getSharedPreferences(PREFERENCES_EULA, Activity.MODE_PRIVATE);
+        return context.getSharedPreferences(PREFERENCES_EULA, Activity.MODE_PRIVATE);
     }
-    
+
     static boolean hasAccepted(Context context) {
-    	return getEulaPrefs(context).getBoolean(PREFERENCE_EULA_ACCEPTED, false);
+        return getEulaPrefs(context).getBoolean(PREFERENCE_EULA_ACCEPTED, false);
     }
 
     /**
@@ -97,7 +97,7 @@ class Eula {
         }
         return true;
     }
-    
+
     /**
      * Hides the EULA if necessary. This method should be called from the onPause()
      * method of your main Activity to prevent the activity from leaking the window.
@@ -105,11 +105,11 @@ class Eula {
      * @return Whether the dialog was actually dismissed.
      */
     static boolean hide() {
-    	if ((mDialog != null) && (mDialog.isShowing())) {
-    		mDialog.dismiss();
-    		return true;
-    	}
-    	return false;
+        if ((mDialog != null) && (mDialog.isShowing())) {
+            mDialog.dismiss();
+            return true;
+        }
+        return false;
     }
 
     private static void accept(SharedPreferences preferences) {

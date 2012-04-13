@@ -20,15 +20,15 @@ import android.content.Context;
 import android.content.Intent;
 
 public final class BootSetup extends BroadcastReceiver {
-	
-	@Override
-	public void onReceive(Context context, Intent intent) {
-		if (Eula.hasAccepted(context)) {
-			Util.log("Running boot setup");
-			RaceAlarm.set(context);
-			QuestionAlarm.set(context);
-		} else
-			Util.log("Skipping boot setup since EULA not accepted");
-	}
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        if (Eula.hasAccepted(context)) {
+            Util.log("Running boot setup");
+            RaceAlarm.set(context);
+            QuestionAlarm.set(context);
+        } else
+            Util.log("Skipping boot setup since EULA not accepted");
+    }
 
 }

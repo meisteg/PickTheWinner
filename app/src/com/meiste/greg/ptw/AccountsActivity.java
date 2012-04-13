@@ -35,22 +35,22 @@ import com.actionbarsherlock.view.MenuItem;
 import com.meiste.greg.ptw.GAE.GaeListener;
 
 public class AccountsActivity extends SherlockActivity implements GaeListener {
-	
-	private static final int REQUEST_LAUNCH_INTENT = 0;
-	private int mAccountSelectedPosition = 0;
-	private String mAccountName;
-	private GAE mGae;
-	
+
+    private static final int REQUEST_LAUNCH_INTENT = 0;
+    private int mAccountSelectedPosition = 0;
+    private String mAccountName;
+    private GAE mGae;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.connect);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        
+
         mGae = new GAE(this, this);
         List<String> accounts = mGae.getGoogleAccounts();
         if (accounts.size() == 0) {
-        	// Show a dialog and invoke the "Add Account" activity if requested
+            // Show a dialog and invoke the "Add Account" activity if requested
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage(R.string.needs_account);
             builder.setPositiveButton(R.string.add_account, new DialogInterface.OnClickListener() {
@@ -68,13 +68,13 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
             builder.setTitle(R.string.attention);
             builder.show();
         } else {
-        	final ListView listView = (ListView) findViewById(R.id.select_account);
-        	listView.setAdapter(new ArrayAdapter<String>(this, R.layout.account, accounts));
-        	listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        	listView.setItemChecked(mAccountSelectedPosition, true);
-        	
-        	final Button connectButton = (Button) findViewById(R.id.connect);
-        	connectButton.setOnClickListener(new OnClickListener() {
+            final ListView listView = (ListView) findViewById(R.id.select_account);
+            listView.setAdapter(new ArrayAdapter<String>(this, R.layout.account, accounts));
+            listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+            listView.setItemChecked(mAccountSelectedPosition, true);
+
+            final Button connectButton = (Button) findViewById(R.id.connect);
+            connectButton.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     mAccountSelectedPosition = listView.getCheckedItemPosition();
                     TextView account = (TextView) listView.getChildAt(mAccountSelectedPosition);
@@ -83,51 +83,51 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
                     mGae.connect(mAccountName);
                 }
             });
-        	
-        	final Button exitButton = (Button) findViewById(R.id.exit);
-        	exitButton.setOnClickListener(new OnClickListener() {
-        		public void onClick(View v) {
-        			finish();
-        		}
-        	});
+
+            final Button exitButton = (Button) findViewById(R.id.exit);
+            exitButton.setOnClickListener(new OnClickListener() {
+                public void onClick(View v) {
+                    finish();
+                }
+            });
         }
     }
-    
+
     @Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-    	if (item.getItemId() == android.R.id.home) {
-    		finish();
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
             return true;
-    	}
-    	return super.onOptionsItemSelected(item);
+        }
+        return super.onOptionsItemSelected(item);
     }
-    
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    	if (requestCode == REQUEST_LAUNCH_INTENT) {
-    		if (resultCode == RESULT_OK)
-    			mGae.connect(mAccountName);
-    		else
-    			onFailedConnect();
-    	}
+        if (requestCode == REQUEST_LAUNCH_INTENT) {
+            if (resultCode == RESULT_OK)
+                mGae.connect(mAccountName);
+            else
+                onFailedConnect();
+        }
     }
-    
-	@Override
-	public void onFailedConnect() {
-		Toast.makeText(this, R.string.failed_connect, Toast.LENGTH_SHORT).show();
-		finish();
-	}
 
-	@Override
-	public void onLaunchIntent(Intent launch) {
-		startActivityForResult(launch, REQUEST_LAUNCH_INTENT);
-	}
+    @Override
+    public void onFailedConnect() {
+        Toast.makeText(this, R.string.failed_connect, Toast.LENGTH_SHORT).show();
+        finish();
+    }
 
-	@Override
-	public void onConnectSuccess() {
-		finish();
-	}
-	
-	@Override
-	public void onGet(String json) {}
+    @Override
+    public void onLaunchIntent(Intent launch) {
+        startActivityForResult(launch, REQUEST_LAUNCH_INTENT);
+    }
+
+    @Override
+    public void onConnectSuccess() {
+        finish();
+    }
+
+    @Override
+    public void onGet(String json) {}
 }

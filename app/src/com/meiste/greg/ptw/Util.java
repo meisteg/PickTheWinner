@@ -21,15 +21,15 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 public final class Util {
-	
-	private final static String TAG = "PickTheWinner";
-	private final static String PREFS_STATE = "state";
-	
-	public static void log(String msg) {
-		if (BuildConfig.DEBUG) Log.d(TAG, msg);
-	}
-	
-	public static SharedPreferences getState(Context context) {
-		return context.getSharedPreferences(PREFS_STATE, Activity.MODE_PRIVATE);
-	}
+
+    private final static String TAG = "PickTheWinner";
+    private final static String PREFS_STATE = "state";
+
+    public static void log(String msg) {
+        if (BuildConfig.DEBUG) Log.d(TAG, msg);
+    }
+
+    public static SharedPreferences getState(Context context) {
+        return context.getSharedPreferences(PREFS_STATE, Activity.MODE_PRIVATE);
+    }
 }

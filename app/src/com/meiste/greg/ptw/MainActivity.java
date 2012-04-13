@@ -31,131 +31,131 @@ import com.google.ads.AdView;
 import com.viewpagerindicator.TitlePageIndicator;
 
 public class MainActivity extends SherlockFragmentActivity implements Eula.OnEulaAgreedTo {
-	
-	public static final String INTENT_TAB = "tab_select";
-	private final String LAST_TAB = "tab.last";
-	
-	private ViewPager mPager;
-	private TitlePageIndicator mIndicator;
-	private AdView mAdView;
-	private AlertDialog mLegalDialog;
-	
+
+    public static final String INTENT_TAB = "tab_select";
+    private final String LAST_TAB = "tab.last";
+
+    private ViewPager mPager;
+    private TitlePageIndicator mIndicator;
+    private AdView mAdView;
+    private AlertDialog mLegalDialog;
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         if (Eula.show(this)) {
             onEulaAgreedTo();
         }
-        
+
         setContentView(R.layout.main);
 
-		mPager = (ViewPager)findViewById(R.id.pager);
-		mPager.setAdapter(new TabFragmentAdapter(getSupportFragmentManager(), this));
+        mPager = (ViewPager)findViewById(R.id.pager);
+        mPager.setAdapter(new TabFragmentAdapter(getSupportFragmentManager(), this));
 
-		mIndicator = (TitlePageIndicator)findViewById(R.id.indicator);
-		mIndicator.setViewPager(mPager);
-		mIndicator.setCurrentItem(getTab(getIntent()));
-		
-		AdRequest adRequest = new AdRequest();
-		adRequest.addKeyword("NASCAR");
-		adRequest.addKeyword("racing");
-		
-		if (BuildConfig.DEBUG) {
-			adRequest.addTestDevice("CB529BCBD1E778FAD10EE145EE29045F"); // Atrix 4G
-			adRequest.addTestDevice("3BF57CB8B267C7B43814616E651CCF5A"); // XOOM
-		}
-		
-		mAdView = (AdView)findViewById(R.id.ad);
-		mAdView.setAdListener(new MyAdListener());
-		mAdView.loadAd(adRequest);
+        mIndicator = (TitlePageIndicator)findViewById(R.id.indicator);
+        mIndicator.setViewPager(mPager);
+        mIndicator.setCurrentItem(getTab(getIntent()));
+
+        AdRequest adRequest = new AdRequest();
+        adRequest.addKeyword("NASCAR");
+        adRequest.addKeyword("racing");
+
+        if (BuildConfig.DEBUG) {
+            adRequest.addTestDevice("CB529BCBD1E778FAD10EE145EE29045F"); // Atrix 4G
+            adRequest.addTestDevice("3BF57CB8B267C7B43814616E651CCF5A"); // XOOM
+        }
+
+        mAdView = (AdView)findViewById(R.id.ad);
+        mAdView.setAdListener(new MyAdListener());
+        mAdView.loadAd(adRequest);
     }
-    
-    @Override
-	public void onPause() {
-		super.onPause();
 
-		Util.log("Saving state: tab=" + mPager.getCurrentItem());
-		Util.getState(this).edit().putInt(LAST_TAB, mPager.getCurrentItem()).commit();
-		
-		// Hide dialogs to prevent window leaks on orientation changes
-		Eula.hide();
-		if ((mLegalDialog != null) && (mLegalDialog.isShowing())) {
-			mLegalDialog.dismiss();
-		}
-	}
-    
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        Util.log("Saving state: tab=" + mPager.getCurrentItem());
+        Util.getState(this).edit().putInt(LAST_TAB, mPager.getCurrentItem()).commit();
+
+        // Hide dialogs to prevent window leaks on orientation changes
+        Eula.hide();
+        if ((mLegalDialog != null) && (mLegalDialog.isShowing())) {
+            mLegalDialog.dismiss();
+        }
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         mAdView.destroy();
     }
-    
+
     @Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getSupportMenuInflater().inflate(R.menu.menu, menu);
-		return true;
-	}
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getSupportMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case R.id.settings:
-				startActivity(new Intent(this, EditPreferences.class));
-				return true;
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case R.id.settings:
+            startActivity(new Intent(this, EditPreferences.class));
+            return true;
 
-			case R.id.legal:
-				final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	            builder.setTitle(R.string.legal);
-	            builder.setCancelable(true);
-	            builder.setPositiveButton(R.string.ok, null);
-	            builder.setMessage(R.string.legal_content);
-	            mLegalDialog = builder.create();
-	            mLegalDialog.show();
-				return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+        case R.id.legal:
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(R.string.legal);
+            builder.setCancelable(true);
+            builder.setPositiveButton(R.string.ok, null);
+            builder.setMessage(R.string.legal_content);
+            mLegalDialog = builder.create();
+            mLegalDialog.show();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
-	@Override
-	public void onEulaAgreedTo() {
-		RaceAlarm.set(this);
-		QuestionAlarm.set(this);
-	}
-	
-	private int getTab(Intent intent) {
-		// Recent applications caches intent with extras. Only want to listen
-		// to INTENT_TAB extra if launched from notification.
-		if ((intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) == 0) {
-			int intent_tab = intent.getIntExtra(INTENT_TAB, -1);
-			if (intent_tab >= 0) {
-				return intent_tab;
-			}
-		}
-		
-		return Util.getState(this).getInt(LAST_TAB, 0);
-	}
-	
-	private class MyAdListener implements AdListener {
+    @Override
+    public void onEulaAgreedTo() {
+        RaceAlarm.set(this);
+        QuestionAlarm.set(this);
+    }
 
-		@Override
-		public void onReceiveAd(Ad ad) {
-			Util.log("onReceiveAd");
-		}
+    private int getTab(Intent intent) {
+        // Recent applications caches intent with extras. Only want to listen
+        // to INTENT_TAB extra if launched from notification.
+        if ((intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) == 0) {
+            int intent_tab = intent.getIntExtra(INTENT_TAB, -1);
+            if (intent_tab >= 0) {
+                return intent_tab;
+            }
+        }
 
-		@Override
-		public void onFailedToReceiveAd(Ad ad, ErrorCode err) {
-			Util.log("onFailedToReceiveAd: " + err);
-		}
+        return Util.getState(this).getInt(LAST_TAB, 0);
+    }
 
-		@Override
-		public void onLeaveApplication(Ad ad) {}
+    private class MyAdListener implements AdListener {
 
-		@Override
-		public void onPresentScreen(Ad ad) {}
-		
-		@Override
-		public void onDismissScreen(Ad ad) {}
-	}
+        @Override
+        public void onReceiveAd(Ad ad) {
+            Util.log("onReceiveAd");
+        }
+
+        @Override
+        public void onFailedToReceiveAd(Ad ad, ErrorCode err) {
+            Util.log("onFailedToReceiveAd: " + err);
+        }
+
+        @Override
+        public void onLeaveApplication(Ad ad) {}
+
+        @Override
+        public void onPresentScreen(Ad ad) {}
+
+        @Override
+        public void onDismissScreen(Ad ad) {}
+    }
 }

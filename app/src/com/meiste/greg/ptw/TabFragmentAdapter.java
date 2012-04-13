@@ -27,63 +27,63 @@ import android.view.ViewGroup;
 import com.viewpagerindicator.TitleProvider;
 
 class TabFragmentAdapter extends FragmentPagerAdapter implements TitleProvider {
-	private List<TabFragment> mFragments;
-	private FragmentListener mFragmentListener;
-	
-	public interface FragmentListener {
-	    void onChangedFragment();
-	}
-	
-	public TabFragmentAdapter(FragmentManager fm, Context context) {
-		super(fm);
-		
-		mFragmentListener = new MyFragmentListener();
-		
-		mFragments = new Vector<TabFragment>();
-		mFragments.add(RuleBook.newInstance(context));
-		mFragments.add(Questions.newInstance(context));
-		mFragments.add(Standings.newInstance(context));
-		mFragments.add(Schedule.newInstance(context));
-		mFragments.add(Suggest.newInstance(context));
-	}
-	
-	@Override
-	public Object instantiateItem(ViewGroup container, int position) {
-		Object o = super.instantiateItem(container, position);
-		
-		// HACK: On an orientation change, even though we created new
-		// fragments, FragmentManager still has the old fragments, which
-		// FragmentPagerAdapter checks for and uses instead of calling
-		// getItem to get the new fragments. Need to give tabs updated
-		// FragmentListener since old one is now invalid.
-		((TabFragment)o).setFragmentListener(mFragmentListener);
-		
-		return o;
-	}
+    private List<TabFragment> mFragments;
+    private FragmentListener mFragmentListener;
 
-	@Override
-	public Fragment getItem(int position) {
-		return this.mFragments.get(position);
-	}
+    public interface FragmentListener {
+        void onChangedFragment();
+    }
 
-	@Override
-	public int getCount() {
-		return mFragments.size();
-	}
-	
-	@Override
-	public int getItemPosition(Object object) {
-		return ((TabFragment)object).isChanged() ? POSITION_NONE : POSITION_UNCHANGED;
-	}
-	
-	@Override
-	public String getTitle(int position) {
-		return mFragments.get(position).getTitle();
-	}
-	
-	private class MyFragmentListener implements FragmentListener {
-		public void onChangedFragment() {
-			notifyDataSetChanged();
-		}
-	}
+    public TabFragmentAdapter(FragmentManager fm, Context context) {
+        super(fm);
+
+        mFragmentListener = new MyFragmentListener();
+
+        mFragments = new Vector<TabFragment>();
+        mFragments.add(RuleBook.newInstance(context));
+        mFragments.add(Questions.newInstance(context));
+        mFragments.add(Standings.newInstance(context));
+        mFragments.add(Schedule.newInstance(context));
+        mFragments.add(Suggest.newInstance(context));
+    }
+
+    @Override
+    public Object instantiateItem(ViewGroup container, int position) {
+        Object o = super.instantiateItem(container, position);
+
+        // HACK: On an orientation change, even though we created new
+        // fragments, FragmentManager still has the old fragments, which
+        // FragmentPagerAdapter checks for and uses instead of calling
+        // getItem to get the new fragments. Need to give tabs updated
+        // FragmentListener since old one is now invalid.
+        ((TabFragment)o).setFragmentListener(mFragmentListener);
+
+        return o;
+    }
+
+    @Override
+    public Fragment getItem(int position) {
+        return this.mFragments.get(position);
+    }
+
+    @Override
+    public int getCount() {
+        return mFragments.size();
+    }
+
+    @Override
+    public int getItemPosition(Object object) {
+        return ((TabFragment)object).isChanged() ? POSITION_NONE : POSITION_UNCHANGED;
+    }
+
+    @Override
+    public String getTitle(int position) {
+        return mFragments.get(position).getTitle();
+    }
+
+    private class MyFragmentListener implements FragmentListener {
+        public void onChangedFragment() {
+            notifyDataSetChanged();
+        }
+    }
 }

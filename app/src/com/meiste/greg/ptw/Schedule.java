@@ -26,32 +26,32 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 public final class Schedule extends TabFragment {
-	public static Schedule newInstance(Context context) {
-		Schedule fragment = new Schedule();
-		fragment.setTitle(context.getString(R.string.tab_schedule));
-		
-		return fragment;
-	}
-	
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View v = inflater.inflate(R.layout.schedule, container, false);
-		
-		Race[] races = new Race[Race.getNumRaces(getActivity())];
-		ListView lv = (ListView) v.findViewById(R.id.schedule);
-		lv.setAdapter(new RaceItemAdapter(getActivity(), R.layout.schedule_row, races));
-		
-		lv.setOnItemClickListener(new OnItemClickListener() {
-		    public void onItemClick(AdapterView<?> parent, View v, int pos, long id) {
-		    	Util.log("Starting activity for race " + pos);
-		    	
-		    	Intent intent = new Intent(getActivity(), RaceActivity.class);
-		    	intent.putExtra(RaceActivity.INTENT_ID, pos);
-		    	intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-		    	startActivity(intent);
-		    }
-		});
-		
-		return v;
-	}
+    public static Schedule newInstance(Context context) {
+        Schedule fragment = new Schedule();
+        fragment.setTitle(context.getString(R.string.tab_schedule));
+
+        return fragment;
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.schedule, container, false);
+
+        Race[] races = new Race[Race.getNumRaces(getActivity())];
+        ListView lv = (ListView) v.findViewById(R.id.schedule);
+        lv.setAdapter(new RaceItemAdapter(getActivity(), R.layout.schedule_row, races));
+
+        lv.setOnItemClickListener(new OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v, int pos, long id) {
+                Util.log("Starting activity for race " + pos);
+
+                Intent intent = new Intent(getActivity(), RaceActivity.class);
+                intent.putExtra(RaceActivity.INTENT_ID, pos);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+                startActivity(intent);
+            }
+        });
+
+        return v;
+    }
 }

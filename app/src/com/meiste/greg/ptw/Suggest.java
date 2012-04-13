@@ -28,51 +28,51 @@ import android.widget.Toast;
 import com.meiste.greg.ptw.ObservableScrollView.ScrollViewListener;
 
 public final class Suggest extends TabFragment implements View.OnClickListener, ScrollViewListener {
-	private EditText mQuestion;
-	private int mScroll = 0;
-	
-	public static Suggest newInstance(Context context) {
-		Suggest fragment = new Suggest();
-		fragment.setTitle(context.getString(R.string.tab_suggest));
-		
-		return fragment;
-	}
-	
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		Race race = Race.getNext(getActivity(), false, false);
-		
-		if (race == null) {
-			return inflater.inflate(R.layout.suggest_no_race, container, false);
-		}
-		
-		View v = inflater.inflate(R.layout.suggest, container, false);
-		
-		TextView track = (TextView) v.findViewById(R.id.racetrack);
-		track.setText(race.getTrack(Race.NAME_LONG));
-		
-		mQuestion = (EditText) v.findViewById(R.id.question);
-		
-		Button send = (Button) v.findViewById(R.id.send);
-		send.setOnClickListener(this);
-		
-		ObservableScrollView sv = (ObservableScrollView) v.findViewById(R.id.scroll_suggest);
-		sv.postScrollTo(0, mScroll);
-		sv.setScrollViewListener(this);
-		
-		return v;
-	}
+    private EditText mQuestion;
+    private int mScroll = 0;
 
-	@Override
-	public void onClick(View v) {
-		// TODO Auto-generated method stub
-		Toast.makeText(getActivity(), "TODO: Actually send suggestion",
-				Toast.LENGTH_SHORT).show();
-		mQuestion.setText("");
-	}
-	
-	@Override
-	public void onScrollChanged(ObservableScrollView sv, int x, int y, int oldx, int oldy) {
-		mScroll = y;
-	}
+    public static Suggest newInstance(Context context) {
+        Suggest fragment = new Suggest();
+        fragment.setTitle(context.getString(R.string.tab_suggest));
+
+        return fragment;
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Race race = Race.getNext(getActivity(), false, false);
+
+        if (race == null) {
+            return inflater.inflate(R.layout.suggest_no_race, container, false);
+        }
+
+        View v = inflater.inflate(R.layout.suggest, container, false);
+
+        TextView track = (TextView) v.findViewById(R.id.racetrack);
+        track.setText(race.getTrack(Race.NAME_LONG));
+
+        mQuestion = (EditText) v.findViewById(R.id.question);
+
+        Button send = (Button) v.findViewById(R.id.send);
+        send.setOnClickListener(this);
+
+        ObservableScrollView sv = (ObservableScrollView) v.findViewById(R.id.scroll_suggest);
+        sv.postScrollTo(0, mScroll);
+        sv.setScrollViewListener(this);
+
+        return v;
+    }
+
+    @Override
+    public void onClick(View v) {
+        // TODO Auto-generated method stub
+        Toast.makeText(getActivity(), "TODO: Actually send suggestion",
+                Toast.LENGTH_SHORT).show();
+        mQuestion.setText("");
+    }
+
+    @Override
+    public void onScrollChanged(ObservableScrollView sv, int x, int y, int oldx, int oldy) {
+        mScroll = y;
+    }
 }

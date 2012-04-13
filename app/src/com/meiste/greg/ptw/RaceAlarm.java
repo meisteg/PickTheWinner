@@ -28,73 +28,73 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 
 public final class RaceAlarm extends BroadcastReceiver {
-	
-	private static final String RACE_ID = "race_id";
-	private static boolean alarm_set = false;
 
-	public static void set(Context context) {
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		Race race = Race.getNext(context, true, true);
-		
-		if (!alarm_set && prefs.getBoolean(EditPreferences.KEY_REMIND_RACE, true) && (race != null)) {
-			Util.log("Setting race alarm for race " + race.getId());
-		
-			AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-			Intent intent = new Intent(context, RaceAlarm.class);
-			intent.putExtra(RACE_ID, race.getId());
-			PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent,
-					PendingIntent.FLAG_UPDATE_CURRENT);
-			am.set(AlarmManager.RTC_WAKEUP, race.getStartTimestamp(), pendingIntent);
-			
-			alarm_set = true;
-		} else {
-			Util.log("Not setting race alarm: alarm_set=" + alarm_set);
-		}
-	}
-	
-	@Override
-	public void onReceive(Context context, Intent intent) {
-		alarm_set = false;
-		
-		// Verify user didn't turn off race reminders after alarm was set
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		if (prefs.getBoolean(EditPreferences.KEY_REMIND_RACE, true)) {
-			Race race = new Race(context, intent.getIntExtra(RACE_ID, 0));
-			Util.log("Received race alarm for race " + race.getId());
-			
-			Intent notificationIntent = new Intent(context, RaceActivity.class);
-			notificationIntent.putExtra(RaceActivity.INTENT_ID, race.getId());
-			notificationIntent.putExtra(RaceActivity.INTENT_ALARM, true);
-			PendingIntent pi = PendingIntent.getActivity(context, 0, notificationIntent,
-					PendingIntent.FLAG_CANCEL_CURRENT);
-			
-			int defaults = 0;
-			if (prefs.getBoolean(EditPreferences.KEY_REMIND_VIBRATE, true))
-				defaults |= Notification.DEFAULT_VIBRATE;
-			if (prefs.getBoolean(EditPreferences.KEY_REMIND_LED, true))
-				defaults |= Notification.DEFAULT_LIGHTS;
-			
-			// TODO: Replace with custom icon
-			NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
-				.setSmallIcon(android.R.drawable.stat_sys_warning)
-				.setTicker(context.getString(R.string.remind_race_ticker, race.getName()))
-				.setContentTitle(context.getString(R.string.remind_race_notify))
-				.setContentText(race.getName())
-				.setContentIntent(pi)
-				.setAutoCancel(true)
-				.setDefaults(defaults)
-				.setSound(Uri.parse(prefs.getString(EditPreferences.KEY_REMIND_RINGTONE,
-						  "content://settings/system/notification_sound")));
-			
-			String ns = Context.NOTIFICATION_SERVICE;
-			NotificationManager nm = (NotificationManager) context.getSystemService(ns);
-			nm.notify(R.string.remind_race_ticker, builder.getNotification());
-			
-			// Reset alarm for the next race
-			set(context);
-		} else {
-			Util.log("Ignoring race alarm since option now disabled");
-		}
-	}
+    private static final String RACE_ID = "race_id";
+    private static boolean alarm_set = false;
+
+    public static void set(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        Race race = Race.getNext(context, true, true);
+
+        if (!alarm_set && prefs.getBoolean(EditPreferences.KEY_REMIND_RACE, true) && (race != null)) {
+            Util.log("Setting race alarm for race " + race.getId());
+
+            AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+            Intent intent = new Intent(context, RaceAlarm.class);
+            intent.putExtra(RACE_ID, race.getId());
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+            am.set(AlarmManager.RTC_WAKEUP, race.getStartTimestamp(), pendingIntent);
+
+            alarm_set = true;
+        } else {
+            Util.log("Not setting race alarm: alarm_set=" + alarm_set);
+        }
+    }
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        alarm_set = false;
+
+        // Verify user didn't turn off race reminders after alarm was set
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        if (prefs.getBoolean(EditPreferences.KEY_REMIND_RACE, true)) {
+            Race race = new Race(context, intent.getIntExtra(RACE_ID, 0));
+            Util.log("Received race alarm for race " + race.getId());
+
+            Intent notificationIntent = new Intent(context, RaceActivity.class);
+            notificationIntent.putExtra(RaceActivity.INTENT_ID, race.getId());
+            notificationIntent.putExtra(RaceActivity.INTENT_ALARM, true);
+            PendingIntent pi = PendingIntent.getActivity(context, 0, notificationIntent,
+                    PendingIntent.FLAG_CANCEL_CURRENT);
+
+            int defaults = 0;
+            if (prefs.getBoolean(EditPreferences.KEY_REMIND_VIBRATE, true))
+                defaults |= Notification.DEFAULT_VIBRATE;
+            if (prefs.getBoolean(EditPreferences.KEY_REMIND_LED, true))
+                defaults |= Notification.DEFAULT_LIGHTS;
+
+            // TODO: Replace with custom icon
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+            .setSmallIcon(android.R.drawable.stat_sys_warning)
+            .setTicker(context.getString(R.string.remind_race_ticker, race.getName()))
+            .setContentTitle(context.getString(R.string.remind_race_notify))
+            .setContentText(race.getName())
+            .setContentIntent(pi)
+            .setAutoCancel(true)
+            .setDefaults(defaults)
+            .setSound(Uri.parse(prefs.getString(EditPreferences.KEY_REMIND_RINGTONE,
+                    "content://settings/system/notification_sound")));
+
+            String ns = Context.NOTIFICATION_SERVICE;
+            NotificationManager nm = (NotificationManager) context.getSystemService(ns);
+            nm.notify(R.string.remind_race_ticker, builder.getNotification());
+
+            // Reset alarm for the next race
+            set(context);
+        } else {
+            Util.log("Ignoring race alarm since option now disabled");
+        }
+    }
 
 }

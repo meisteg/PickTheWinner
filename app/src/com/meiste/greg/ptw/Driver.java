@@ -19,30 +19,30 @@ import android.content.Context;
 import android.content.res.Resources;
 
 public final class Driver {
-	private int mNumber;
-	private String mName;
-	
-	public Driver(Context context, int id) {
-		Resources res = context.getResources();
-		
-		mNumber = res.getIntArray(R.array.driver_nums)[id];
-		mName = res.getStringArray(R.array.driver_names)[id];
-	}
-	
-	public static int getNumDrivers(Context context) {
-		return context.getResources().getIntArray(R.array.driver_nums).length;
-	}
-	
-	public int getNumber() {
-		return mNumber;
-	}
-	
-	public String getName() {
-		return mName;
-	}
-	
-	@Override
-	public String toString() {
-		return getName();
-	}
+    private int mNumber;
+    private String mName;
+
+    public Driver(Context context, int id) {
+        Resources res = context.getResources();
+
+        mNumber = res.getIntArray(R.array.driver_nums)[id];
+        mName = res.getStringArray(R.array.driver_names)[id];
+    }
+
+    public static int getNumDrivers(Context context) {
+        return context.getResources().getIntArray(R.array.driver_nums).length;
+    }
+
+    public int getNumber() {
+        return mNumber;
+    }
+
+    public String getName() {
+        return mName;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

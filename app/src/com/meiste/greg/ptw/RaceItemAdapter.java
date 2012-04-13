@@ -24,64 +24,64 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public final class RaceItemAdapter extends ArrayAdapter<Race> {
-	private Race[] mRaces;
-	private Context mContext;
-	
-	public RaceItemAdapter(Context context, int textViewResourceId, Race[] races) {
-		super(context, textViewResourceId, races);
-		mContext = context;
-		mRaces = races;
-	}
+    private Race[] mRaces;
+    private Context mContext;
 
-	@Override
+    public RaceItemAdapter(Context context, int textViewResourceId, Race[] races) {
+        super(context, textViewResourceId, races);
+        mContext = context;
+        mRaces = races;
+    }
+
+    @Override
     public View getView(int pos, View convertView, ViewGroup parent) {
         View v = convertView;
         if (v == null) {
             LayoutInflater vi = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             v = vi.inflate(R.layout.schedule_row, null);
         }
-        
+
         if (mRaces[pos] == null) {
-        	mRaces[pos] = new Race(mContext, pos);
+            mRaces[pos] = new Race(mContext, pos);
         }
-        
+
         LinearLayout row = (LinearLayout) v.findViewById(R.id.row);
-    	TextView raceNum = (TextView) v.findViewById(R.id.race_num);
-    	TextView startDate = (TextView) v.findViewById(R.id.race_date);
-    	TextView startTime = (TextView) v.findViewById(R.id.race_time);
-    	TextView name = (TextView) v.findViewById(R.id.race_name);
-    	TextView trackLong = (TextView) v.findViewById(R.id.race_track);
-    	TextView trackShort = (TextView) v.findViewById(R.id.race_track_short);
-    	TextView tv = (TextView) v.findViewById(R.id.race_tv);
-    	
-    	if (!mRaces[pos].isFuture())
-    		row.setBackgroundResource(R.drawable.schedule_past);
-    	else if (mRaces[pos].isInChase())
-    		row.setBackgroundResource(R.drawable.schedule_chase);
-    	else
-    		row.setBackgroundResource(R.drawable.schedule_future);
-    	
-    	if (raceNum != null)
-    		raceNum.setText(mRaces[pos].getRaceNum());
-    	
-    	if (startDate != null)
-    		startDate.setText(mRaces[pos].getStartDate());
-    	
-    	if (startTime != null)
-    		startTime.setText(mRaces[pos].getStartTime());
-    	
-    	if (name != null)
-    		name.setText(mRaces[pos].getName());
-    	
-    	if (trackLong != null)
-    		trackLong.setText(mRaces[pos].getTrack(Race.NAME_LONG));
-    	
-    	if (trackShort != null)
-    		trackShort.setText(mRaces[pos].getTrack(Race.NAME_SHORT));
-    	
-    	if (tv != null)
-    		tv.setText(mRaces[pos].getTv());
-        
+        TextView raceNum = (TextView) v.findViewById(R.id.race_num);
+        TextView startDate = (TextView) v.findViewById(R.id.race_date);
+        TextView startTime = (TextView) v.findViewById(R.id.race_time);
+        TextView name = (TextView) v.findViewById(R.id.race_name);
+        TextView trackLong = (TextView) v.findViewById(R.id.race_track);
+        TextView trackShort = (TextView) v.findViewById(R.id.race_track_short);
+        TextView tv = (TextView) v.findViewById(R.id.race_tv);
+
+        if (!mRaces[pos].isFuture())
+            row.setBackgroundResource(R.drawable.schedule_past);
+        else if (mRaces[pos].isInChase())
+            row.setBackgroundResource(R.drawable.schedule_chase);
+        else
+            row.setBackgroundResource(R.drawable.schedule_future);
+
+        if (raceNum != null)
+            raceNum.setText(mRaces[pos].getRaceNum());
+
+        if (startDate != null)
+            startDate.setText(mRaces[pos].getStartDate());
+
+        if (startTime != null)
+            startTime.setText(mRaces[pos].getStartTime());
+
+        if (name != null)
+            name.setText(mRaces[pos].getName());
+
+        if (trackLong != null)
+            trackLong.setText(mRaces[pos].getTrack(Race.NAME_LONG));
+
+        if (trackShort != null)
+            trackShort.setText(mRaces[pos].getTrack(Race.NAME_SHORT));
+
+        if (tv != null)
+            tv.setText(mRaces[pos].getTv());
+
         return v;
     }
 }

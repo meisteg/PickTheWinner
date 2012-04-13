@@ -21,43 +21,43 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
 public class TabFragment extends Fragment {
-	private static final String KEY_TITLE = "TabFragment:Title";
-	private String mTitle = "???";
-	private FragmentListener mFragmentListener;
-	
-	public void setTitle(String title) {
-		mTitle = title;
-	}
-	
-	public String getTitle() {
-		return mTitle;
-	}
-	
-	public void setFragmentListener(FragmentListener fl) {
-		mFragmentListener = fl;
-	}
-	
-	protected void notifyChanged() {
-		if (mFragmentListener != null)
-			mFragmentListener.onChangedFragment();
-	}
-	
-	public boolean isChanged() {
-		return false;
-	}
-	
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		
-		if ((savedInstanceState != null) && savedInstanceState.containsKey(KEY_TITLE)) {
-			setTitle(savedInstanceState.getString(KEY_TITLE));
-		}
-	}
-	
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putString(KEY_TITLE, getTitle());
-	}
+    private static final String KEY_TITLE = "TabFragment:Title";
+    private String mTitle = "???";
+    private FragmentListener mFragmentListener;
+
+    public void setTitle(String title) {
+        mTitle = title;
+    }
+
+    public String getTitle() {
+        return mTitle;
+    }
+
+    public void setFragmentListener(FragmentListener fl) {
+        mFragmentListener = fl;
+    }
+
+    protected void notifyChanged() {
+        if (mFragmentListener != null)
+            mFragmentListener.onChangedFragment();
+    }
+
+    public boolean isChanged() {
+        return false;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if ((savedInstanceState != null) && savedInstanceState.containsKey(KEY_TITLE)) {
+            setTitle(savedInstanceState.getString(KEY_TITLE));
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(KEY_TITLE, getTitle());
+    }
 }

@@ -20,41 +20,41 @@ import android.util.AttributeSet;
 import android.widget.ScrollView;
 
 public final class ObservableScrollView extends ScrollView {
-	public interface ScrollViewListener {
-	    void onScrollChanged(ObservableScrollView sv, int x, int y, int oldx, int oldy);
-	}
-	
-	private ScrollViewListener mScrollViewListener = null;
-	
-	public ObservableScrollView(Context context) {
-		super(context);
-	}
-	
-	public ObservableScrollView(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-	}
-	
-	public ObservableScrollView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-	}
-	
-	public void setScrollViewListener(ScrollViewListener l) {
-		mScrollViewListener = l;
-	}
-	
-	@Override
-	protected void onScrollChanged(int x, int y, int oldx, int oldy) {
-		super.onScrollChanged(x, y, oldx, oldy);
-		if (mScrollViewListener != null) {
-			mScrollViewListener.onScrollChanged(this, x, y, oldx, oldy);
-		}
-	}
-	
-	public void postScrollTo(final int x, final int y) {
-		post(new Runnable() {
-			public void run() {
-				ObservableScrollView.this.scrollTo(x, y);
-			} 
-		});
-	}
+    public interface ScrollViewListener {
+        void onScrollChanged(ObservableScrollView sv, int x, int y, int oldx, int oldy);
+    }
+
+    private ScrollViewListener mScrollViewListener = null;
+
+    public ObservableScrollView(Context context) {
+        super(context);
+    }
+
+    public ObservableScrollView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+    }
+
+    public ObservableScrollView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    public void setScrollViewListener(ScrollViewListener l) {
+        mScrollViewListener = l;
+    }
+
+    @Override
+    protected void onScrollChanged(int x, int y, int oldx, int oldy) {
+        super.onScrollChanged(x, y, oldx, oldy);
+        if (mScrollViewListener != null) {
+            mScrollViewListener.onScrollChanged(this, x, y, oldx, oldy);
+        }
+    }
+
+    public void postScrollTo(final int x, final int y) {
+        post(new Runnable() {
+            public void run() {
+                ObservableScrollView.this.scrollTo(x, y);
+            }
+        });
+    }
 }
