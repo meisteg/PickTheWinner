@@ -33,6 +33,7 @@
     <string name="eula_refuse">Refuse</string>
     <string name="exit">Close</string>
     <string name="failed_connect">Failed to connect. Please try again.</string>
+    <string name="failed_get">Unable to connect to server.</string>
     <string name="in_the_chase">In The Chase</string>
     <string name="led">Phone LED</string>
     <string name="led_summary">Flash LED for reminders</string>
@@ -55,6 +56,7 @@
     <string name="remind_race_summary">Show when it is time to watch the race</string>
     <string name="remind_race_ticker">Time to watch the %s</string>
     <string name="reminder_settings">Reminder Settings</string>
+    <string name="retry">Retry</string>
     <string name="ringtone">Ringtone</string>
     <string name="ringtone_summary">Set a ringtone for reminders</string>
     <string name="select_account">Select the account you wish to authorize:</string>

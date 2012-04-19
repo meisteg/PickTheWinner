@@ -15,7 +15,10 @@
  */
 package com.meiste.greg.ptw;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,9 +31,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.meiste.greg.ptw.GAE.GaeListener;
 import com.meiste.greg.ptw.ObservableScrollView.ScrollViewListener;
 
-public final class Questions extends TabFragment implements View.OnClickListener, ScrollViewListener {
+public final class Questions extends TabFragment implements View.OnClickListener, ScrollViewListener, GaeListener {
+
+    private final static String QCACHE = "question_cache";
 
     private int mWinner;
     private int mMostLaps;
@@ -39,6 +45,8 @@ public final class Questions extends TabFragment implements View.OnClickListener
     private int mScroll = 0;
     private boolean mSetupNeeded;
     private boolean mChanged = false;
+    private Race mRace;
+    private boolean mFailedConnect = false;
 
     public static Questions newInstance(Context context) {
         Questions fragment = new Questions();
@@ -50,15 +58,36 @@ public final class Questions extends TabFragment implements View.OnClickListener
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v;
-        Race race = Race.getNext(getActivity(), false, true);
+        mRace = Race.getNext(getActivity(), false, true);
         mSetupNeeded = GAE.isAccountSetupNeeded(getActivity());
         mChanged = false;
 
-        if (race == null) {
+        if (mRace == null) {
             return inflater.inflate(R.layout.questions_no_race, container, false);
         } else if (mSetupNeeded) {
             return inflater.inflate(R.layout.no_account, container, false);
-        } else if (race.inProgress()) {
+        } else if (mRace.inProgress()) {
+            if (mFailedConnect) {
+                mFailedConnect = false;
+                v = inflater.inflate(R.layout.no_connection, container, false);
+
+                Button retry = (Button) v.findViewById(R.id.retry);
+                retry.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        mChanged = true;
+                        notifyChanged();
+                    }
+                });
+
+                return v;
+            }
+
+            SharedPreferences cache = getActivity().getSharedPreferences(QCACHE, Activity.MODE_PRIVATE);
+            if (cache.getString("race" + mRace.getId(), null) == null) {
+                new GAE(getActivity(), this).getPage("questions");
+                return inflater.inflate(R.layout.connecting, container, false);
+            }
+
             // TODO: Only show form if user hasn't submitted answers yet
             v = inflater.inflate(R.layout.questions, container, false);
 
@@ -93,14 +122,14 @@ public final class Questions extends TabFragment implements View.OnClickListener
             v = inflater.inflate(R.layout.questions_not_yet, container, false);
 
             TextView time = (TextView) v.findViewById(R.id.questiontime);
-            time.setText(race.getQuestionDateTime());
+            time.setText(mRace.getQuestionDateTime());
         }
 
         TextView name = (TextView) v.findViewById(R.id.racename);
-        name.setText(race.getName());
+        name.setText(mRace.getName());
 
         TextView track = (TextView) v.findViewById(R.id.racetrack);
-        track.setText(race.getTrack(Race.NAME_LONG));
+        track.setText(mRace.getTrack(Race.NAME_LONG));
 
         return v;
     }
@@ -189,4 +218,27 @@ public final class Questions extends TabFragment implements View.OnClickListener
     public void onScrollChanged(ObservableScrollView sv, int x, int y, int oldx, int oldy) {
         mScroll = y;
     }
+
+    @Override
+    public void onFailedConnect() {
+        Util.log("Questions: onFailedConnect");
+        mFailedConnect = mChanged = true;
+        notifyChanged();
+    }
+
+    @Override
+    public void onGet(String json) {
+        Util.log("Questions: onGet: " + json);
+
+        SharedPreferences cache = getActivity().getSharedPreferences(QCACHE, Activity.MODE_PRIVATE);
+        cache.edit().putString("race" + mRace.getId(), json).commit();
+        mChanged = true;
+        notifyChanged();
+    }
+
+    @Override
+    public void onLaunchIntent(Intent launch) {}
+
+    @Override
+    public void onConnectSuccess() {}
 }
