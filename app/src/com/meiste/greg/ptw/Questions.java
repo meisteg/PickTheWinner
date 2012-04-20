@@ -50,6 +50,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
     private boolean mChanged = false;
     private Race mRace;
     private boolean mFailedConnect = false;
+    private long mOnCreateViewTime = 0;
 
     public static Questions newInstance(Context context) {
         Questions fragment = new Questions();
@@ -64,6 +65,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
         mRace = Race.getNext(getActivity(), false, true);
         mSetupNeeded = GAE.isAccountSetupNeeded(getActivity());
         mChanged = false;
+        mOnCreateViewTime = System.currentTimeMillis();
 
         if (mRace == null) {
             return inflater.inflate(R.layout.questions_no_race, container, false);
@@ -157,8 +159,13 @@ public final class Questions extends TabFragment implements View.OnClickListener
     public void onResume() {
         super.onResume();
 
-        if (mSetupNeeded != GAE.isAccountSetupNeeded(getActivity())) {
-            mChanged = true;
+        // Check if user changed their account status
+        mChanged = mSetupNeeded != GAE.isAccountSetupNeeded(getActivity());
+        // See if race questions are now available but weren't previously
+        mChanged |= (mOnCreateViewTime < mRace.getQuestionTimestamp()) && mRace.inProgress();
+
+        if (mChanged) {
+            Util.log("Questions: onResume: notifyChanged");
             notifyChanged();
         }
     }
