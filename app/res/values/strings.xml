@@ -116,6 +116,7 @@
     <string name="questions_prompt_numleaders">Choose a range</string>
     <string name="questions_prompt_q2q3">Choose your answer</string>
     <string name="questions_soon">Questions will be available at</string>
+    <string name="questions_success">Answers submitted!</string>
     
     <!-- Suggest Strings -->
     <string name="suggest_para1">You can submit question ideas for the next race at:</string>

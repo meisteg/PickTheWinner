@@ -32,6 +32,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import com.meiste.greg.ptw.GAE.GaeListener;
 import com.meiste.greg.ptw.ObservableScrollView.ScrollViewListener;
 
@@ -39,10 +42,24 @@ public final class Questions extends TabFragment implements View.OnClickListener
 
     private final static String QCACHE = "question_cache";
 
+    @Expose
+    @SerializedName("a1")
     private int mWinner;
+
+    @Expose
+    @SerializedName("a2")
     private int mA2;
+
+    @Expose
+    @SerializedName("a3")
     private int mA3;
+
+    @Expose
+    @SerializedName("a4")
     private int mMostLaps;
+
+    @Expose
+    @SerializedName("a5")
     private int mNumLeaders;
 
     private int mScroll = 0;
@@ -50,6 +67,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
     private boolean mChanged = false;
     private Race mRace;
     private boolean mFailedConnect = false;
+    private boolean mSending = false;
     private long mOnCreateViewTime = 0;
 
     public static Questions newInstance(Context context) {
@@ -66,11 +84,14 @@ public final class Questions extends TabFragment implements View.OnClickListener
         mSetupNeeded = GAE.isAccountSetupNeeded(getActivity());
         mChanged = false;
         mOnCreateViewTime = System.currentTimeMillis();
+        setRetainInstance(true);
 
         if (mRace == null) {
             return inflater.inflate(R.layout.questions_no_race, container, false);
         } else if (mSetupNeeded) {
             return inflater.inflate(R.layout.no_account, container, false);
+        } else if (mSending) {
+            return inflater.inflate(R.layout.connecting, container, false);
         } else if (mRace.inProgress()) {
             if (mFailedConnect) {
                 mFailedConnect = false;
@@ -252,15 +273,12 @@ public final class Questions extends TabFragment implements View.OnClickListener
 
     @Override
     public void onClick(View v) {
-        // TODO Auto-generated method stub
-        Util.log("Sending: a1=" + mWinner + ", a2=" + mA2 + ", a3=" + mA3 +
-                ", a4=" + mMostLaps + ", a5=" + mNumLeaders);
-        Toast.makeText(getActivity(), "TODO: Actually send answers",
-                Toast.LENGTH_SHORT).show();
-
         mScroll = 0;
-        mChanged = true;
+        mChanged = mSending = true;
         notifyChanged();
+
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        new GAE(getActivity(), this).postPage("questions", gson.toJson(this));
     }
 
     @Override
@@ -271,6 +289,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
     @Override
     public void onFailedConnect() {
         Util.log("Questions: onFailedConnect");
+        mSending = false;
         mFailedConnect = mChanged = true;
         notifyChanged();
     }
@@ -286,8 +305,15 @@ public final class Questions extends TabFragment implements View.OnClickListener
     }
 
     @Override
-    public void onLaunchIntent(Intent launch) {}
+    public void onConnectSuccess() {
+        Util.log("Questions: onConnectSuccess");
+        Toast.makeText(getActivity(), R.string.questions_success, Toast.LENGTH_SHORT).show();
+
+        mSending = false;
+        mChanged = true;
+        notifyChanged();
+    }
 
     @Override
-    public void onConnectSuccess() {}
+    public void onLaunchIntent(Intent launch) {}
 }

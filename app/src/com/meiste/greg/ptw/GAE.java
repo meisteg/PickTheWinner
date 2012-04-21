@@ -123,7 +123,7 @@ public final class GAE {
         // Reset status variables in case object re-used
         mGetPage = mJson = null;
 
-        Util.log("Posting page " + page);
+        Util.log("Posting to " + page + " page: " + json);
         new PostPageTask().execute(page, json);
     }
 
