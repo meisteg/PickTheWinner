@@ -15,10 +15,11 @@
  */
 package com.meiste.greg.ptw;
 
-import com.meiste.greg.ptw.TabFragmentAdapter.FragmentListener;
-
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
+
+import com.meiste.greg.ptw.TabFragmentAdapter.FragmentListener;
 
 public class TabFragment extends Fragment {
     private static final String KEY_TITLE = "TabFragment:Title";
@@ -43,6 +44,12 @@ public class TabFragment extends Fragment {
                 mFragmentListener.onChangedFragment();
         } catch (Exception e) {
             Util.log("Failed to notifyChanged! - " + e);
+            new Handler().postDelayed(new Runnable() {
+                public void run() {
+                    Util.log("Trying notifyChanged again...");
+                    mFragmentListener.onChangedFragment();
+                }
+            }, 1000);
         }
     }
 
