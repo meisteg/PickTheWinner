@@ -289,29 +289,40 @@ public final class Questions extends TabFragment implements View.OnClickListener
     @Override
     public void onFailedConnect() {
         Util.log("Questions: onFailedConnect");
-        mSending = false;
-        mFailedConnect = mChanged = true;
-        notifyChanged();
+
+        // Verify application wasn't closed before callback returned
+        if (getActivity() != null) {
+            mSending = false;
+            mFailedConnect = mChanged = true;
+            notifyChanged();
+        }
     }
 
     @Override
-    public void onGet(String json) {
+    public void onGet(Context context, String json) {
         Util.log("Questions: onGet: " + json);
 
-        SharedPreferences cache = getActivity().getSharedPreferences(QCACHE, Activity.MODE_PRIVATE);
+        SharedPreferences cache = context.getSharedPreferences(QCACHE, Activity.MODE_PRIVATE);
         cache.edit().putString("race" + mRace.getId(), json).commit();
-        mChanged = true;
-        notifyChanged();
+
+        // Verify application wasn't closed before callback returned
+        if (getActivity() != null) {
+            mChanged = true;
+            notifyChanged();
+        }
     }
 
     @Override
-    public void onConnectSuccess() {
+    public void onConnectSuccess(Context context) {
         Util.log("Questions: onConnectSuccess");
-        Toast.makeText(getActivity(), R.string.questions_success, Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, R.string.questions_success, Toast.LENGTH_SHORT).show();
 
-        mSending = false;
-        mChanged = true;
-        notifyChanged();
+        // Verify application wasn't closed before callback returned
+        if (getActivity() != null) {
+            mSending = false;
+            mChanged = true;
+            notifyChanged();
+        }
     }
 
     @Override

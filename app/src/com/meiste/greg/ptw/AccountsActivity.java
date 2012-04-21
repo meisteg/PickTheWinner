@@ -18,6 +18,7 @@ package com.meiste.greg.ptw;
 import java.util.List;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -124,10 +125,10 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
     }
 
     @Override
-    public void onConnectSuccess() {
+    public void onConnectSuccess(Context context) {
         finish();
     }
 
     @Override
-    public void onGet(String json) {}
+    public void onGet(Context context, String json) {}
 }

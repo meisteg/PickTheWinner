@@ -63,8 +63,8 @@ public final class GAE {
     static interface GaeListener {
         void onFailedConnect();
         void onLaunchIntent(Intent launch);
-        void onConnectSuccess();
-        void onGet(String json);
+        void onConnectSuccess(Context context);
+        void onGet(Context context, String json);
     }
 
     public static boolean isAccountSetupNeeded(Context context) {
@@ -210,7 +210,7 @@ public final class GAE {
                 else if (mGetPage != null)
                     getPage(mGetPage);
                 else
-                    mListener.onConnectSuccess();
+                    mListener.onConnectSuccess(mActivity);
             } else
                 mListener.onFailedConnect();
         }
@@ -265,7 +265,7 @@ public final class GAE {
         protected void onPostExecute(Boolean success) {
             if (success) {
                 if (mGetPage == null)
-                    mListener.onGet(mBuilder.toString());
+                    mListener.onGet(mActivity, mBuilder.toString());
             } else
                 mListener.onFailedConnect();
         }
@@ -324,7 +324,7 @@ public final class GAE {
         protected void onPostExecute(Boolean success) {
             if (success) {
                 if (mJson == null)
-                    mListener.onConnectSuccess();
+                    mListener.onConnectSuccess(mActivity);
             } else
                 mListener.onFailedConnect();
         }
