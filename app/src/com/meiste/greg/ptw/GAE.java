@@ -26,11 +26,15 @@ import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.cookie.Cookie;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
+import org.apache.http.protocol.HTTP;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -54,6 +58,7 @@ public final class GAE {
     private String mAccountName;
     private boolean mNeedInvalidate = true;
     private String mGetPage;
+    private String mJson;
 
     static interface GaeListener {
         void onFailedConnect();
@@ -108,10 +113,18 @@ public final class GAE {
 
     public void getPage(String page) {
         // Reset status variable in case object re-used
-        mGetPage = null;
+        mGetPage = mJson = null;
 
         Util.log("Getting page " + page);
         new GetPageTask().execute(page);
+    }
+
+    public void postPage(String page, String json) {
+        // Reset status variables in case object re-used
+        mGetPage = mJson = null;
+
+        Util.log("Posting page " + page);
+        new PostPageTask().execute(page, json);
     }
 
     private class AuthTokenCallback implements AccountManagerCallback<Bundle> {
@@ -192,7 +205,9 @@ public final class GAE {
 
         protected void onPostExecute(Boolean success) {
             if (success) {
-                if (mGetPage != null)
+                if (mJson != null)
+                    postPage(mGetPage, mJson);
+                else if (mGetPage != null)
                     getPage(mGetPage);
                 else
                     mListener.onConnectSuccess();
@@ -251,6 +266,65 @@ public final class GAE {
             if (success) {
                 if (mGetPage == null)
                     mListener.onGet(mBuilder.toString());
+            } else
+                mListener.onFailedConnect();
+        }
+    }
+
+    private class PostPageTask extends AsyncTask<String, Integer, Boolean> {
+        protected Boolean doInBackground(String... args) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
+            DefaultHttpClient client = new DefaultHttpClient();
+            HttpPost method = new HttpPost(PROD_URL + "/" + args[0]);
+
+            final HttpParams postParams = new BasicHttpParams();
+            HttpClientParams.setRedirecting(postParams, false);
+            method.setParams(postParams);
+            method.setHeader("Cookie", prefs.getString(EditPreferences.KEY_ACCOUNT_COOKIE, null));
+
+            try {
+                StringEntity se = new StringEntity(args[1]);
+                se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+                method.setEntity(se);
+
+                HttpResponse resp = client.execute(method);
+
+                switch(resp.getStatusLine().getStatusCode()) {
+                case HttpStatus.SC_OK:
+                    BufferedReader reader = new BufferedReader(
+                            new InputStreamReader(resp.getEntity().getContent()));
+                    String line = reader.readLine();
+                    if (line.compareTo(args[1]) != 0) {
+                        Util.log("Invalid data returned: " + line);
+                        return false;
+                    }
+                    break;
+                case HttpStatus.SC_MOVED_TEMPORARILY:
+                    if (mAccountName != null) {
+                        Util.log("Post page failed (status 302)");
+                        return false;
+                    }
+                    Util.log("Cookie expired? Attempting reconnect");
+                    mGetPage = args[0];
+                    mJson = args[1];
+                    connect(prefs.getString(EditPreferences.KEY_ACCOUNT_EMAIL, null));
+                    break;
+                default:
+                    Util.log("Post page failed (invalid status code)");
+                    return false;
+                }
+            } catch (Exception e) {
+                Util.log("Post page failed with exception " + e);
+                return false;
+            }
+
+            return true;
+        }
+
+        protected void onPostExecute(Boolean success) {
+            if (success) {
+                if (mJson == null)
+                    mListener.onConnectSuccess();
             } else
                 mListener.onFailedConnect();
         }
