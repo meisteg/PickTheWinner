@@ -85,9 +85,6 @@ public class EditPreferences extends SherlockPreferenceActivity implements OnSha
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-        if (!key.equals(KEY_REMIND_RINGTONE))
-            Util.log(key + "=" + prefs.getBoolean(key, true));
-
         if (key.equals(KEY_REMIND_QUESTIONS)) {
             if (prefs.getBoolean(key, true)) {
                 QuestionAlarm.set(this);
