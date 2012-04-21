@@ -35,6 +35,7 @@ public final class RuleBook extends TabFragment implements ScrollViewListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        setRetainInstance(true);
         View v = inflater.inflate(R.layout.rules, container, false);
         ObservableScrollView sv = (ObservableScrollView) v.findViewById(R.id.scroll_rules);
         sv.postScrollTo(0, mScroll);
