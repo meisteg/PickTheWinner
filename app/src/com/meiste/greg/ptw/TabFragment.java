@@ -38,8 +38,12 @@ public class TabFragment extends Fragment {
     }
 
     protected void notifyChanged() {
-        if (mFragmentListener != null)
-            mFragmentListener.onChangedFragment();
+        try {
+            if (mFragmentListener != null)
+                mFragmentListener.onChangedFragment();
+        } catch (Exception e) {
+            Util.log("Failed to notifyChanged! - " + e);
+        }
     }
 
     public boolean isChanged() {
