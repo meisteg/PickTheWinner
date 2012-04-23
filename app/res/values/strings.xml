@@ -123,6 +123,7 @@
     <string name="suggest_para2">It is optional and does not earn you any points.</string>
     <string name="suggest_hint">Enter question suggestion here</string>
     <string name="suggest_no_race">Thanks for all your question suggestions this season.</string>
+    <string name="suggest_success">Thanks for your suggestion!</string>
     
     <!-- Race Details -->
     <string name="details_tv">TV: %s</string>
