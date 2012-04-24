@@ -63,7 +63,7 @@ public final class GAE {
     static interface GaeListener {
         void onFailedConnect();
         void onLaunchIntent(Intent launch);
-        void onConnectSuccess(Context context);
+        void onConnectSuccess(Context context, String json);
         void onGet(Context context, String json);
     }
 
@@ -98,6 +98,8 @@ public final class GAE {
             editor.putString(EditPreferences.KEY_ACCOUNT_EMAIL, null);
             editor.putString(EditPreferences.KEY_ACCOUNT_COOKIE, null);
             editor.commit();
+
+            mActivity.getSharedPreferences(Questions.ACACHE, Activity.MODE_PRIVATE).edit().clear().commit();
         }
 
         // Obtain an auth token and register
@@ -210,7 +212,7 @@ public final class GAE {
                 else if (mGetPage != null)
                     getPage(mGetPage);
                 else
-                    mListener.onConnectSuccess(mActivity);
+                    mListener.onConnectSuccess(mActivity, null);
             } else
                 mListener.onFailedConnect();
         }
@@ -272,6 +274,8 @@ public final class GAE {
     }
 
     private class PostPageTask extends AsyncTask<String, Integer, Boolean> {
+        String mJsonReturned;
+
         protected Boolean doInBackground(String... args) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
             DefaultHttpClient client = new DefaultHttpClient();
@@ -293,11 +297,7 @@ public final class GAE {
                 case HttpStatus.SC_OK:
                     BufferedReader reader = new BufferedReader(
                             new InputStreamReader(resp.getEntity().getContent()));
-                    String line = reader.readLine();
-                    if (line.compareTo(args[1]) != 0) {
-                        Util.log("Invalid data returned: " + line);
-                        return false;
-                    }
+                    mJsonReturned = reader.readLine();
                     break;
                 case HttpStatus.SC_MOVED_TEMPORARILY:
                     if (mAccountName != null) {
@@ -324,7 +324,7 @@ public final class GAE {
         protected void onPostExecute(Boolean success) {
             if (success) {
                 if (mJson == null)
-                    mListener.onConnectSuccess(mActivity);
+                    mListener.onConnectSuccess(mActivity, mJsonReturned);
             } else
                 mListener.onFailedConnect();
         }

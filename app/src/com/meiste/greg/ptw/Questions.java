@@ -41,6 +41,7 @@ import com.meiste.greg.ptw.ObservableScrollView.ScrollViewListener;
 public final class Questions extends TabFragment implements View.OnClickListener, ScrollViewListener, GaeListener {
 
     private final static String QCACHE = "question_cache";
+    public final static String ACACHE = "answer_cache";
 
     @Expose
     @SerializedName("a1")
@@ -313,9 +314,12 @@ public final class Questions extends TabFragment implements View.OnClickListener
     }
 
     @Override
-    public void onConnectSuccess(Context context) {
-        Util.log("Questions: onConnectSuccess");
+    public void onConnectSuccess(Context context, String json) {
+        Util.log("Questions: onConnectSuccess: " + json);
         Toast.makeText(context, R.string.questions_success, Toast.LENGTH_SHORT).show();
+
+        SharedPreferences cache = context.getSharedPreferences(ACACHE, Activity.MODE_PRIVATE);
+        cache.edit().putString("race" + mRace.getId(), json).commit();
 
         // Verify application wasn't closed before callback returned
         if (getActivity() != null) {

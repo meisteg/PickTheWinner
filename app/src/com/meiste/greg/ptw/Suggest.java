@@ -104,7 +104,7 @@ public final class Suggest extends TabFragment implements View.OnClickListener, 
     }
 
     @Override
-    public void onConnectSuccess(Context context) {
+    public void onConnectSuccess(Context context, String json) {
         Util.log("Suggest: onConnectSuccess");
     }
 

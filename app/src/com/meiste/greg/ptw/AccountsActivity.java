@@ -125,7 +125,7 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
     }
 
     @Override
-    public void onConnectSuccess(Context context) {
+    public void onConnectSuccess(Context context, String json) {
         finish();
     }
 
