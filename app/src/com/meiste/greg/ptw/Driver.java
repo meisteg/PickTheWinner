@@ -29,6 +29,18 @@ public final class Driver {
         mName = res.getStringArray(R.array.driver_names)[id];
     }
 
+    public Driver(Resources res, int num) {
+        int[] numbers = res.getIntArray(R.array.driver_nums);
+        mNumber = num;
+
+        for (int id = 0; id < numbers.length; id++) {
+            if (numbers[id] == num) {
+                mName = res.getStringArray(R.array.driver_names)[id];
+                break;
+            }
+        }
+    }
+
     public static int getNumDrivers(Context context) {
         return context.getResources().getIntArray(R.array.driver_nums).length;
     }

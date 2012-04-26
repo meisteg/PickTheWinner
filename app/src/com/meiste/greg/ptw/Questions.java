@@ -19,6 +19,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,22 +44,27 @@ public final class Questions extends TabFragment implements View.OnClickListener
     private final static String QCACHE = "question_cache";
     public final static String ACACHE = "answer_cache";
 
+    @SuppressWarnings("unused")
     @Expose
     @SerializedName("a1")
     private int mWinner;
 
+    @SuppressWarnings("unused")
     @Expose
     @SerializedName("a2")
     private int mA2;
 
+    @SuppressWarnings("unused")
     @Expose
     @SerializedName("a3")
     private int mA3;
 
+    @SuppressWarnings("unused")
     @Expose
     @SerializedName("a4")
     private int mMostLaps;
 
+    @SuppressWarnings("unused")
     @Expose
     @SerializedName("a5")
     private int mNumLeaders;
@@ -70,6 +76,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
     private boolean mFailedConnect = false;
     private boolean mSending = false;
     private long mOnCreateViewTime = 0;
+    private RaceAnswers mRa;
 
     public static Questions newInstance(Context context) {
         Questions fragment = new Questions();
@@ -84,6 +91,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
         mRace = Race.getNext(getActivity(), false, true);
         mSetupNeeded = GAE.isAccountSetupNeeded(getActivity());
         mChanged = false;
+        mRa = null;
         mOnCreateViewTime = System.currentTimeMillis();
         setRetainInstance(true);
 
@@ -116,47 +124,74 @@ public final class Questions extends TabFragment implements View.OnClickListener
                 return inflater.inflate(R.layout.connecting, container, false);
             }
 
-            // TODO: Only show form if user hasn't submitted answers yet
-            v = inflater.inflate(R.layout.questions, container, false);
             RaceQuestions rq = RaceQuestions.fromJson(json);
 
-            Spinner winner = (Spinner) v.findViewById(R.id.winner);
-            winner.setAdapter(new DriverAdapter(getActivity(), android.R.layout.simple_spinner_item));
-            winner.setOnItemSelectedListener(new WinnerSelectedListener());
+            cache = getActivity().getSharedPreferences(ACACHE, Activity.MODE_PRIVATE);
+            json = cache.getString("race" + mRace.getId(), null);
+            if (json == null) {
+                Util.log("Questions: Showing form");
+
+                v = inflater.inflate(R.layout.questions, container, false);
+
+                Spinner winner = (Spinner) v.findViewById(R.id.winner);
+                winner.setAdapter(new DriverAdapter(getActivity(), android.R.layout.simple_spinner_item));
+                winner.setOnItemSelectedListener(new WinnerSelectedListener());
+
+                Spinner a2 = (Spinner) v.findViewById(R.id.question2a);
+                ArrayAdapter<CharSequence> a2_adapter = new ArrayAdapter<CharSequence>(
+                        getActivity(), android.R.layout.simple_spinner_item, rq.a2);
+                a2_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                a2.setAdapter(a2_adapter);
+                a2.setOnItemSelectedListener(new A2SelectedListener());
+
+                Spinner a3 = (Spinner) v.findViewById(R.id.question3a);
+                ArrayAdapter<CharSequence> a3_adapter = new ArrayAdapter<CharSequence>(
+                        getActivity(), android.R.layout.simple_spinner_item, rq.a3);
+                a3_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                a3.setAdapter(a3_adapter);
+                a3.setOnItemSelectedListener(new A3SelectedListener());
+
+                Spinner mostlaps = (Spinner) v.findViewById(R.id.mostlaps);
+                mostlaps.setAdapter(new DriverAdapter(getActivity(), android.R.layout.simple_spinner_item));
+                mostlaps.setOnItemSelectedListener(new MostLapsSelectedListener());
+
+                Spinner numleaders = (Spinner) v.findViewById(R.id.numleaders);
+                ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                        getActivity(), R.array.num_leaders, android.R.layout.simple_spinner_item);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                numleaders.setAdapter(adapter);
+                numleaders.setOnItemSelectedListener(new NumLeadersSelectedListener());
+
+                Button send = (Button) v.findViewById(R.id.send);
+                send.setOnClickListener(this);
+            } else {
+                Util.log("Questions: Showing submitted answers");
+
+                v = inflater.inflate(R.layout.questions_answered, container, false);
+                Resources res = getActivity().getResources();
+                mRa = RaceAnswers.fromJson(json);
+
+                TextView a1 = (TextView) v.findViewById(R.id.answer1);
+                a1.setText(new Driver(res, mRa.a1).getName());
+
+                TextView a2 = (TextView) v.findViewById(R.id.answer2);
+                a2.setText(rq.a2[mRa.a2]);
+
+                TextView a3 = (TextView) v.findViewById(R.id.answer3);
+                a3.setText(rq.a3[mRa.a3]);
+
+                TextView a4 = (TextView) v.findViewById(R.id.answer4);
+                a4.setText(new Driver(res, mRa.a4).getName());
+
+                TextView a5 = (TextView) v.findViewById(R.id.answer5);
+                a5.setText(res.getStringArray(R.array.num_leaders)[mRa.a5]);
+            }
 
             TextView q2 = (TextView) v.findViewById(R.id.question2);
             q2.setText(getActivity().getString(R.string.questions_2, rq.q2));
 
-            Spinner a2 = (Spinner) v.findViewById(R.id.question2a);
-            ArrayAdapter<CharSequence> a2_adapter = new ArrayAdapter<CharSequence>(
-                    getActivity(), android.R.layout.simple_spinner_item, rq.a2);
-            a2_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            a2.setAdapter(a2_adapter);
-            a2.setOnItemSelectedListener(new A2SelectedListener());
-
             TextView q3 = (TextView) v.findViewById(R.id.question3);
             q3.setText(getActivity().getString(R.string.questions_3, rq.q3));
-
-            Spinner a3 = (Spinner) v.findViewById(R.id.question3a);
-            ArrayAdapter<CharSequence> a3_adapter = new ArrayAdapter<CharSequence>(
-                    getActivity(), android.R.layout.simple_spinner_item, rq.a3);
-            a3_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            a3.setAdapter(a3_adapter);
-            a3.setOnItemSelectedListener(new A3SelectedListener());
-
-            Spinner mostlaps = (Spinner) v.findViewById(R.id.mostlaps);
-            mostlaps.setAdapter(new DriverAdapter(getActivity(), android.R.layout.simple_spinner_item));
-            mostlaps.setOnItemSelectedListener(new MostLapsSelectedListener());
-
-            Spinner numleaders = (Spinner) v.findViewById(R.id.numleaders);
-            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-                    getActivity(), R.array.num_leaders, android.R.layout.simple_spinner_item);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            numleaders.setAdapter(adapter);
-            numleaders.setOnItemSelectedListener(new NumLeadersSelectedListener());
-
-            Button send = (Button) v.findViewById(R.id.send);
-            send.setOnClickListener(this);
 
             ObservableScrollView sv = (ObservableScrollView) v.findViewById(R.id.scroll_questions);
             sv.postScrollTo(0, mScroll);
@@ -180,11 +215,14 @@ public final class Questions extends TabFragment implements View.OnClickListener
     @Override
     public void onResume() {
         super.onResume();
+        SharedPreferences cache = getActivity().getSharedPreferences(ACACHE, Activity.MODE_PRIVATE);
 
         // Check if user changed their account status
         mChanged = mSetupNeeded != GAE.isAccountSetupNeeded(getActivity());
         // See if race questions are now available but weren't previously
         mChanged |= (mOnCreateViewTime < mRace.getQuestionTimestamp()) && mRace.inProgress();
+        // See if race answers have been cleared by a new account connect
+        mChanged |= ((mRa != null) && !cache.contains("race" + mRace.getId()));
 
         if (mChanged) {
             Util.log("Questions: onResume: notifyChanged");
@@ -204,8 +242,19 @@ public final class Questions extends TabFragment implements View.OnClickListener
         public String[] a3;
 
         public static RaceQuestions fromJson(String json) {
-            Gson gson = new Gson();
-            return gson.fromJson(json, RaceQuestions.class);
+            return new Gson().fromJson(json, RaceQuestions.class);
+        }
+    }
+
+    private static class RaceAnswers {
+        public int a1;
+        public int a2;
+        public int a3;
+        public int a4;
+        public int a5;
+
+        public static RaceAnswers fromJson(String json) {
+            return new Gson().fromJson(json, RaceAnswers.class);
         }
     }
 
