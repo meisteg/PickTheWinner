@@ -127,6 +127,7 @@ public final class Race {
     public String getStartDateTime() {
         int flags = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_YEAR;
         flags |= DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_NO_NOON_MIDNIGHT;
+        flags |= DateUtils.FORMAT_SHOW_WEEKDAY;
         return DateUtils.formatDateTime(mContext, mStart, flags);
     }
 
