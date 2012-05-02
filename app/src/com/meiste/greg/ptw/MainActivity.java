@@ -52,6 +52,7 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
         setContentView(R.layout.main);
 
         mPager = (ViewPager)findViewById(R.id.pager);
+        mPager.setOffscreenPageLimit(2);
         mPager.setAdapter(new TabFragmentAdapter(getSupportFragmentManager(), this));
 
         mIndicator = (TitlePageIndicator)findViewById(R.id.indicator);

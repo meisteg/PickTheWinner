@@ -15,9 +15,6 @@
  */
 package com.meiste.greg.ptw;
 
-import java.util.List;
-import java.util.Vector;
-
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -27,8 +24,9 @@ import android.view.ViewGroup;
 import com.viewpagerindicator.TitleProvider;
 
 class TabFragmentAdapter extends FragmentPagerAdapter implements TitleProvider {
-    private List<TabFragment> mFragments;
-    private FragmentListener mFragmentListener;
+    private TabFragment[] mFragments = new TabFragment[5];
+    private FragmentListener mFragmentListener = new MyFragmentListener();
+    private Context mContext;
 
     public interface FragmentListener {
         void onChangedFragment();
@@ -36,39 +34,45 @@ class TabFragmentAdapter extends FragmentPagerAdapter implements TitleProvider {
 
     public TabFragmentAdapter(FragmentManager fm, Context context) {
         super(fm);
-
-        mFragmentListener = new MyFragmentListener();
-
-        mFragments = new Vector<TabFragment>();
-        mFragments.add(RuleBook.newInstance(context));
-        mFragments.add(Questions.newInstance(context));
-        mFragments.add(Standings.newInstance(context));
-        mFragments.add(Schedule.newInstance(context));
-        mFragments.add(Suggest.newInstance(context));
+        mContext = context;
     }
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         Object o = super.instantiateItem(container, position);
+        mFragments[position] = (TabFragment)o;
 
         // HACK: On an orientation change, even though we created new
         // fragments, FragmentManager still has the old fragments, which
         // FragmentPagerAdapter checks for and uses instead of calling
         // getItem to get the new fragments. Need to give tabs updated
         // FragmentListener since old one is now invalid.
-        ((TabFragment)o).setFragmentListener(mFragmentListener);
+        mFragments[position].setFragmentListener(mFragmentListener);
 
         return o;
     }
 
     @Override
     public Fragment getItem(int position) {
-        return this.mFragments.get(position);
+        switch (position) {
+        case 0:
+            return RuleBook.newInstance(mContext);
+        case 1:
+            return Questions.newInstance(mContext);
+        case 2:
+            return Standings.newInstance(mContext);
+        case 3:
+            return Schedule.newInstance(mContext);
+        case 4:
+            return Suggest.newInstance(mContext);
+        default:
+            return null;
+        }
     }
 
     @Override
     public int getCount() {
-        return mFragments.size();
+        return mFragments.length;
     }
 
     @Override
@@ -78,7 +82,10 @@ class TabFragmentAdapter extends FragmentPagerAdapter implements TitleProvider {
 
     @Override
     public String getTitle(int position) {
-        return mFragments.get(position).getTitle();
+        if (mFragments[position] == null)
+            return Integer.toString(position);
+
+        return mFragments[position].getTitle();
     }
 
     private class MyFragmentListener implements FragmentListener {
