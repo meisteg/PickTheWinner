@@ -106,6 +106,8 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_LAUNCH_INTENT) {
+            Util.log("onActivityResult: resultCode=" + resultCode);
+
             if (resultCode == RESULT_OK)
                 mGae.connect(mAccountName);
             else

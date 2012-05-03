@@ -53,7 +53,7 @@ public final class GAE {
     private static final String PROD_URL = "https://ptwgame.appspot.com";
     private static final String AUTH_COOKIE_NAME = "SACSID";
 
-    private Activity mActivity;
+    private Context mContext;
     private GaeListener mListener;
     private String mAccountName;
     private boolean mNeedInvalidate = true;
@@ -72,14 +72,14 @@ public final class GAE {
         return prefs.getString(EditPreferences.KEY_ACCOUNT_EMAIL, "").length() == 0;
     }
 
-    public GAE(Activity activity, GaeListener listener) {
-        mActivity = activity;
+    public GAE(Context context, GaeListener listener) {
+        mContext = context;
         mListener = listener;
     }
 
     public List<String> getGoogleAccounts() {
         ArrayList<String> result = new ArrayList<String>();
-        Account[] accounts = AccountManager.get(mActivity).getAccountsByType("com.google");
+        Account[] accounts = AccountManager.get(mContext).getAccountsByType("com.google");
         for (Account account : accounts) {
             result.add(account.name);
         }
@@ -87,27 +87,28 @@ public final class GAE {
         return result;
     }
 
+    @SuppressWarnings("deprecation")
     public void connect(String account) {
         Util.log("Connect using " + account);
         mAccountName = account;
 
         // Only reset the preferences if performing new connect
         if (mGetPage == null) {
-            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putString(EditPreferences.KEY_ACCOUNT_EMAIL, null);
             editor.putString(EditPreferences.KEY_ACCOUNT_COOKIE, null);
             editor.commit();
 
-            mActivity.getSharedPreferences(Questions.ACACHE, Activity.MODE_PRIVATE).edit().clear().commit();
+            mContext.getSharedPreferences(Questions.ACACHE, Activity.MODE_PRIVATE).edit().clear().commit();
         }
 
         // Obtain an auth token and register
-        AccountManager mgr = AccountManager.get(mActivity);
+        AccountManager mgr = AccountManager.get(mContext);
         Account[] accts = mgr.getAccountsByType("com.google");
         for (Account acct : accts) {
             if (acct.name.equals(mAccountName)) {
-                mgr.getAuthToken(acct, "ah", null, mActivity, new AuthTokenCallback(), null);
+                mgr.getAuthToken(acct, "ah", false, new AuthTokenCallback(), null);
                 break;
             }
         }
@@ -137,6 +138,8 @@ public final class GAE {
                 Intent launch = (Intent) result.get(AccountManager.KEY_INTENT);
                 if (launch != null) {
                     Util.log("Need to launch activity before getting authToken");
+                    // How can we get the result of the activity if it is a new task!?
+                    launch.setFlags(launch.getFlags() & ~Intent.FLAG_ACTIVITY_NEW_TASK);
                     mListener.onLaunchIntent(launch);
                     return;
                 }
@@ -146,7 +149,7 @@ public final class GAE {
                     Util.log("Invalidating token and starting over");
                     mNeedInvalidate = false;
 
-                    AccountManager mgr = AccountManager.get(mActivity);
+                    AccountManager mgr = AccountManager.get(mContext);
                     mgr.invalidateAuthToken("com.google", authToken);
                     connect(mAccountName);
                 } else {
@@ -196,7 +199,7 @@ public final class GAE {
             }
 
             final SharedPreferences prefs =
-                    PreferenceManager.getDefaultSharedPreferences(mActivity);
+                    PreferenceManager.getDefaultSharedPreferences(mContext);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putString(EditPreferences.KEY_ACCOUNT_EMAIL, mAccountName);
             editor.putString(EditPreferences.KEY_ACCOUNT_COOKIE, authCookie);
@@ -212,7 +215,7 @@ public final class GAE {
                 else if (mGetPage != null)
                     getPage(mGetPage);
                 else
-                    mListener.onConnectSuccess(mActivity, null);
+                    mListener.onConnectSuccess(mContext, null);
             } else
                 mListener.onFailedConnect();
         }
@@ -222,7 +225,7 @@ public final class GAE {
         StringBuilder mBuilder = new StringBuilder();
 
         protected Boolean doInBackground(String... pages) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
             DefaultHttpClient client = new DefaultHttpClient();
             HttpGet method = new HttpGet(PROD_URL + "/" + pages[0]);
 
@@ -267,7 +270,7 @@ public final class GAE {
         protected void onPostExecute(Boolean success) {
             if (success) {
                 if (mGetPage == null)
-                    mListener.onGet(mActivity, mBuilder.toString());
+                    mListener.onGet(mContext, mBuilder.toString());
             } else
                 mListener.onFailedConnect();
         }
@@ -277,7 +280,7 @@ public final class GAE {
         String mJsonReturned;
 
         protected Boolean doInBackground(String... args) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
             DefaultHttpClient client = new DefaultHttpClient();
             HttpPost method = new HttpPost(PROD_URL + "/" + args[0]);
 
@@ -324,7 +327,7 @@ public final class GAE {
         protected void onPostExecute(Boolean success) {
             if (success) {
                 if (mJson == null)
-                    mListener.onConnectSuccess(mActivity, mJsonReturned);
+                    mListener.onConnectSuccess(mContext, mJsonReturned);
             } else
                 mListener.onFailedConnect();
         }
