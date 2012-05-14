@@ -48,7 +48,7 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
         setContentView(R.layout.connect);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mGae = new GAE(this, this);
+        mGae = GAE.getInstance(getApplicationContext());
         List<String> accounts = mGae.getGoogleAccounts();
         if (accounts.size() == 0) {
             // Show a dialog and invoke the "Add Account" activity if requested
@@ -81,7 +81,7 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
                     TextView account = (TextView) listView.getChildAt(mAccountSelectedPosition);
                     mAccountName = (String) account.getText();
                     setContentView(R.layout.connecting);
-                    mGae.connect(mAccountName);
+                    mGae.connect(AccountsActivity.this, mAccountName);
                 }
             });
 
@@ -109,7 +109,7 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
             Util.log("onActivityResult: resultCode=" + resultCode);
 
             if (resultCode == RESULT_OK)
-                mGae.connect(mAccountName);
+                mGae.connect(this, mAccountName);
             else
                 onFailedConnect();
         }

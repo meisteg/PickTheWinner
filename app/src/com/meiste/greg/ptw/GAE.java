@@ -46,6 +46,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 
 public final class GAE {
@@ -53,7 +54,12 @@ public final class GAE {
     private static final String PROD_URL = "https://ptwgame.appspot.com";
     private static final String AUTH_COOKIE_NAME = "SACSID";
 
+    private static final Object sInstanceSync = new Object();
+    private static GAE sInstance;
+
     private Context mContext;
+    private Handler mHandler;
+    private final Object mListenerSync = new Object();
     private GaeListener mListener;
     private String mAccountName;
     private boolean mNeedInvalidate = true;
@@ -72,9 +78,19 @@ public final class GAE {
         return prefs.getString(EditPreferences.KEY_ACCOUNT_EMAIL, "").length() == 0;
     }
 
-    public GAE(Context context, GaeListener listener) {
+    public static GAE getInstance(Context context) {
+        synchronized (sInstanceSync) {
+            if (sInstance == null) {
+                Util.log("Instantiate GAE object");
+                sInstance = new GAE(context);
+            }
+        }
+        return sInstance;
+    }
+
+    private GAE(Context context) {
         mContext = context;
-        mListener = listener;
+        mHandler = new Handler();
     }
 
     public List<String> getGoogleAccounts() {
@@ -87,23 +103,77 @@ public final class GAE {
         return result;
     }
 
+    public void connect(final GaeListener listener, final String account) {
+        if ((listener == null) || (account == null))
+            throw new IllegalArgumentException("No null arguments allowed");
+
+        final Runnable r = new Runnable() {
+            public void run() {
+                synchronized (mListenerSync) {
+                    if (mListener == null) {
+                        Util.log("Connect using " + account);
+                        mListener = listener;
+                        mAccountName = account;
+                        doConnect();
+                    } else
+                        mHandler.postDelayed(this, 100);
+                }
+            }
+        };
+        mHandler.post(r);
+    }
+
+    public void getPage(final GaeListener listener, final String page) {
+        if ((listener == null) || (page == null))
+            throw new IllegalArgumentException("No null arguments allowed");
+
+        final Runnable r = new Runnable() {
+            public void run() {
+                synchronized (mListenerSync) {
+                    if (mListener == null) {
+                        Util.log("Getting page " + page);
+                        mListener = listener;
+                        new GetPageTask().execute(page);
+                    } else
+                        mHandler.postDelayed(this, 100);
+                }
+            }
+        };
+        mHandler.post(r);
+    }
+
+    public void postPage(final GaeListener listener, final String page, final String json) {
+        if ((listener == null) || (page == null) || (json == null))
+            throw new IllegalArgumentException("No null arguments allowed");
+
+        final Runnable r = new Runnable() {
+            public void run() {
+                synchronized (mListenerSync) {
+                    if (mListener == null) {
+                        Util.log("Posting to " + page + " page: " + json);
+                        mListener = listener;
+                        new PostPageTask().execute(page, json);
+                    } else
+                        mHandler.postDelayed(this, 100);
+                }
+            }
+        };
+        mHandler.post(r);
+    }
+
+    private void doConnect() {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(EditPreferences.KEY_ACCOUNT_EMAIL, null);
+        editor.putString(EditPreferences.KEY_ACCOUNT_COOKIE, null);
+        editor.commit();
+
+        mContext.getSharedPreferences(Questions.ACACHE, Activity.MODE_PRIVATE).edit().clear().commit();
+        reconnect();
+    }
+
     @SuppressWarnings("deprecation")
-    public void connect(String account) {
-        Util.log("Connect using " + account);
-        mAccountName = account;
-
-        // Only reset the preferences if performing new connect
-        if (mGetPage == null) {
-            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putString(EditPreferences.KEY_ACCOUNT_EMAIL, null);
-            editor.putString(EditPreferences.KEY_ACCOUNT_COOKIE, null);
-            editor.commit();
-
-            mContext.getSharedPreferences(Questions.ACACHE, Activity.MODE_PRIVATE).edit().clear().commit();
-        }
-
-        // Obtain an auth token and register
+    private void reconnect() {
         AccountManager mgr = AccountManager.get(mContext);
         Account[] accts = mgr.getAccountsByType("com.google");
         for (Account acct : accts) {
@@ -112,22 +182,6 @@ public final class GAE {
                 break;
             }
         }
-    }
-
-    public void getPage(String page) {
-        // Reset status variable in case object re-used
-        mGetPage = mJson = null;
-
-        Util.log("Getting page " + page);
-        new GetPageTask().execute(page);
-    }
-
-    public void postPage(String page, String json) {
-        // Reset status variables in case object re-used
-        mGetPage = mJson = null;
-
-        Util.log("Posting to " + page + " page: " + json);
-        new PostPageTask().execute(page, json);
     }
 
     private class AuthTokenCallback implements AccountManagerCallback<Bundle> {
@@ -140,7 +194,7 @@ public final class GAE {
                     Util.log("Need to launch activity before getting authToken");
                     // How can we get the result of the activity if it is a new task!?
                     launch.setFlags(launch.getFlags() & ~Intent.FLAG_ACTIVITY_NEW_TASK);
-                    mListener.onLaunchIntent(launch);
+                    cbLaunchIntent(launch);
                     return;
                 }
 
@@ -151,16 +205,17 @@ public final class GAE {
 
                     AccountManager mgr = AccountManager.get(mContext);
                     mgr.invalidateAuthToken("com.google", authToken);
-                    connect(mAccountName);
+                    reconnect();
                 } else {
                     Util.log("authToken=" + authToken);
+                    mNeedInvalidate = true;
 
                     // Phase 2: get authCookie from PTW server
                     new GetCookieTask().execute(authToken);
                 }
             } catch (Exception e) {
                 Util.log("Get auth token failed with exception " + e);
-                mListener.onFailedConnect();
+                cbFailedConnect();
             }
         }
     }
@@ -211,13 +266,13 @@ public final class GAE {
         protected void onPostExecute(Boolean success) {
             if (success) {
                 if (mJson != null)
-                    postPage(mGetPage, mJson);
+                    new PostPageTask().execute(mGetPage, mJson);
                 else if (mGetPage != null)
-                    getPage(mGetPage);
+                    new GetPageTask().execute(mGetPage);
                 else
-                    mListener.onConnectSuccess(mContext, null);
+                    cbConnectSuccess(null);
             } else
-                mListener.onFailedConnect();
+                cbFailedConnect();
         }
     }
 
@@ -253,7 +308,8 @@ public final class GAE {
                     }
                     Util.log("Cookie expired? Attempting reconnect");
                     mGetPage = pages[0];
-                    connect(prefs.getString(EditPreferences.KEY_ACCOUNT_EMAIL, null));
+                    mAccountName = prefs.getString(EditPreferences.KEY_ACCOUNT_EMAIL, null);
+                    reconnect();
                     break;
                 default:
                     Util.log("Get page failed (invalid status code)");
@@ -270,9 +326,9 @@ public final class GAE {
         protected void onPostExecute(Boolean success) {
             if (success) {
                 if (mGetPage == null)
-                    mListener.onGet(mContext, mBuilder.toString());
+                    cbGet(mBuilder.toString());
             } else
-                mListener.onFailedConnect();
+                cbFailedConnect();
         }
     }
 
@@ -310,7 +366,8 @@ public final class GAE {
                     Util.log("Cookie expired? Attempting reconnect");
                     mGetPage = args[0];
                     mJson = args[1];
-                    connect(prefs.getString(EditPreferences.KEY_ACCOUNT_EMAIL, null));
+                    mAccountName = prefs.getString(EditPreferences.KEY_ACCOUNT_EMAIL, null);
+                    reconnect();
                     break;
                 default:
                     Util.log("Post page failed (invalid status code)");
@@ -327,9 +384,41 @@ public final class GAE {
         protected void onPostExecute(Boolean success) {
             if (success) {
                 if (mJson == null)
-                    mListener.onConnectSuccess(mContext, mJsonReturned);
+                    cbConnectSuccess(mJsonReturned);
             } else
-                mListener.onFailedConnect();
+                cbFailedConnect();
+        }
+    }
+
+    private void cbFailedConnect() {
+        mListener.onFailedConnect();
+        synchronized (mListenerSync) {
+            mGetPage = mJson = mAccountName = null;
+            mListener = null;
+        }
+    }
+
+    private void cbLaunchIntent(Intent launch) {
+        mListener.onLaunchIntent(launch);
+        synchronized (mListenerSync) {
+            mGetPage = mJson = mAccountName = null;
+            mListener = null;
+        }
+    }
+
+    private void cbConnectSuccess(String json) {
+        mListener.onConnectSuccess(mContext, json);
+        synchronized (mListenerSync) {
+            mGetPage = mJson = mAccountName = null;
+            mListener = null;
+        }
+    }
+
+    private void cbGet(String json) {
+        mListener.onGet(mContext, json);
+        synchronized (mListenerSync) {
+            mGetPage = mJson = mAccountName = null;
+            mListener = null;
         }
     }
 }

@@ -120,7 +120,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
             SharedPreferences cache = getActivity().getSharedPreferences(QCACHE, Activity.MODE_PRIVATE);
             String json = cache.getString("race" + mRace.getId(), null);
             if (json == null) {
-                new GAE(getActivity(), this).getPage("questions");
+                GAE.getInstance(getActivity()).getPage(this, "questions");
                 return inflater.inflate(R.layout.connecting, container, false);
             }
 
@@ -328,7 +328,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
         notifyChanged();
 
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-        new GAE(getActivity(), this).postPage("questions", gson.toJson(this));
+        GAE.getInstance(getActivity()).postPage(this, "questions", gson.toJson(this));
     }
 
     @Override

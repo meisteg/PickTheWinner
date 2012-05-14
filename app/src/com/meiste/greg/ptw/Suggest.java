@@ -87,7 +87,7 @@ public final class Suggest extends TabFragment implements View.OnClickListener, 
     @Override
     public void onClick(View v) {
         String json = new Gson().toJson(mQuestion.getText().toString().trim());
-        new GAE(getActivity(), this).postPage("suggest", json);
+        GAE.getInstance(getActivity()).postPage(this, "suggest", json);
 
         Toast.makeText(getActivity(), R.string.suggest_success, Toast.LENGTH_SHORT).show();
         mQuestion.setText("");
