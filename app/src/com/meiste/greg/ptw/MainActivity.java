@@ -66,6 +66,7 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
         if (BuildConfig.DEBUG) {
             adRequest.addTestDevice("CB529BCBD1E778FAD10EE145EE29045F"); // Atrix 4G
             adRequest.addTestDevice("3BF57CB8B267C7B43814616E651CCF5A"); // XOOM
+            adRequest.addTestDevice("E64392AEFC7C9A13D2A6A76E9EA034C4"); // RAZR
         }
 
         mAdView = (AdView)findViewById(R.id.ad);
