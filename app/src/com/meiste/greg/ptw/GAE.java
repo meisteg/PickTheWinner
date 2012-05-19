@@ -58,6 +58,8 @@ public final class GAE {
     private static final int TIMEOUT_CONNECTION = 3000;
     // Timeout in milliseconds to wait for data.
     private static final int TIMEOUT_SOCKET = 5000;
+    // Force the auth cookie to be always expired (FOR DEBUG ONLY).
+    private static final boolean DEBUG_FORCE_COOKIE_EXPIRED = false;
 
     private static final Object sInstanceSync = new Object();
     private static GAE sInstance;
@@ -132,6 +134,11 @@ public final class GAE {
         if ((listener == null) || (page == null))
             throw new IllegalArgumentException("No null arguments allowed");
 
+        if (DEBUG_FORCE_COOKIE_EXPIRED) {
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+            prefs.edit().putString(EditPreferences.KEY_ACCOUNT_COOKIE, "ExpiredCookie").commit();
+        }
+
         final Runnable r = new Runnable() {
             public void run() {
                 synchronized (mListenerSync) {
@@ -150,6 +157,11 @@ public final class GAE {
     public void postPage(final GaeListener listener, final String page, final String json) {
         if ((listener == null) || (page == null) || (json == null))
             throw new IllegalArgumentException("No null arguments allowed");
+
+        if (DEBUG_FORCE_COOKIE_EXPIRED) {
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+            prefs.edit().putString(EditPreferences.KEY_ACCOUNT_COOKIE, "ExpiredCookie").commit();
+        }
 
         final Runnable r = new Runnable() {
             public void run() {
@@ -287,6 +299,7 @@ public final class GAE {
         StringBuilder mBuilder = new StringBuilder();
 
         protected Boolean doInBackground(String... pages) {
+            mGetPage = null;
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
             DefaultHttpClient client = new DefaultHttpClient();
             HttpGet method = new HttpGet(PROD_URL + "/" + pages[0]);
@@ -345,6 +358,7 @@ public final class GAE {
         String mJsonReturned;
 
         protected Boolean doInBackground(String... args) {
+            mJson = null;
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
             DefaultHttpClient client = new DefaultHttpClient();
             HttpPost method = new HttpPost(PROD_URL + "/" + args[0]);
