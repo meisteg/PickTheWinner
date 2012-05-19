@@ -372,49 +372,49 @@
         <item>36</item>
     </integer-array>
     
-    <array name="schedule_layouts">
-        <item>@drawable/dis</item>
-        <item>@drawable/dis</item>
-        <item>@drawable/dis</item>
-        <item>@drawable/dis</item>
-        <item>@drawable/pir</item>
-        <item>@drawable/las</item>
-        <item>@drawable/bms</item>
-        <item>@drawable/cal</item>
-        <item>@drawable/mar</item>
-        <item>@drawable/tms</item>
-        <item>@drawable/kan</item>
-        <item>@drawable/rir</item>
-        <item>@drawable/tal</item>
-        <item>@drawable/dar</item>
-        <item>@drawable/lms</item>
-        <item>@drawable/lms</item>
-        <item>@drawable/lms</item>
-        <item>@drawable/dov</item>
-        <item>@drawable/poc</item>
-        <item>@drawable/mis</item>
-        <item>@drawable/spr</item>
-        <item>@drawable/ken</item>
-        <item>@drawable/dis</item>
-        <item>@drawable/nhi</item>
-        <item>@drawable/ims</item>
-        <item>@drawable/poc</item>
-        <item>@drawable/wgi</item>
-        <item>@drawable/mis</item>
-        <item>@drawable/bms</item>
-        <item>@drawable/ams</item>
-        <item>@drawable/rir</item>
-        <item>@drawable/chi</item>
-        <item>@drawable/nhi</item>
-        <item>@drawable/dov</item>
-        <item>@drawable/tal</item>
-        <item>@drawable/lms</item>
-        <item>@drawable/kan</item>
-        <item>@drawable/mar</item>
-        <item>@drawable/tms</item>
-        <item>@drawable/pir</item>
-        <item>@drawable/hms</item>
-    </array>
+    <string-array name="schedule_layouts" translatable="false">
+        <item>dis</item>
+        <item>dis</item>
+        <item>dis</item>
+        <item>dis</item>
+        <item>pir</item>
+        <item>las</item>
+        <item>bms</item>
+        <item>cal</item>
+        <item>mar</item>
+        <item>tms</item>
+        <item>kan</item>
+        <item>rir</item>
+        <item>tal</item>
+        <item>dar</item>
+        <item>lms</item>
+        <item>lms</item>
+        <item>lms</item>
+        <item>dov</item>
+        <item>poc</item>
+        <item>mis</item>
+        <item>spr</item>
+        <item>ken</item>
+        <item>dis</item>
+        <item>nhi</item>
+        <item>ims</item>
+        <item>poc</item>
+        <item>wgi</item>
+        <item>mis</item>
+        <item>bms</item>
+        <item>ams</item>
+        <item>rir</item>
+        <item>chi</item>
+        <item>nhi</item>
+        <item>dov</item>
+        <item>tal</item>
+        <item>lms</item>
+        <item>kan</item>
+        <item>mar</item>
+        <item>tms</item>
+        <item>pir</item>
+        <item>hms</item>
+    </string-array>
     
     <!-- Each driver number MUST be unique! Should NOT change a number during season. -->
     <string-array name="drivers" translatable="false">

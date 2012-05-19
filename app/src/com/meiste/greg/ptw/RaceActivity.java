@@ -60,7 +60,7 @@ public class RaceActivity extends SherlockActivity {
         name.setText(mRace.getName());
         trackLong.setText(mRace.getTrack(Race.NAME_LONG));
         tv.setText(getString(R.string.details_tv, mRace.getTv()));
-        img.setImageDrawable(mRace.getLayout());
+        img.setImageResource(mRace.getLayoutId());
     }
 
     @Override
