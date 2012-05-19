@@ -33,6 +33,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 
@@ -53,6 +54,10 @@ public final class GAE {
 
     private static final String PROD_URL = "https://ptwgame.appspot.com";
     private static final String AUTH_COOKIE_NAME = "SACSID";
+    // Timeout in milliseconds until a connection is established.
+    private static final int TIMEOUT_CONNECTION = 3000;
+    // Timeout in milliseconds to wait for data.
+    private static final int TIMEOUT_SOCKET = 5000;
 
     private static final Object sInstanceSync = new Object();
     private static GAE sInstance;
@@ -232,6 +237,8 @@ public final class GAE {
                 HttpGet method = new HttpGet(uri);
                 final HttpParams getParams = new BasicHttpParams();
                 HttpClientParams.setRedirecting(getParams, false);
+                HttpConnectionParams.setConnectionTimeout(getParams, TIMEOUT_CONNECTION);
+                HttpConnectionParams.setSoTimeout(getParams, TIMEOUT_SOCKET);
                 method.setParams(getParams);
 
                 HttpResponse res = client.execute(method);
@@ -286,6 +293,8 @@ public final class GAE {
 
             final HttpParams getParams = new BasicHttpParams();
             HttpClientParams.setRedirecting(getParams, false);
+            HttpConnectionParams.setConnectionTimeout(getParams, TIMEOUT_CONNECTION);
+            HttpConnectionParams.setSoTimeout(getParams, TIMEOUT_SOCKET);
             method.setParams(getParams);
             method.setHeader("Cookie", prefs.getString(EditPreferences.KEY_ACCOUNT_COOKIE, null));
 
@@ -342,6 +351,8 @@ public final class GAE {
 
             final HttpParams postParams = new BasicHttpParams();
             HttpClientParams.setRedirecting(postParams, false);
+            HttpConnectionParams.setConnectionTimeout(postParams, TIMEOUT_CONNECTION);
+            HttpConnectionParams.setSoTimeout(postParams, TIMEOUT_SOCKET);
             method.setParams(postParams);
             method.setHeader("Cookie", prefs.getString(EditPreferences.KEY_ACCOUNT_COOKIE, null));
 
