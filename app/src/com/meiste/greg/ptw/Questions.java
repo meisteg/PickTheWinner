@@ -172,7 +172,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
                 mRa = RaceAnswers.fromJson(json);
 
                 TextView a1 = (TextView) v.findViewById(R.id.answer1);
-                a1.setText(new Driver(res, mRa.a1).getName());
+                a1.setText(Driver.newInstance(res, mRa.a1).getName());
 
                 TextView a2 = (TextView) v.findViewById(R.id.answer2);
                 a2.setText(rq.a2[mRa.a2]);
@@ -181,7 +181,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
                 a3.setText(rq.a3[mRa.a3]);
 
                 TextView a4 = (TextView) v.findViewById(R.id.answer4);
-                a4.setText(new Driver(res, mRa.a4).getName());
+                a4.setText(Driver.newInstance(res, mRa.a4).getName());
 
                 TextView a5 = (TextView) v.findViewById(R.id.answer5);
                 a5.setText(res.getStringArray(R.array.num_leaders)[mRa.a5]);
@@ -275,7 +275,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
 
         @Override
         public Driver getItem(int position) {
-            return new Driver(mContext, position);
+            return Driver.newInstance(mContext, position);
         }
     }
 

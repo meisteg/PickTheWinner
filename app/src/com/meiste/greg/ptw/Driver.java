@@ -18,31 +18,32 @@ package com.meiste.greg.ptw;
 import android.content.Context;
 import android.content.res.Resources;
 
+import com.google.gson.Gson;
+
 public final class Driver {
     private int mNumber;
     private String mName;
 
-    public Driver(Context context, int id) {
-        Resources res = context.getResources();
-
-        mNumber = res.getIntArray(R.array.driver_nums)[id];
-        mName = res.getStringArray(R.array.driver_names)[id];
+    public static Driver newInstance(Context context, int id) {
+        String json = context.getResources().getStringArray(R.array.drivers)[id];
+        return new Gson().fromJson(json, Driver.class);
     }
 
-    public Driver(Resources res, int num) {
-        int[] numbers = res.getIntArray(R.array.driver_nums);
-        mNumber = num;
+    public static Driver newInstance(Resources res, int num) {
+        String[] drivers = res.getStringArray(R.array.drivers);
+        Gson gson = new Gson();
 
-        for (int id = 0; id < numbers.length; id++) {
-            if (numbers[id] == num) {
-                mName = res.getStringArray(R.array.driver_names)[id];
-                break;
-            }
+        for (String json : drivers) {
+            Driver driver = gson.fromJson(json, Driver.class);
+            if (driver.getNumber() == num)
+                return driver;
         }
+
+        return null;
     }
 
     public static int getNumDrivers(Context context) {
-        return context.getResources().getIntArray(R.array.driver_nums).length;
+        return context.getResources().getStringArray(R.array.drivers).length;
     }
 
     public int getNumber() {

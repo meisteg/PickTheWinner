@@ -416,132 +416,68 @@
         <item>@drawable/hms</item>
     </array>
     
-    <!-- Must remain in sync with driver_nums array below. -->
-    <string-array name="driver_names" translatable="false">
-        <item>A.J. Allmendinger</item>
-        <item>Aric Almirola</item>
-        <item>Marcos Ambrose</item>
-        <item>Trevor Bayne</item>
-        <item>Greg Biffle</item>
-        <item>Dave Blaney</item>
-        <item>Mike Bliss</item>
-        <item>Clint Bowyer</item>
-        <item>Jeff Burton</item>
-        <item>Kurt Busch</item>
-        <item>Kyle Busch</item>
-        <item>Landon Cassill</item>
-        <item>Stacy Compton</item>
-        <item>Dale Earnhardt Jr.</item>
-        <item>Carl Edwards</item>
-        <item>Bill Elliott</item>
-        <item>Brendan Gaughan</item>
-        <item>David Gilliland</item>
-        <item>Jeff Gordon</item>
-        <item>Robby Gordon</item>
-        <item>Denny Hamlin</item>
-        <item>Kevin Harvick</item>
-        <item>Timmy Hill</item>
-        <item>Jimmie Johnson</item>
-        <item>Kasey Kahne</item>
-        <item>Matt Kenseth</item>
-        <item>Brad Keselowski</item>
-        <item>Travis Kvapil</item>
-        <item>Terry Labonte</item>
-        <item>Bobby Labonte</item>
-        <item>Joey Logano</item>
-        <item>Mark Martin</item>
-        <item>Michael McDowell</item>
-        <item>Jamie McMurray</item>
-        <item>Casey Mears</item>
-        <item>Paul Menard</item>
-        <item>Juan Montoya</item>
-        <item>Joe Nemechek</item>
-        <item>Ryan Newman</item>
-        <item>Danica Patrick</item>
-        <item>David Ragan</item>
-        <item>Tony Raines</item>
-        <item>David Reutimann</item>
-        <item>Robert Richardson Jr.</item>
-        <item>Scott Riggs</item>
-        <item>Elliott Sadler</item>
-        <item>Ken Schrader</item>
-        <item>Regan Smith</item>
-        <item>Reed Sorenson</item>
-        <item>Ricky Stenhouse Jr.</item>
-        <item>Tony Stewart</item>
-        <item>David Stremme</item>
-        <item>Martin Truex Jr.</item>
-        <item>Brian Vickers</item>
-        <item>Kenny Wallace</item>
-        <item>Mike Wallace</item>
-        <item>Michael Waltrip</item>
-        <item>Josh Wise</item>
-        <item>J.J. Yeley</item>
+    <!-- Each driver number MUST be unique! Should NOT change a number during season. -->
+    <string-array name="drivers" translatable="false">
+        <item>{\"mName\":\"A.J. Allmendinger\",\"mNumber\":22}</item>
+        <item>{\"mName\":\"Aric Almirola\",\"mNumber\":43}</item>
+        <item>{\"mName\":\"Marcos Ambrose\",\"mNumber\":9}</item>
+        <item>{\"mName\":\"Trevor Bayne\",\"mNumber\":21}</item>
+        <item>{\"mName\":\"Greg Biffle\",\"mNumber\":16}</item>
+        <item>{\"mName\":\"Dave Blaney\",\"mNumber\":36}</item>
+        <item>{\"mName\":\"Mike Bliss\",\"mNumber\":32}</item>
+        <item>{\"mName\":\"Clint Bowyer\",\"mNumber\":15}</item>
+        <item>{\"mName\":\"Jeff Burton\",\"mNumber\":31}</item>
+        <item>{\"mName\":\"Kurt Busch\",\"mNumber\":51}</item>
+        <item>{\"mName\":\"Kyle Busch\",\"mNumber\":18}</item>
+        <item>{\"mName\":\"Landon Cassill\",\"mNumber\":83}</item>
+        <item>{\"mName\":\"Stacy Compton\",\"mNumber\":74}</item>
+        <item>{\"mName\":\"Dale Earnhardt Jr.\",\"mNumber\":88}</item>
+        <item>{\"mName\":\"Carl Edwards\",\"mNumber\":99}</item>
+        <item>{\"mName\":\"Bill Elliott\",\"mNumber\":97}</item>
+        <item>{\"mName\":\"Brendan Gaughan\",\"mNumber\":33}</item>
+        <item>{\"mName\":\"David Gilliland\",\"mNumber\":38}</item>
+        <item>{\"mName\":\"Jeff Gordon\",\"mNumber\":24}</item>
+        <item>{\"mName\":\"Robby Gordon\",\"mNumber\":7}</item>
+        <item>{\"mName\":\"Denny Hamlin\",\"mNumber\":11}</item>
+        <item>{\"mName\":\"Kevin Harvick\",\"mNumber\":29}</item>
+        <item>{\"mName\":\"Timmy Hill\",\"mNumber\":37}</item>
+        <item>{\"mName\":\"Jimmie Johnson\",\"mNumber\":48}</item>
+        <item>{\"mName\":\"Kasey Kahne\",\"mNumber\":5}</item>
+        <item>{\"mName\":\"Matt Kenseth\",\"mNumber\":17}</item>
+        <item>{\"mName\":\"Brad Keselowski\",\"mNumber\":2}</item>
+        <item>{\"mName\":\"Travis Kvapil\",\"mNumber\":93}</item>
+        <item>{\"mName\":\"Terry Labonte\",\"mNumber\":320}</item>
+        <item>{\"mName\":\"Bobby Labonte\",\"mNumber\":47}</item>
+        <item>{\"mName\":\"Joey Logano\",\"mNumber\":20}</item>
+        <item>{\"mName\":\"Mark Martin\",\"mNumber\":55}</item>
+        <item>{\"mName\":\"Michael McDowell\",\"mNumber\":98}</item>
+        <item>{\"mName\":\"Jamie McMurray\",\"mNumber\":1}</item>
+        <item>{\"mName\":\"Casey Mears\",\"mNumber\":13}</item>
+        <item>{\"mName\":\"Paul Menard\",\"mNumber\":27}</item>
+        <item>{\"mName\":\"Juan Montoya\",\"mNumber\":42}</item>
+        <item>{\"mName\":\"Joe Nemechek\",\"mNumber\":87}</item>
+        <item>{\"mName\":\"Ryan Newman\",\"mNumber\":39}</item>
+        <item>{\"mName\":\"Danica Patrick\",\"mNumber\":100}</item>
+        <item>{\"mName\":\"David Ragan\",\"mNumber\":34}</item>
+        <item>{\"mName\":\"Tony Raines\",\"mNumber\":26}</item>
+        <item>{\"mName\":\"David Reutimann\",\"mNumber\":10}</item>
+        <item>{\"mName\":\"Robert Richardson Jr.\",\"mNumber\":23}</item>
+        <item>{\"mName\":\"Scott Riggs\",\"mNumber\":230}</item>
+        <item>{\"mName\":\"Elliott Sadler\",\"mNumber\":330}</item>
+        <item>{\"mName\":\"Ken Schrader\",\"mNumber\":321}</item>
+        <item>{\"mName\":\"Regan Smith\",\"mNumber\":78}</item>
+        <item>{\"mName\":\"Reed Sorenson\",\"mNumber\":740}</item>
+        <item>{\"mName\":\"Ricky Stenhouse Jr.\",\"mNumber\":6}</item>
+        <item>{\"mName\":\"Tony Stewart\",\"mNumber\":14}</item>
+        <item>{\"mName\":\"David Stremme\",\"mNumber\":30}</item>
+        <item>{\"mName\":\"Martin Truex Jr.\",\"mNumber\":56}</item>
+        <item>{\"mName\":\"Brian Vickers\",\"mNumber\":550}</item>
+        <item>{\"mName\":\"Kenny Wallace\",\"mNumber\":109}</item>
+        <item>{\"mName\":\"Mike Wallace\",\"mNumber\":370}</item>
+        <item>{\"mName\":\"Michael Waltrip\",\"mNumber\":140}</item>
+        <item>{\"mName\":\"Josh Wise\",\"mNumber\":260}</item>
+        <item>{\"mName\":\"J.J. Yeley\",\"mNumber\":249}</item>
     </string-array>
-    
-    <!-- Each item MUST be unique! Should NOT change a number during season. -->
-    <!-- Must remain in sync with driver_names array above. -->
-    <integer-array name="driver_nums" translatable="false">
-        <item>22</item>
-        <item>43</item>
-        <item>9</item>
-        <item>21</item>
-        <item>16</item>
-        <item>36</item>
-        <item>32</item>
-        <item>15</item>
-        <item>31</item>
-        <item>51</item>
-        <item>18</item>
-        <item>83</item>
-        <item>74</item>
-        <item>88</item>
-        <item>99</item>
-        <item>97</item>
-        <item>33</item>
-        <item>38</item>
-        <item>24</item>
-        <item>7</item>
-        <item>11</item>
-        <item>29</item>
-        <item>37</item>
-        <item>48</item>
-        <item>5</item>
-        <item>17</item>
-        <item>2</item>
-        <item>93</item>
-        <item>320</item>
-        <item>47</item>
-        <item>20</item>
-        <item>55</item>
-        <item>98</item>
-        <item>1</item>
-        <item>13</item>
-        <item>27</item>
-        <item>42</item>
-        <item>87</item>
-        <item>39</item>
-        <item>100</item>
-        <item>34</item>
-        <item>26</item>
-        <item>10</item>
-        <item>23</item>
-        <item>230</item>
-        <item>330</item>
-        <item>321</item>
-        <item>78</item>
-        <item>740</item>
-        <item>6</item>
-        <item>14</item>
-        <item>30</item>
-        <item>56</item>
-        <item>550</item>
-        <item>109</item>
-        <item>370</item>
-        <item>140</item>
-        <item>260</item>
-        <item>249</item>
-    </integer-array>
     
     <string-array name="num_leaders">
         <item>1 &#8211; 5 drivers</item>
