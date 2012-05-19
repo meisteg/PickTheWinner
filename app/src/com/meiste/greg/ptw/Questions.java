@@ -200,7 +200,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
             v = inflater.inflate(R.layout.questions_not_yet, container, false);
 
             TextView time = (TextView) v.findViewById(R.id.questiontime);
-            time.setText(mRace.getQuestionDateTime());
+            time.setText(mRace.getQuestionDateTime(getActivity()));
         }
 
         TextView name = (TextView) v.findViewById(R.id.racename);

@@ -55,12 +55,12 @@ public class RaceActivity extends SherlockActivity {
             if (mRace.isInChase())
                 inTheChase.setVisibility(View.VISIBLE);
         }
-        trackSize.setText(mRace.getTrackSize());
-        startTime.setText(mRace.getStartDateTime());
+        trackSize.setText(mRace.getTrackSize(this));
+        startTime.setText(mRace.getStartDateTime(this));
         name.setText(mRace.getName());
         trackLong.setText(mRace.getTrack(Race.NAME_LONG));
         tv.setText(getString(R.string.details_tv, mRace.getTv()));
-        img.setImageResource(mRace.getLayoutId());
+        img.setImageResource(mRace.getLayoutId(this));
     }
 
     @Override

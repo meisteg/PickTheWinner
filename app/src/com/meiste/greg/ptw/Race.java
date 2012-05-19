@@ -23,8 +23,6 @@ public final class Race {
     public static final int NAME_SHORT = 0;
     public static final int NAME_LONG = 1;
 
-    private Context mContext;
-
     private int mId;
     private int mRaceNum;
     private String mTrackLong;
@@ -37,7 +35,6 @@ public final class Race {
     private String mLayout;
 
     public Race(Context context, int id) {
-        mContext = context;
         Resources res = context.getResources();
 
         mId = id;
@@ -110,42 +107,42 @@ public final class Race {
         return mTv;
     }
 
-    public String getStartDate() {
+    public String getStartDate(Context context) {
         int flags = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_YEAR;
-        return DateUtils.formatDateTime(mContext, mStart, flags);
+        return DateUtils.formatDateTime(context, mStart, flags);
     }
 
-    public String getStartTime() {
+    public String getStartTime(Context context) {
         int flags = DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_NO_NOON_MIDNIGHT;
-        return DateUtils.formatDateTime(mContext, mStart, flags);
+        return DateUtils.formatDateTime(context, mStart, flags);
     }
 
-    public String getStartDateTime() {
+    public String getStartDateTime(Context context) {
         int flags = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_YEAR;
         flags |= DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_NO_NOON_MIDNIGHT;
         flags |= DateUtils.FORMAT_SHOW_WEEKDAY;
-        return DateUtils.formatDateTime(mContext, mStart, flags);
+        return DateUtils.formatDateTime(context, mStart, flags);
     }
 
     public long getStartTimestamp() {
         return mStart;
     }
 
-    public String getQuestionDateTime() {
+    public String getQuestionDateTime(Context context) {
         int flags = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_YEAR;
         flags |= DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_NO_NOON_MIDNIGHT;
-        return DateUtils.formatDateTime(mContext, mQuestion, flags);
+        return DateUtils.formatDateTime(context, mQuestion, flags);
     }
 
     public long getQuestionTimestamp() {
         return mQuestion;
     }
 
-    public int getLayoutId() {
-        return mContext.getResources().getIdentifier(mLayout, "drawable", mContext.getPackageName());
+    public int getLayoutId(Context context) {
+        return context.getResources().getIdentifier(mLayout, "drawable", context.getPackageName());
     }
 
-    public String getTrackSize() {
-        return mContext.getString(R.string.details_size, mSize);
+    public String getTrackSize(Context context) {
+        return context.getString(R.string.details_size, mSize);
     }
 }

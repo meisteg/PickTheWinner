@@ -65,10 +65,10 @@ public final class RaceItemAdapter extends ArrayAdapter<Race> {
             raceNum.setText(mRaces[pos].getRaceNum());
 
         if (startDate != null)
-            startDate.setText(mRaces[pos].getStartDate());
+            startDate.setText(mRaces[pos].getStartDate(mContext));
 
         if (startTime != null)
-            startTime.setText(mRaces[pos].getStartTime());
+            startTime.setText(mRaces[pos].getStartTime(mContext));
 
         if (name != null)
             name.setText(mRaces[pos].getName());
