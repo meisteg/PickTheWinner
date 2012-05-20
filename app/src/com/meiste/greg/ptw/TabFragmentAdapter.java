@@ -21,9 +21,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.view.ViewGroup;
 
-import com.viewpagerindicator.TitleProvider;
-
-class TabFragmentAdapter extends FragmentPagerAdapter implements TitleProvider {
+class TabFragmentAdapter extends FragmentPagerAdapter {
     private TabFragment[] mFragments = new TabFragment[5];
     private FragmentListener mFragmentListener = new MyFragmentListener();
     private Context mContext;
@@ -81,7 +79,7 @@ class TabFragmentAdapter extends FragmentPagerAdapter implements TitleProvider {
     }
 
     @Override
-    public String getTitle(int position) {
+    public CharSequence getPageTitle(int position) {
         if (mFragments[position] == null)
             return Integer.toString(position);
 
