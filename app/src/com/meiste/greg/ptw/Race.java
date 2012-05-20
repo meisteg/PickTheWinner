@@ -16,7 +16,6 @@
 package com.meiste.greg.ptw;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.text.format.DateUtils;
 
 public final class Race {
@@ -34,25 +33,12 @@ public final class Race {
     private long mQuestion;
     private String mLayout;
 
-    public Race(Context context, int id) {
-        Resources res = context.getResources();
-
-        mId = id;
-        mRaceNum = res.getIntArray(R.array.schedule_race_nums)[id];
-        mTrackLong = res.getStringArray(R.array.schedule_tracks)[id];
-        mTrackShort = res.getStringArray(R.array.schedule_tracks_short)[id];
-        mName = res.getStringArray(R.array.schedule_races)[id];
-        mTv = res.getStringArray(R.array.schedule_tv)[id];
-        mSize = res.getStringArray(R.array.schedule_tracks_size)[id];
-        mStart = res.getIntArray(R.array.schedule_start_times)[id] * DateUtils.SECOND_IN_MILLIS;
-        mQuestion = res.getIntArray(R.array.schedule_question_times)[id] * DateUtils.SECOND_IN_MILLIS;
-        mLayout = res.getStringArray(R.array.schedule_layouts)[id];
+    public static Race getInstance(Context context, int id) {
+        return Races.get(context)[id];
     }
 
     public static Race getNext(Context context, boolean allowExhibition, boolean allowInProgress) {
-        for (int i = 0; i < getNumRaces(context); ++i) {
-            Race race = new Race(context, i);
-
+        for (Race race : Races.get(context)) {
             if (race.isFuture()) {
                 if (!allowExhibition && race.isExhibition())
                     continue;
@@ -65,10 +51,6 @@ public final class Race {
         }
 
         return null;
-    }
-
-    public static int getNumRaces(Context context) {
-        return context.getResources().getInteger(R.integer.num_races);
     }
 
     public boolean isFuture() {

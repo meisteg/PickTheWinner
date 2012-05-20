@@ -36,7 +36,7 @@ public class RaceActivity extends SherlockActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mRace = new Race(this, getIntent().getIntExtra(INTENT_ID, 0));
+        mRace = Race.getInstance(this, getIntent().getIntExtra(INTENT_ID, 0));
 
         TextView raceNum = (TextView) findViewById(R.id.race_num);
         TextView inTheChase = (TextView) findViewById(R.id.race_in_chase);

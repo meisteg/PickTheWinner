@@ -75,7 +75,7 @@ public final class QuestionAlarm extends BroadcastReceiver {
         // Verify user didn't turn off question reminders after alarm was set
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         if (prefs.getBoolean(EditPreferences.KEY_REMIND_QUESTIONS, true)) {
-            Race race = new Race(context, intent.getIntExtra(RACE_ID, 0));
+            Race race = Race.getInstance(context, intent.getIntExtra(RACE_ID, 0));
             Util.log("Received question alarm for race " + race.getId());
 
             Intent notificationIntent = new Intent(context, MainActivity.class);

@@ -27,10 +27,15 @@ public final class RaceItemAdapter extends ArrayAdapter<Race> {
     private Race[] mRaces;
     private Context mContext;
 
-    public RaceItemAdapter(Context context, int textViewResourceId, Race[] races) {
-        super(context, textViewResourceId, races);
+    public RaceItemAdapter(Context context, int textViewResourceId) {
+        super(context, textViewResourceId);
         mContext = context;
-        mRaces = races;
+        mRaces = Races.get(context);
+    }
+
+    @Override
+    public int getCount() {
+        return mRaces.length;
     }
 
     @Override
@@ -39,10 +44,6 @@ public final class RaceItemAdapter extends ArrayAdapter<Race> {
         if (v == null) {
             LayoutInflater vi = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             v = vi.inflate(R.layout.schedule_row, null);
-        }
-
-        if (mRaces[pos] == null) {
-            mRaces[pos] = new Race(mContext, pos);
         }
 
         LinearLayout row = (LinearLayout) v.findViewById(R.id.row);

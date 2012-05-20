@@ -37,9 +37,8 @@ public final class Schedule extends TabFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.schedule, container, false);
 
-        Race[] races = new Race[Race.getNumRaces(getActivity())];
         ListView lv = (ListView) v.findViewById(R.id.schedule);
-        lv.setAdapter(new RaceItemAdapter(getActivity(), R.layout.schedule_row, races));
+        lv.setAdapter(new RaceItemAdapter(getActivity(), R.layout.schedule_row));
 
         lv.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int pos, long id) {
