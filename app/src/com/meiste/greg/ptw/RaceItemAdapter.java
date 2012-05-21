@@ -39,6 +39,12 @@ public final class RaceItemAdapter extends ArrayAdapter<Race> {
     }
 
     @Override
+    public void notifyDataSetChanged() {
+        mRaces = Races.get(mContext);
+        super.notifyDataSetChanged();
+    }
+
+    @Override
     public View getView(int pos, View convertView, ViewGroup parent) {
         View v = convertView;
         if (v == null) {

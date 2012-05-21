@@ -16,6 +16,7 @@
 package com.meiste.greg.ptw;
 
 import java.io.BufferedReader;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -25,6 +26,7 @@ import com.google.gson.Gson;
 
 public final class Races {
 
+    private static final String FILENAME = "schedule";
     private static final Object sRacesSync = new Object();
     private static Race[] sRaces;
 
@@ -33,16 +35,32 @@ public final class Races {
             if (sRaces == null) {
                 Util.log("Populating race array");
 
-                // TODO: First try opening updated schedule file from GAE
-                sRaces = getIncluded(context);
+                sRaces = getLatest(context);
+                if (sRaces == null) {
+                    // User doesn't have updated schedule, so use included schedule
+                    sRaces = getIncluded(context);
+                }
             }
         }
         return sRaces;
     }
 
+    public static void update(Context context, String json) {
+        synchronized (sRacesSync) {
+            try {
+                FileOutputStream fos = context.openFileOutput(FILENAME, Context.MODE_PRIVATE);
+                fos.write(json.getBytes());
+                fos.close();
+                sRaces = null;
+            } catch (Exception e) {
+                Util.log("Failed to save update to schedule");
+            }
+        }
+    }
+
     private static Race[] getIncluded(Context context) {
         try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(context.getAssets().open("schedule")));
+            BufferedReader in = new BufferedReader(new InputStreamReader(context.getAssets().open(FILENAME)));
             String line;
             StringBuilder buffer = new StringBuilder();
             while ((line = in.readLine()) != null)
@@ -53,6 +71,21 @@ public final class Races {
             Util.log("Unable to open included schedule: " + e);
         }
 
+        return null;
+    }
+
+    private static Race[] getLatest(Context context) {
+        try {
+            BufferedReader in = new BufferedReader(new InputStreamReader(context.openFileInput(FILENAME)));
+            String line;
+            StringBuilder buffer = new StringBuilder();
+            while ((line = in.readLine()) != null)
+                buffer.append(line).append('\n');
+            in.close();
+            return new Gson().fromJson(buffer.toString(), Race[].class);
+        } catch (Exception e) {
+            Util.log("No updated schedule found");
+        }
         return null;
     }
 }

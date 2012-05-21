@@ -111,12 +111,12 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
             if (resultCode == RESULT_OK)
                 mGae.connect(this, mAccountName);
             else
-                onFailedConnect();
+                onFailedConnect(this);
         }
     }
 
     @Override
-    public void onFailedConnect() {
+    public void onFailedConnect(Context context) {
         Toast.makeText(this, R.string.failed_connect, Toast.LENGTH_SHORT).show();
         finish();
     }

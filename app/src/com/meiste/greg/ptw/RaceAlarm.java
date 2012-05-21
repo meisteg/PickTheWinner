@@ -52,6 +52,11 @@ public final class RaceAlarm extends BroadcastReceiver {
         }
     }
 
+    public static void reset(Context context) {
+        alarm_set = false;
+        set(context);
+    }
+
     @Override
     public void onReceive(Context context, Intent intent) {
         alarm_set = false;

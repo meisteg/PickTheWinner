@@ -74,7 +74,7 @@ public final class GAE {
     private String mJson;
 
     static interface GaeListener {
-        void onFailedConnect();
+        void onFailedConnect(Context context);
         void onLaunchIntent(Intent launch);
         void onConnectSuccess(Context context, String json);
         void onGet(Context context, String json);
@@ -320,7 +320,7 @@ public final class GAE {
                             new InputStreamReader(resp.getEntity().getContent()));
                     String line;
                     while ((line = reader.readLine()) != null) {
-                        mBuilder.append(line);
+                        mBuilder.append(line).append('\n');
                     }
                     break;
                 case HttpStatus.SC_MOVED_TEMPORARILY:
@@ -416,7 +416,7 @@ public final class GAE {
     }
 
     private void cbFailedConnect() {
-        mListener.onFailedConnect();
+        mListener.onFailedConnect(mContext);
         synchronized (mListenerSync) {
             mGetPage = mJson = mAccountName = null;
             mListener = null;

@@ -99,7 +99,7 @@ public final class Suggest extends TabFragment implements View.OnClickListener, 
     }
 
     @Override
-    public void onFailedConnect() {
+    public void onFailedConnect(Context context) {
         Util.log("Suggest: onFailedConnect");
     }
 

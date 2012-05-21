@@ -337,7 +337,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
     }
 
     @Override
-    public void onFailedConnect() {
+    public void onFailedConnect(Context context) {
         Util.log("Questions: onFailedConnect");
 
         // Verify application wasn't closed before callback returned
