@@ -27,6 +27,17 @@ public final class RaceItemAdapter extends ArrayAdapter<Race> {
     private Race[] mRaces;
     private Context mContext;
 
+    private class ViewHolder {
+        public LinearLayout row;
+        public TextView raceNum;
+        public TextView startDate;
+        public TextView startTime;
+        public TextView name;
+        public TextView trackLong;
+        public TextView trackShort;
+        public TextView tv;
+    }
+
     public RaceItemAdapter(Context context, int textViewResourceId) {
         super(context, textViewResourceId);
         mContext = context;
@@ -46,48 +57,54 @@ public final class RaceItemAdapter extends ArrayAdapter<Race> {
 
     @Override
     public View getView(int pos, View convertView, ViewGroup parent) {
+        ViewHolder holder;
         View v = convertView;
+
         if (v == null) {
             LayoutInflater vi = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             v = vi.inflate(R.layout.schedule_row, null);
+
+            holder = new ViewHolder();
+            holder.row = (LinearLayout) v.findViewById(R.id.row);
+            holder.raceNum = (TextView) v.findViewById(R.id.race_num);
+            holder.startDate = (TextView) v.findViewById(R.id.race_date);
+            holder.startTime = (TextView) v.findViewById(R.id.race_time);
+            holder.name = (TextView) v.findViewById(R.id.race_name);
+            holder.trackLong = (TextView) v.findViewById(R.id.race_track);
+            holder.trackShort = (TextView) v.findViewById(R.id.race_track_short);
+            holder.tv = (TextView) v.findViewById(R.id.race_tv);
+            v.setTag(holder);
+        } else {
+            holder = (ViewHolder) v.getTag();
         }
 
-        LinearLayout row = (LinearLayout) v.findViewById(R.id.row);
-        TextView raceNum = (TextView) v.findViewById(R.id.race_num);
-        TextView startDate = (TextView) v.findViewById(R.id.race_date);
-        TextView startTime = (TextView) v.findViewById(R.id.race_time);
-        TextView name = (TextView) v.findViewById(R.id.race_name);
-        TextView trackLong = (TextView) v.findViewById(R.id.race_track);
-        TextView trackShort = (TextView) v.findViewById(R.id.race_track_short);
-        TextView tv = (TextView) v.findViewById(R.id.race_tv);
-
         if (!mRaces[pos].isFuture())
-            row.setBackgroundResource(R.drawable.schedule_past);
+            holder.row.setBackgroundResource(R.drawable.schedule_past);
         else if (mRaces[pos].isInChase())
-            row.setBackgroundResource(R.drawable.schedule_chase);
+            holder.row.setBackgroundResource(R.drawable.schedule_chase);
         else
-            row.setBackgroundResource(R.drawable.schedule_future);
+            holder.row.setBackgroundResource(R.drawable.schedule_future);
 
-        if (raceNum != null)
-            raceNum.setText(mRaces[pos].getRaceNum());
+        if (holder.raceNum != null)
+            holder.raceNum.setText(mRaces[pos].getRaceNum());
 
-        if (startDate != null)
-            startDate.setText(mRaces[pos].getStartDate(mContext));
+        if (holder.startDate != null)
+            holder.startDate.setText(mRaces[pos].getStartDate(mContext));
 
-        if (startTime != null)
-            startTime.setText(mRaces[pos].getStartTime(mContext));
+        if (holder.startTime != null)
+            holder.startTime.setText(mRaces[pos].getStartTime(mContext));
 
-        if (name != null)
-            name.setText(mRaces[pos].getName());
+        if (holder.name != null)
+            holder.name.setText(mRaces[pos].getName());
 
-        if (trackLong != null)
-            trackLong.setText(mRaces[pos].getTrack(Race.NAME_LONG));
+        if (holder.trackLong != null)
+            holder.trackLong.setText(mRaces[pos].getTrack(Race.NAME_LONG));
 
-        if (trackShort != null)
-            trackShort.setText(mRaces[pos].getTrack(Race.NAME_SHORT));
+        if (holder.trackShort != null)
+            holder.trackShort.setText(mRaces[pos].getTrack(Race.NAME_SHORT));
 
-        if (tv != null)
-            tv.setText(mRaces[pos].getTv());
+        if (holder.tv != null)
+            holder.tv.setText(mRaces[pos].getTv());
 
         return v;
     }
