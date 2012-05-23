@@ -185,7 +185,13 @@ public final class GAE {
         editor.putString(EditPreferences.KEY_ACCOUNT_COOKIE, null);
         editor.commit();
 
+        // HACK: The GAE class should not need to know what to clear on a user
+        // change. Ideally, the components would register for this event and
+        // handle this themselves. However, the fragments are not guaranteed to
+        // be instantiated, and therefore not registered. Handle here for now.
         mContext.getSharedPreferences(Questions.ACACHE, Activity.MODE_PRIVATE).edit().clear().commit();
+        mContext.deleteFile(Standings.FILENAME);
+
         reconnect();
     }
 
