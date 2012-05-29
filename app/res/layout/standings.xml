@@ -15,20 +15,14 @@
      limitations under the License.
 -->
 
-<resources>
-    <color name="tab_bg">#18FF0000</color>
-    <color name="tab_footer">#FFAA2222</color>
-    <color name="tab_text">#AA000000</color>
-    <color name="tab_selected">#FF000000</color>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
     
-    <color name="standings_header">#FFCCCCCC</color>
-    <color name="standings_chase">#88FFFF00</color>
-    <color name="standings_self">#8800FF00</color>
-    <color name="standings_other">#FFFFFFFF</color>
+    <com.handmark.pulltorefresh.library.PullToRefreshListView 
+        android:id="@+id/standings"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
     
-    <color name="schedule_past">#FFCCCCCC</color>
-    <color name="schedule_future">#FFFFFFFF</color>
-    <color name="schedule_chase">#88FFFF00</color>
-    
-    <color name="ad_background">#FF222222</color>
-</resources>
+</LinearLayout>

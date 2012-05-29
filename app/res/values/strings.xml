@@ -118,6 +118,14 @@
     <string name="questions_soon">Questions will be available at</string>
     <string name="questions_success">Answers submitted!</string>
     
+    <!-- Standings Strings -->
+    <string name="standings_after">After %s</string>
+    <string name="standings_rank">Rank</string>
+    <string name="standings_player">Player</string>
+    <string name="standings_points">Points</string>
+    <string name="standings_races">Races</string>
+    <string name="standings_wins">Wins</string>
+    
     <!-- Suggest Strings -->
     <string name="suggest_para1">You can submit question ideas for the next race at:</string>
     <string name="suggest_para2">It is optional and does not earn you any points.</string>

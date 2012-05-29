@@ -18,27 +18,30 @@ package com.meiste.greg.ptw;
 import java.io.File;
 import java.io.FileOutputStream;
 
-import com.meiste.greg.ptw.GAE.GaeListener;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
-import android.widget.LinearLayout.LayoutParams;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public final class Standings extends TabFragment implements GaeListener {
+import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
+import com.handmark.pulltorefresh.library.PullToRefreshListView;
+import com.meiste.greg.ptw.GAE.GaeListener;
+
+public final class Standings extends TabFragment implements OnRefreshListener, GaeListener {
     public static final String FILENAME = "standings";
 
     private boolean mSetupNeeded;
     private boolean mChanged = false;
     private boolean mFailedConnect = false;
     private boolean mConnecting = false;
+    private PullToRefreshListView mPullToRefresh;
+    private PlayerAdapter mAdapter;
 
     public static Standings newInstance(Context context) {
         Standings fragment = new Standings();
@@ -76,11 +79,19 @@ public final class Standings extends TabFragment implements GaeListener {
             return inflater.inflate(R.layout.connecting, container, false);
         }
 
-        TextView text = new TextView(getActivity());
-        text.setGravity(Gravity.CENTER);
-        text.setText("TODO");
-        text.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-        return text;
+        View v = inflater.inflate(R.layout.standings, container, false);
+        mPullToRefresh = (PullToRefreshListView) v.findViewById(R.id.standings);
+        mPullToRefresh.setOnRefreshListener(this);
+
+        ListView lv = mPullToRefresh.getRefreshableView();
+        View header = inflater.inflate(R.layout.standings_header, lv, false);
+        mAdapter = new PlayerAdapter(getActivity(), R.layout.schedule_row);
+        TextView tv = (TextView) header.findViewById(R.id.after);
+        tv.setText(getActivity().getString(R.string.standings_after, mAdapter.getRaceAfter()));
+        lv.addHeaderView(header, null, false);
+        lv.setAdapter(mAdapter);
+
+        return v;
     }
 
     @Override
@@ -106,12 +117,17 @@ public final class Standings extends TabFragment implements GaeListener {
     }
 
     @Override
+    public void onRefresh() {
+        GAE.getInstance(getActivity()).getPage(this, "standings");
+    }
+
+    @Override
     public void onFailedConnect(Context context) {
         Util.log("Standings: onFailedConnect");
 
         // mConnecting not set for pull to refresh case
         if (!mConnecting) {
-            //mPullToRefresh.onRefreshComplete();
+            mPullToRefresh.onRefreshComplete();
             Toast.makeText(context, R.string.failed_connect, Toast.LENGTH_SHORT).show();
         }
         // Verify application wasn't closed before callback returned
@@ -136,8 +152,8 @@ public final class Standings extends TabFragment implements GaeListener {
 
         // mConnecting not set for pull to refresh case
         if (!mConnecting) {
-            //mAdapter.notifyDataSetChanged();
-            //mPullToRefresh.onRefreshComplete();
+            mAdapter.notifyDataSetChanged();
+            mPullToRefresh.onRefreshComplete();
         }
         // Verify application wasn't closed before callback returned
         else if (getActivity() != null) {
