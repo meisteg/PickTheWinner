@@ -55,9 +55,9 @@ public final class GAE {
     private static final String PROD_URL = "https://ptwgame.appspot.com";
     private static final String AUTH_COOKIE_NAME = "SACSID";
     // Timeout in milliseconds until a connection is established.
-    private static final int TIMEOUT_CONNECTION = 5000;
+    private static final int TIMEOUT_CONNECTION = 10000;
     // Timeout in milliseconds to wait for data.
-    private static final int TIMEOUT_SOCKET = 5000;
+    private static final int TIMEOUT_SOCKET = 10000;
     // Force the auth cookie to be always expired (FOR DEBUG ONLY).
     private static final boolean DEBUG_FORCE_COOKIE_EXPIRED = false;
 
