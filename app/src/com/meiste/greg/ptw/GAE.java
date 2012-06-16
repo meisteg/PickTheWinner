@@ -16,6 +16,7 @@
 package com.meiste.greg.ptw;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -45,6 +46,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -70,6 +73,7 @@ public final class GAE {
     private GaeListener mListener;
     private String mAccountName;
     private boolean mNeedInvalidate = true;
+    private int mRemainingRetries = 3;
     private String mGetPage;
     private String mJson;
 
@@ -178,6 +182,14 @@ public final class GAE {
         mHandler.post(r);
     }
 
+    private boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+
+        return (netInfo != null) && (netInfo.isConnected());
+    }
+
     private void doConnect() {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         SharedPreferences.Editor editor = prefs.edit();
@@ -236,6 +248,14 @@ public final class GAE {
                     // Phase 2: get authCookie from PTW server
                     new GetCookieTask().execute(authToken);
                 }
+            } catch (IOException e) {
+                Util.log("Get auth token failed with IOException: online=" + isOnline());
+
+                if (isOnline() && (mRemainingRetries > 0)) {
+                    mRemainingRetries--;
+                    reconnect();
+                } else
+                    cbFailedConnect();
             } catch (Exception e) {
                 Util.log("Get auth token failed with exception " + e);
                 cbFailedConnect();
