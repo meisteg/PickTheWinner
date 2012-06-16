@@ -43,6 +43,6 @@ public final class Player {
     }
 
     public boolean inChase() {
-        return rank <= 10;
+        return (rank <= 10) || (points >= 5000);
     }
 }

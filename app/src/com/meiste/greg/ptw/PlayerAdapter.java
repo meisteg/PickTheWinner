@@ -72,6 +72,10 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
     private void findWildCards() {
         mStandings.wildcards = new Player[2];
 
+        // Wild card rule does not apply once in the Chase
+        if (Race.getInstance(mContext, mStandings.race_id).isInChase())
+            return;
+
         // Verify we have at least 12 players (remember, counting from zero)
         if (mStandings.standings.length < 11)
             return;
