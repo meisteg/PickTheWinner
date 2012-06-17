@@ -42,6 +42,7 @@ public final class Standings extends TabFragment implements OnRefreshListener, G
     private boolean mConnecting = false;
     private PullToRefreshListView mPullToRefresh;
     private PlayerAdapter mAdapter;
+    private TextView mAfterRace;
 
     public static Standings newInstance(Context context) {
         Standings fragment = new Standings();
@@ -86,8 +87,8 @@ public final class Standings extends TabFragment implements OnRefreshListener, G
         ListView lv = mPullToRefresh.getRefreshableView();
         View header = inflater.inflate(R.layout.standings_header, lv, false);
         mAdapter = new PlayerAdapter(getActivity(), R.layout.schedule_row);
-        TextView tv = (TextView) header.findViewById(R.id.after);
-        tv.setText(getActivity().getString(R.string.standings_after, mAdapter.getRaceAfter()));
+        mAfterRace = (TextView) header.findViewById(R.id.after);
+        mAfterRace.setText(getActivity().getString(R.string.standings_after, mAdapter.getRaceAfter()));
         lv.addHeaderView(header, null, false);
         lv.setAdapter(mAdapter);
 
@@ -153,6 +154,7 @@ public final class Standings extends TabFragment implements OnRefreshListener, G
         // mConnecting not set for pull to refresh case
         if (!mConnecting) {
             mAdapter.notifyDataSetChanged();
+            mAfterRace.setText(context.getString(R.string.standings_after, mAdapter.getRaceAfter()));
             mPullToRefresh.onRefreshComplete();
         }
         // Verify application wasn't closed before callback returned
