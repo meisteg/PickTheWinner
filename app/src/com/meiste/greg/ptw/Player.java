@@ -17,7 +17,7 @@ package com.meiste.greg.ptw;
 
 public final class Player {
     public String name;
-    public int rank;
+    public Integer rank;
     public int points;
     public int races;
     public int wins;
@@ -27,7 +27,7 @@ public final class Player {
     }
 
     public String getRank() {
-        return Integer.toString(rank);
+        return (rank == null) ? "-" : rank.toString();
     }
 
     public String getPoints() {

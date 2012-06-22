@@ -108,7 +108,8 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
 
     @Override
     public int getCount() {
-        if (mStandings.self.rank > mStandings.standings.length)
+        Integer rank = mStandings.self.rank;
+        if ((rank == null) || (rank > mStandings.standings.length))
             return mStandings.standings.length + 1;
         return mStandings.standings.length;
     }
