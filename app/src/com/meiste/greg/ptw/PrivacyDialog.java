@@ -20,6 +20,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
@@ -27,7 +29,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class PrivacyDialog extends AlertDialog implements View.OnClickListener, TextWatcher {
+public class PrivacyDialog extends AlertDialog implements View.OnClickListener, TextWatcher, InputFilter {
 
     private final DialogInterface.OnClickListener mListener;
     private CheckBox mCb;
@@ -53,6 +55,7 @@ public class PrivacyDialog extends AlertDialog implements View.OnClickListener, 
 
         mCb.setOnClickListener(this);
         mEt.addTextChangedListener(this);
+        mEt.setFilters(new InputFilter[] { this });
         setButton(DialogInterface.BUTTON_POSITIVE, getContext().getString(R.string.ok), mListener);
         setButton(DialogInterface.BUTTON_NEGATIVE, getContext().getString(R.string.cancel), mListener);
 
@@ -108,4 +111,15 @@ public class PrivacyDialog extends AlertDialog implements View.OnClickListener, 
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+    @Override
+    public CharSequence filter(CharSequence source, int start, int end,
+            Spanned dest, int dstart, int dend) {
+        for (int i = start; i < end; i++) {
+            if (!Character.isLetterOrDigit(source.charAt(i))) {
+                return "";
+            }
+        }
+        return null;
+    }
 }
