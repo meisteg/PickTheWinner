@@ -25,6 +25,7 @@
     <string name="app_name">Pick The Winner</string>
     <string name="attention">Attention</string>
     <string name="build_version">Build version</string>
+    <string name="cancel">Cancel</string>
     <string name="connect">Connect</string>
     <string name="connect_text">This application requests permission to connect your mobile device to the cloud.</string>
     <string name="contacting_server">Contacting server&#8230;</string>
@@ -34,6 +35,7 @@
     <string name="exit">Close</string>
     <string name="failed_connect">Failed to connect. Please try again.</string>
     <string name="failed_get">Unable to connect to server.</string>
+    <string name="hide_name">Hide my player name</string>
     <string name="in_the_chase">In The Chase</string>
     <string name="led">Phone LED</string>
     <string name="led_summary">Flash LED for reminders</string>
@@ -46,6 +48,8 @@
     <string name="notifications">Notifications</string>
     <string name="ok">OK</string>
     <string name="personal">Personal</string>
+    <string name="player_name">Player Name</string>
+    <string name="privacy">Privacy</string>
     <string name="race_details">Race Details</string>
     <string name="race_num">Race %s</string>
     <string name="remind_questions">Question reminders</string>

@@ -169,6 +169,12 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
 
     @Override
     public boolean isEnabled(int position) {
+        if (position < mStandings.standings.length) {
+            if (mStandings.self.rank == mStandings.standings[position].rank)
+                return true;
+        } else
+            return true;
+
         return false;
     }
 

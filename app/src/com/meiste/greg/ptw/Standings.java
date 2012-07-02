@@ -19,11 +19,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -33,7 +36,7 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.meiste.greg.ptw.GAE.GaeListener;
 
-public final class Standings extends TabFragment implements OnRefreshListener, GaeListener {
+public final class Standings extends TabFragment implements OnRefreshListener, GaeListener, DialogInterface.OnClickListener {
     public static final String FILENAME = "standings";
 
     private boolean mSetupNeeded;
@@ -43,6 +46,9 @@ public final class Standings extends TabFragment implements OnRefreshListener, G
     private PullToRefreshListView mPullToRefresh;
     private PlayerAdapter mAdapter;
     private TextView mAfterRace;
+
+    private PrivacyDialog mDialog;
+    private boolean mDialogResume = false;
 
     public static Standings newInstance(Context context) {
         Standings fragment = new Standings();
@@ -92,6 +98,17 @@ public final class Standings extends TabFragment implements OnRefreshListener, G
         lv.addHeaderView(header, null, false);
         lv.setAdapter(mAdapter);
 
+        lv.setOnItemClickListener(new OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v, int pos, long id) {
+                Util.log("Starting privacy dialog: id=" + id);
+                if (mDialog == null) {
+                    mDialog = new PrivacyDialog(getActivity(), Standings.this);
+                }
+                // TODO: Get name from adapter and pass to dialog
+                mDialog.show(null);
+            }
+        });
+
         return v;
     }
 
@@ -102,6 +119,19 @@ public final class Standings extends TabFragment implements OnRefreshListener, G
         if (mSetupNeeded != GAE.isAccountSetupNeeded(getActivity())) {
             Util.log("Standings: onResume: notifyChanged");
             notifyChanged();
+        } else if ((mDialog != null) && mDialogResume) {
+            mDialog.show();
+            mDialogResume = false;
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if ((mDialog != null) && mDialog.isShowing()) {
+            mDialog.dismiss();
+            mDialogResume = true;
         }
     }
 
@@ -170,4 +200,11 @@ public final class Standings extends TabFragment implements OnRefreshListener, G
 
     @Override
     public void onConnectSuccess(Context context, String json) {}
+
+    @Override
+    public void onClick(DialogInterface dialog, int which) {
+        if (which == DialogInterface.BUTTON_POSITIVE) {
+            // TODO: Send new player name to server and get new standings
+        }
+    }
 }
