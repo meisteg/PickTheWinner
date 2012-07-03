@@ -50,6 +50,7 @@
     <string name="personal">Personal</string>
     <string name="player_name">Player Name</string>
     <string name="privacy">Privacy</string>
+    <string name="private_name">&lt;Private&gt;</string>
     <string name="race_details">Race Details</string>
     <string name="race_num">Race %s</string>
     <string name="remind_questions">Question reminders</string>

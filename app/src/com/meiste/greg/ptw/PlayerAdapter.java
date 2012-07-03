@@ -155,8 +155,12 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
             holder.row.setBackgroundResource(R.color.standings_other);
 
         holder.rank.setText(p.getRank());
-        holder.name.setText(p.getName());
         holder.points.setText(p.getPoints());
+
+        if (p.getName() != null)
+            holder.name.setText(p.getName());
+        else
+            holder.name.setText(mContext.getString(R.string.private_name));
 
         if (holder.races != null)
             holder.races.setText(p.getRaces());
@@ -180,5 +184,9 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
 
     public String getRaceAfter() {
         return Race.getInstance(mContext, mStandings.race_id).getTrack(Race.NAME_SHORT);
+    }
+
+    public String getPlayerName() {
+        return mStandings.self.getName();
     }
 }

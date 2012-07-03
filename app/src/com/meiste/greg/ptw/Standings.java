@@ -104,8 +104,7 @@ public final class Standings extends TabFragment implements OnRefreshListener, G
                 if (mDialog == null) {
                     mDialog = new PrivacyDialog(getActivity(), Standings.this);
                 }
-                // TODO: Get name from adapter and pass to dialog
-                mDialog.show(null);
+                mDialog.show(mAdapter.getPlayerName());
             }
         });
 
