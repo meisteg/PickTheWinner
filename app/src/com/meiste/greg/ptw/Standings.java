@@ -32,6 +32,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.meiste.greg.ptw.GAE.GaeListener;
@@ -43,6 +44,7 @@ public final class Standings extends TabFragment implements OnRefreshListener, G
     private boolean mChanged = false;
     private boolean mFailedConnect = false;
     private boolean mConnecting = false;
+    private boolean mCheckName = false;
     private PullToRefreshListView mPullToRefresh;
     private PlayerAdapter mAdapter;
     private TextView mAfterRace;
@@ -107,6 +109,14 @@ public final class Standings extends TabFragment implements OnRefreshListener, G
                 mDialog.show(mAdapter.getPlayerName());
             }
         });
+
+        if (mCheckName) {
+            if ((mDialog.getNewName() != null) &&
+                    !mDialog.getNewName().equals(mAdapter.getPlayerName())) {
+                Toast.makeText(getActivity(), R.string.name_taken, Toast.LENGTH_SHORT).show();
+            }
+            mCheckName = false;
+        }
 
         return v;
     }
@@ -198,12 +208,20 @@ public final class Standings extends TabFragment implements OnRefreshListener, G
     public void onLaunchIntent(Intent launch) {}
 
     @Override
-    public void onConnectSuccess(Context context, String json) {}
+    public void onConnectSuccess(Context context, String json) {
+        Util.log("Standings: onConnectSuccess");
+
+        mCheckName = true;
+        onGet(context, json);
+    }
 
     @Override
     public void onClick(DialogInterface dialog, int which) {
         if (which == DialogInterface.BUTTON_POSITIVE) {
-            // TODO: Send new player name to server and get new standings
+            String json = new Gson().toJson(mDialog.getNewName());
+            mConnecting = mChanged = true;
+            notifyChanged();
+            GAE.getInstance(getActivity()).postPage(this, "standings", json);
         }
     }
 }

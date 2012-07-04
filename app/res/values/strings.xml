@@ -45,6 +45,7 @@
         Car Auto Racing, Inc. All other trademarks, names or logos in this application are the
         property of their respective owners.</string>
     <string name="needs_account">To play Pick The Winner, you must first create a Google account.</string>
+    <string name="name_taken">Name already taken. Please pick a different name.</string>
     <string name="notifications">Notifications</string>
     <string name="ok">OK</string>
     <string name="personal">Personal</string>

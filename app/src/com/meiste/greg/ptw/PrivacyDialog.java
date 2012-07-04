@@ -122,4 +122,12 @@ public class PrivacyDialog extends AlertDialog implements View.OnClickListener, 
         }
         return null;
     }
+
+    public String getNewName() {
+        if (mCb.isChecked()) {
+            return null;
+        }
+
+        return mEt.getText().toString();
+    }
 }
