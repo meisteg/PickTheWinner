@@ -81,7 +81,7 @@
     
     <!-- Rule Book Strings -->
     <string name="scoring_header">Weekly Scoring</string>
-    <string name="scoring">Every week that there is a point paying Sprint Cup Series event,
+    <string name="scoring">Every week that there is a point paying NASCAR Sprint Cup Series event,
         five questions related to the event will be asked on Thursday. Each question has its
         own individual point value, for a total of 200 points:\n\n
         &#8226; <b>100 points</b>: Pick The Winner of the race\n
@@ -89,9 +89,9 @@
         &#8226; <b>35 points</b>: Answer Question 3 correctly\n
         &#8226; <b>10 points</b>: Pick the leader of most laps\n
         &#8226; <b>5 points</b>: Pick number of lap leaders
-        \n\nYou can make your picks until one hour prior to the scheduled green flag. Once the
-        race is completed the points will be calculated within 24 hours of the race results
-        being made official by NASCAR.</string>
+        \n\nYou can make your picks until the TV coverage is scheduled to begin (see Schedule
+        page for exact times). Once the race is completed the points will be calculated within
+        24 hours of the race results being made official by NASCAR.</string>
     <string name="chase_header">The Chase</string>
     <string name="chase">After the 26th race of the season the players in the top 10 in points
         are automatically qualified for The Chase. In addition, there are two "wild card"
