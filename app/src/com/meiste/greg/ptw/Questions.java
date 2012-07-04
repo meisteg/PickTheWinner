@@ -38,6 +38,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.meiste.greg.ptw.GAE.GaeListener;
 import com.meiste.greg.ptw.ObservableScrollView.ScrollViewListener;
+import com.squareup.otto.Subscribe;
 
 public final class Questions extends TabFragment implements View.OnClickListener, ScrollViewListener, GaeListener {
 
@@ -215,14 +216,19 @@ public final class Questions extends TabFragment implements View.OnClickListener
     @Override
     public void onResume() {
         super.onResume();
+        BusProvider.getInstance().register(this);
         SharedPreferences cache = getActivity().getSharedPreferences(ACACHE, Activity.MODE_PRIVATE);
 
         // Check if user changed their account status
         mChanged = mSetupNeeded != GAE.isAccountSetupNeeded(getActivity());
-        // See if race questions are now available but weren't previously
-        mChanged |= (mOnCreateViewTime < mRace.getQuestionTimestamp()) && mRace.inProgress();
-        // See if race answers have been cleared by a new account connect
-        mChanged |= ((mRa != null) && !cache.contains("race" + mRace.getId()));
+        if (mRace != null) {
+            // See if race questions are now available but weren't previously
+            mChanged |= (mOnCreateViewTime < mRace.getQuestionTimestamp()) && mRace.inProgress();
+            // See if race answers have been cleared by a new account connect
+            mChanged |= ((mRa != null) && !cache.contains("race" + mRace.getId()));
+            // Check if questions form needs to disappear because race started
+            mChanged |= !mRace.isFuture();
+        }
 
         if (mChanged) {
             Util.log("Questions: onResume: notifyChanged");
@@ -231,8 +237,28 @@ public final class Questions extends TabFragment implements View.OnClickListener
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        BusProvider.getInstance().unregister(this);
+    }
+
+    @Override
     public boolean isChanged() {
         return mChanged;
+    }
+
+    @Subscribe
+    public void onScheduleUpdate(ScheduleUpdateEvent event) {
+        Util.log("Questions: onScheduleUpdate");
+        mChanged = true;
+        notifyChanged();
+    }
+
+    @Subscribe
+    public void onRaceAlarm(RaceAlarmEvent event) {
+        Util.log("Questions: onRaceAlarm");
+        mChanged = true;
+        notifyChanged();
     }
 
     private static class RaceQuestions {

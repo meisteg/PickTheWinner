@@ -84,6 +84,7 @@ public final class Schedule extends TabFragment implements OnRefreshListener, Ga
         mAdapter.notifyDataSetChanged();
         RaceAlarm.reset(context);
         mPullToRefresh.onRefreshComplete();
+        BusProvider.getInstance().post(new ScheduleUpdateEvent());
     }
 
     @Override

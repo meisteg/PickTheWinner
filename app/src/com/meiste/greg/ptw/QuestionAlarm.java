@@ -34,11 +34,6 @@ public final class QuestionAlarm extends BroadcastReceiver {
     private static boolean alarm_set = false;
 
     public static void set(Context context) {
-        // Verify user wants Question reminders
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        if (!prefs.getBoolean(EditPreferences.KEY_REMIND_QUESTIONS, true))
-            return;
-
         // Get next points race: allow in progress
         Race race = Race.getNext(context, false, true);
         if (race == null)
@@ -71,13 +66,12 @@ public final class QuestionAlarm extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         alarm_set = false;
+        Race race = Race.getInstance(context, intent.getIntExtra(RACE_ID, 0));
+        Util.log("Received question alarm for race " + race.getId());
 
-        // Verify user didn't turn off question reminders after alarm was set
+        // Only show notification if user wants question reminders
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         if (prefs.getBoolean(EditPreferences.KEY_REMIND_QUESTIONS, true)) {
-            Race race = Race.getInstance(context, intent.getIntExtra(RACE_ID, 0));
-            Util.log("Received question alarm for race " + race.getId());
-
             Intent notificationIntent = new Intent(context, MainActivity.class);
             notificationIntent.putExtra(MainActivity.INTENT_TAB, 1);
             PendingIntent pi = PendingIntent.getActivity(context, 0, notificationIntent,
@@ -104,15 +98,15 @@ public final class QuestionAlarm extends BroadcastReceiver {
             String ns = Context.NOTIFICATION_SERVICE;
             NotificationManager nm = (NotificationManager) context.getSystemService(ns);
             nm.notify(R.string.remind_questions_ticker, builder.getNotification());
-
-            // Remember that user was reminded of this race
-            Util.getState(context).edit().putInt(LAST_REMIND, race.getId()).commit();
-
-            // Reset alarm for the next race
-            set(context);
         } else {
-            Util.log("Ignoring question alarm since option now disabled");
+            Util.log("Ignoring question alarm since option is disabled");
         }
-    }
 
+        // Remember that user was reminded of this race
+        Util.getState(context).edit().putInt(LAST_REMIND, race.getId()).commit();
+
+        // Reset alarm for the next race
+        set(context);
+        BusProvider.getInstance().post(new RaceAlarmEvent());
+    }
 }

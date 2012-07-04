@@ -33,10 +33,9 @@ public final class RaceAlarm extends BroadcastReceiver {
     private static boolean alarm_set = false;
 
     public static void set(Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         Race race = Race.getNext(context, true, true);
 
-        if (!alarm_set && prefs.getBoolean(EditPreferences.KEY_REMIND_RACE, true) && (race != null)) {
+        if (!alarm_set && (race != null)) {
             Util.log("Setting race alarm for race " + race.getId());
 
             AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
@@ -60,13 +59,12 @@ public final class RaceAlarm extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         alarm_set = false;
+        Race race = Race.getInstance(context, intent.getIntExtra(RACE_ID, 0));
+        Util.log("Received race alarm for race " + race.getId());
 
-        // Verify user didn't turn off race reminders after alarm was set
+        // Only show notification if user wants race reminders
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         if (prefs.getBoolean(EditPreferences.KEY_REMIND_RACE, true)) {
-            Race race = Race.getInstance(context, intent.getIntExtra(RACE_ID, 0));
-            Util.log("Received race alarm for race " + race.getId());
-
             Intent notificationIntent = new Intent(context, RaceActivity.class);
             notificationIntent.putExtra(RaceActivity.INTENT_ID, race.getId());
             notificationIntent.putExtra(RaceActivity.INTENT_ALARM, true);
@@ -94,12 +92,12 @@ public final class RaceAlarm extends BroadcastReceiver {
             String ns = Context.NOTIFICATION_SERVICE;
             NotificationManager nm = (NotificationManager) context.getSystemService(ns);
             nm.notify(R.string.remind_race_ticker, builder.getNotification());
-
-            // Reset alarm for the next race
-            set(context);
         } else {
-            Util.log("Ignoring race alarm since option now disabled");
+            Util.log("Ignoring race alarm since option is disabled");
         }
-    }
 
+        // Reset alarm for the next race
+        set(context);
+        BusProvider.getInstance().post(new RaceAlarmEvent());
+    }
 }
