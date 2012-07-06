@@ -15,6 +15,8 @@
  */
 package com.meiste.greg.ptw;
 
+import java.util.Calendar;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -44,6 +46,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
 
     private final static String QCACHE = "question_cache";
     public final static String ACACHE = "answer_cache";
+    private final static String CACHE_PREFIX = Calendar.getInstance().get(Calendar.YEAR) + "_race";
 
     @SuppressWarnings("unused")
     @Expose
@@ -119,7 +122,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
             }
 
             SharedPreferences cache = getActivity().getSharedPreferences(QCACHE, Activity.MODE_PRIVATE);
-            String json = cache.getString("race" + mRace.getId(), null);
+            String json = cache.getString(CACHE_PREFIX + mRace.getId(), null);
             if (json == null) {
                 GAE.getInstance(getActivity()).getPage(this, "questions");
                 return inflater.inflate(R.layout.connecting, container, false);
@@ -128,7 +131,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
             RaceQuestions rq = RaceQuestions.fromJson(json);
 
             cache = getActivity().getSharedPreferences(ACACHE, Activity.MODE_PRIVATE);
-            json = cache.getString("race" + mRace.getId(), null);
+            json = cache.getString(CACHE_PREFIX + mRace.getId(), null);
             if (json == null) {
                 Util.log("Questions: Showing form");
 
@@ -225,7 +228,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
             // See if race questions are now available but weren't previously
             mChanged |= (mOnCreateViewTime < mRace.getQuestionTimestamp()) && mRace.inProgress();
             // See if race answers have been cleared by a new account connect
-            mChanged |= ((mRa != null) && !cache.contains("race" + mRace.getId()));
+            mChanged |= ((mRa != null) && !cache.contains(CACHE_PREFIX + mRace.getId()));
             // Check if questions form needs to disappear because race started
             mChanged |= !mRace.isFuture();
         }
@@ -379,7 +382,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
         Util.log("Questions: onGet: " + json);
 
         SharedPreferences cache = context.getSharedPreferences(QCACHE, Activity.MODE_PRIVATE);
-        cache.edit().putString("race" + mRace.getId(), json).commit();
+        cache.edit().putString(CACHE_PREFIX + mRace.getId(), json).commit();
 
         // Verify application wasn't closed before callback returned
         if (getActivity() != null) {
@@ -394,7 +397,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
         Toast.makeText(context, R.string.questions_success, Toast.LENGTH_SHORT).show();
 
         SharedPreferences cache = context.getSharedPreferences(ACACHE, Activity.MODE_PRIVATE);
-        cache.edit().putString("race" + mRace.getId(), json).commit();
+        cache.edit().putString(CACHE_PREFIX + mRace.getId(), json).commit();
 
         // Verify application wasn't closed before callback returned
         if (getActivity() != null) {
