@@ -83,9 +83,8 @@ public final class QuestionAlarm extends BroadcastReceiver {
             if (prefs.getBoolean(EditPreferences.KEY_REMIND_LED, true))
                 defaults |= Notification.DEFAULT_LIGHTS;
 
-            // TODO: Replace with custom icon
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
-            .setSmallIcon(android.R.drawable.stat_sys_warning)
+            .setSmallIcon(R.drawable.ic_stat_steering_wheel)
             .setTicker(context.getString(R.string.remind_questions_ticker, race.getName()))
             .setContentTitle(context.getString(R.string.app_name))
             .setContentText(race.getName())
