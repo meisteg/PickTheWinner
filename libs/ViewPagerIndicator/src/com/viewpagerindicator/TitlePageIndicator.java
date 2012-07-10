@@ -528,12 +528,18 @@ public class TitlePageIndicator extends View implements PageIndicator {
 
                     if (eventX < leftThird) {
                         if (mCurrentPage > 0) {
-                            mViewPager.setCurrentItem(mCurrentPage - 1);
+                            try {
+                                mViewPager.setCurrentItem(mCurrentPage - 1);
+                            } catch (NullPointerException e) {
+                            }
                             return true;
                         }
                     } else if (eventX > rightThird) {
                         if (mCurrentPage < count - 1) {
-                            mViewPager.setCurrentItem(mCurrentPage + 1);
+                            try {
+                                mViewPager.setCurrentItem(mCurrentPage + 1);
+                            } catch (NullPointerException e) {
+                            }
                             return true;
                         }
                     } else {
