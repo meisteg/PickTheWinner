@@ -15,6 +15,7 @@
  */
 package com.meiste.greg.ptw;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -41,9 +42,11 @@ public class EditPreferences extends SherlockPreferenceActivity implements OnSha
 
     private static final String KEY_ACCOUNT_SCREEN = "account_screen";
     private static final String KEY_REMINDER_SETTINGS = "reminder_settings_category";
+    private static final String KEY_BUILD = "build";
 
     private Preference mVibrate;
 
+    @TargetApi(11)
     @SuppressWarnings("deprecation")
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,6 +62,11 @@ public class EditPreferences extends SherlockPreferenceActivity implements OnSha
             Util.log("Remove vibrator option since vibrator not present");
             PreferenceCategory pc = (PreferenceCategory)findPreference(KEY_REMINDER_SETTINGS);
             pc.removePreference(mVibrate);
+        }
+
+        if (BuildConfig.DEBUG) {
+            Preference build = findPreference(KEY_BUILD);
+            build.setSummary(build.getSummary() + " " + getString(R.string.debug_build));
         }
     }
 

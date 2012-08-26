@@ -29,6 +29,7 @@
     <string name="connect">Connect</string>
     <string name="connect_text">This application requests permission to connect your mobile device to the cloud.</string>
     <string name="contacting_server">Contacting server&#8230;</string>
+    <string name="debug_build">(debug)</string>
     <string name="eula_title">License</string>
     <string name="eula_accept">Accept</string>
     <string name="eula_refuse">Refuse</string>
