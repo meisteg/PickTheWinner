@@ -26,11 +26,12 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.meiste.greg.ptw.GAE.GaeListener;
 
-public final class Schedule extends TabFragment implements OnRefreshListener, GaeListener  {
+public final class Schedule extends TabFragment implements OnRefreshListener<ListView>, GaeListener  {
 
     private PullToRefreshListView mPullToRefresh;
     private RaceItemAdapter mAdapter;
@@ -68,7 +69,7 @@ public final class Schedule extends TabFragment implements OnRefreshListener, Ga
     }
 
     @Override
-    public void onRefresh() {
+    public void onRefresh(PullToRefreshBase<ListView> refreshView) {
         GAE.getInstance(getActivity()).getPage(this, "schedule");
     }
 

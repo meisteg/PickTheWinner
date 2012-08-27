@@ -34,10 +34,11 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.meiste.greg.ptw.GAE.GaeListener;
 
-public final class Standings extends TabFragment implements OnRefreshListener, GaeListener, DialogInterface.OnClickListener {
+public final class Standings extends TabFragment implements OnRefreshListener<ListView>, GaeListener, DialogInterface.OnClickListener {
     public static final String FILENAME = "standings";
 
     private boolean mSetupNeeded;
@@ -157,7 +158,7 @@ public final class Standings extends TabFragment implements OnRefreshListener, G
     }
 
     @Override
-    public void onRefresh() {
+    public void onRefresh(PullToRefreshBase<ListView> refreshView) {
         GAE.getInstance(getActivity()).getPage(this, "standings");
     }
 
