@@ -290,7 +290,7 @@
   {
     "mTv": "ESPN",
     "mLayout": "ims",
-    "mName": "Crown Royal presents the \u0027\u0027Your Hero\u0027s Name Here\u0027\u0027 400 at the Brickyard",
+    "mName": "Crown Royal presents the Curtiss Shaver 400 at the Brickyard",
     "mTrackShort": "Indianapolis",
     "mTrackLong": "Indianapolis Motor Speedway",
     "mSize": "2.5",
@@ -314,7 +314,7 @@
   {
     "mTv": "ESPN",
     "mLayout": "wgi",
-    "mName": "Watkins Glen",
+    "mName": "Finger Lakes 355 at the Glen",
     "mTrackShort": "Watkins Glen",
     "mTrackLong": "Watkins Glen International",
     "mSize": "2.45",
@@ -338,7 +338,7 @@
   {
     "mTv": "ABC",
     "mLayout": "bms",
-    "mName": "Irwin Tools Night Race",
+    "mName": "IRWIN Tools Night Race",
     "mTrackShort": "Bristol",
     "mTrackLong": "Bristol Motor Speedway",
     "mSize": "0.533",
@@ -362,7 +362,7 @@
   {
     "mTv": "ABC",
     "mLayout": "rir",
-    "mName": "Wonderful Pistachios 400",
+    "mName": "Federated Auto Parts 400",
     "mTrackShort": "Richmond",
     "mTrackLong": "Richmond International Raceway",
     "mSize": "0.75",
@@ -374,7 +374,7 @@
   {
     "mTv": "ESPN",
     "mLayout": "chi",
-    "mName": "Geico 400",
+    "mName": "GEICO 400",
     "mTrackShort": "Chicagoland",
     "mTrackLong": "Chicagoland Speedway",
     "mSize": "1.5",
@@ -410,7 +410,7 @@
   {
     "mTv": "ESPN",
     "mLayout": "tal",
-    "mName": "Good Sam Club 500",
+    "mName": "Good Sam Roadside Assistance 500",
     "mTrackShort": "Talladega",
     "mTrackLong": "Talladega Superspeedway",
     "mSize": "2.66",
@@ -482,7 +482,7 @@
   {
     "mTv": "ESPN",
     "mLayout": "hms",
-    "mName": "Ford 400",
+    "mName": "Ford EcoBoost 400",
     "mTrackShort": "Homestead",
     "mTrackLong": "Homestead-Miami Speedway",
     "mSize": "1.5",
