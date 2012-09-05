@@ -39,6 +39,14 @@ public final class Driver {
                 return driver;
         }
 
+        // Now check the inactive drivers array
+        drivers = res.getStringArray(R.array.drivers_inactive);
+        for (String json : drivers) {
+            Driver driver = gson.fromJson(json, Driver.class);
+            if (driver.getNumber() == num)
+                return driver;
+        }
+
         return null;
     }
 
