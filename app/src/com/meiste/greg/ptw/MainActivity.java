@@ -90,8 +90,9 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
+        mAdView.removeAllViews();
         mAdView.destroy();
+        super.onDestroy();
     }
 
     @Override
