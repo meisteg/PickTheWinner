@@ -21,6 +21,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
@@ -74,7 +75,16 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
             listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
             listView.setItemChecked(mAccountSelectedPosition, true);
 
-            final Button connectButton = (Button) findViewById(R.id.connect);
+            int connectId = R.id.right_button;
+            int exitId = R.id.left_button;
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                // Android versions prior to ICS have the affirmative on the left
+                connectId = R.id.left_button;
+                exitId = R.id.right_button;
+            }
+
+            final Button connectButton = (Button) findViewById(connectId);
+            connectButton.setText(R.string.connect);
             connectButton.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     mAccountSelectedPosition = listView.getCheckedItemPosition();
@@ -85,7 +95,8 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
                 }
             });
 
-            final Button exitButton = (Button) findViewById(R.id.exit);
+            final Button exitButton = (Button) findViewById(exitId);
+            exitButton.setText(R.string.exit);
             exitButton.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     finish();

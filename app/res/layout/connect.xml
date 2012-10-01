@@ -61,16 +61,14 @@
         android:layout_alignParentBottom="true">
 
         <Button
-            android:id="@+id/connect"
-            android:text="@string/connect"
+            android:id="@+id/left_button"
             android:layout_marginTop="5dp"
             android:layout_weight="1"
             android:layout_width="0dip"
             android:layout_height="wrap_content"/>
 
         <Button
-            android:id="@+id/exit"
-            android:text="@string/exit"
+            android:id="@+id/right_button"
             android:layout_marginTop="5dp"
             android:layout_weight="1"
             android:layout_width="0dip"
