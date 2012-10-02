@@ -122,6 +122,7 @@
     <string name="questions_prompt_drivers">Choose a driver</string>
     <string name="questions_prompt_numleaders">Choose a range</string>
     <string name="questions_prompt_q2q3">Choose your answer</string>
+    <string name="questions_prompt_race">Choose a race</string>
     <string name="questions_soon">Questions will be available at</string>
     <string name="questions_success">Answers submitted!</string>
     

@@ -19,14 +19,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="15dp" >
+    android:padding="6dp" >
     
-    <Spinner
-        android:id="@+id/race_spinner"
+    <TextView android:id="@+id/race_name"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:prompt="@string/questions_prompt_race" />
-    <TextView style="@style/QuestionsText" android:text="@string/questions_soon" />
-    <TextView style="@style/QuestionsTime" android:id="@+id/questiontime" />
+    	android:layout_height="wrap_content"
+        android:textSize="18sp" />
+    
+    <TextView android:id="@+id/race_track"
+        android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+        android:textSize="18sp" />
 
 </LinearLayout>

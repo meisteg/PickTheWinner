@@ -44,9 +44,9 @@ import com.squareup.otto.Subscribe;
 
 public final class Questions extends TabFragment implements View.OnClickListener, ScrollViewListener, GaeListener {
 
-    private final static String QCACHE = "question_cache";
+    public final static String QCACHE = "question_cache";
     public final static String ACACHE = "answer_cache";
-    private final static String CACHE_PREFIX = Calendar.getInstance().get(Calendar.YEAR) + "_race";
+    public final static String CACHE_PREFIX = Calendar.getInstance().get(Calendar.YEAR) + "_race";
 
     @SuppressWarnings("unused")
     @Expose
@@ -76,7 +76,8 @@ public final class Questions extends TabFragment implements View.OnClickListener
     private int mScroll = 0;
     private boolean mSetupNeeded;
     private boolean mChanged = false;
-    private Race mRace;
+    private Race mRaceNext;
+    private Race mRaceSelected = null;
     private boolean mFailedConnect = false;
     private boolean mSending = false;
     private long mOnCreateViewTime = 0;
@@ -92,20 +93,29 @@ public final class Questions extends TabFragment implements View.OnClickListener
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v;
-        mRace = Race.getNext(getActivity(), false, true);
+        mRaceNext = Race.getNext(getActivity(), false, true);
         mSetupNeeded = GAE.isAccountSetupNeeded(getActivity());
         mChanged = false;
         mRa = null;
+        QuestionsRaceAdapter raceAdapter = new QuestionsRaceAdapter(getActivity());
         mOnCreateViewTime = System.currentTimeMillis();
         setRetainInstance(true);
 
-        if (mRace == null) {
+        if (mRaceSelected == null) {
+            if (mRaceNext != null) {
+                mRaceSelected = mRaceNext;
+            } else if (raceAdapter.getCount() > 0) {
+                mRaceSelected = raceAdapter.getItem(raceAdapter.getCount()-1);
+            }
+        }
+
+        if (mRaceSelected == null) {
             return inflater.inflate(R.layout.questions_no_race, container, false);
         } else if (mSetupNeeded) {
             return inflater.inflate(R.layout.no_account, container, false);
         } else if (mSending) {
             return inflater.inflate(R.layout.connecting, container, false);
-        } else if (mRace.inProgress()) {
+        } else if (mRaceSelected.inProgress() || !mRaceSelected.isFuture()) {
             if (mFailedConnect) {
                 mFailedConnect = false;
                 v = inflater.inflate(R.layout.no_connection, container, false);
@@ -122,7 +132,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
             }
 
             SharedPreferences cache = getActivity().getSharedPreferences(QCACHE, Activity.MODE_PRIVATE);
-            String json = cache.getString(CACHE_PREFIX + mRace.getId(), null);
+            String json = cache.getString(CACHE_PREFIX + mRaceSelected.getId(), null);
             if (json == null) {
                 GAE.getInstance(getActivity()).getPage(this, "questions");
                 return inflater.inflate(R.layout.connecting, container, false);
@@ -131,14 +141,14 @@ public final class Questions extends TabFragment implements View.OnClickListener
             RaceQuestions rq = RaceQuestions.fromJson(json);
 
             cache = getActivity().getSharedPreferences(ACACHE, Activity.MODE_PRIVATE);
-            json = cache.getString(CACHE_PREFIX + mRace.getId(), null);
+            json = cache.getString(CACHE_PREFIX + mRaceSelected.getId(), null);
             if (json == null) {
                 Util.log("Questions: Showing form");
 
                 v = inflater.inflate(R.layout.questions, container, false);
 
                 Spinner winner = (Spinner) v.findViewById(R.id.winner);
-                winner.setAdapter(new DriverAdapter(getActivity(), android.R.layout.simple_spinner_item));
+                winner.setAdapter(new DriverAdapter(getActivity()));
                 winner.setOnItemSelectedListener(new WinnerSelectedListener());
 
                 Spinner a2 = (Spinner) v.findViewById(R.id.question2a);
@@ -156,7 +166,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
                 a3.setOnItemSelectedListener(new A3SelectedListener());
 
                 Spinner mostlaps = (Spinner) v.findViewById(R.id.mostlaps);
-                mostlaps.setAdapter(new DriverAdapter(getActivity(), android.R.layout.simple_spinner_item));
+                mostlaps.setAdapter(new DriverAdapter(getActivity()));
                 mostlaps.setOnItemSelectedListener(new MostLapsSelectedListener());
 
                 Spinner numleaders = (Spinner) v.findViewById(R.id.numleaders);
@@ -204,14 +214,15 @@ public final class Questions extends TabFragment implements View.OnClickListener
             v = inflater.inflate(R.layout.questions_not_yet, container, false);
 
             TextView time = (TextView) v.findViewById(R.id.questiontime);
-            time.setText(mRace.getQuestionDateTime(getActivity()));
+            time.setText(mRaceSelected.getQuestionDateTime(getActivity()));
         }
 
-        TextView name = (TextView) v.findViewById(R.id.racename);
-        name.setText(mRace.getName());
-
-        TextView track = (TextView) v.findViewById(R.id.racetrack);
-        track.setText(mRace.getTrack(Race.NAME_LONG));
+        Spinner raceSpinner = (Spinner) v.findViewById(R.id.race_spinner);
+        if (raceSpinner != null) {
+            raceSpinner.setAdapter(raceAdapter);
+            raceSpinner.setSelection(raceAdapter.getPosition(mRaceSelected));
+            raceSpinner.setOnItemSelectedListener(new RaceSelectedListener());
+        }
 
         return v;
     }
@@ -224,17 +235,20 @@ public final class Questions extends TabFragment implements View.OnClickListener
 
         // Check if user changed their account status
         mChanged = mSetupNeeded != GAE.isAccountSetupNeeded(getActivity());
-        if (mRace != null) {
-            // See if race questions are now available but weren't previously
-            mChanged |= (mOnCreateViewTime < mRace.getQuestionTimestamp()) && mRace.inProgress();
+        if (mRaceSelected != null) {
             // See if race answers have been cleared by a new account connect
-            mChanged |= ((mRa != null) && !cache.contains(CACHE_PREFIX + mRace.getId()));
+            mChanged |= ((mRa != null) && !cache.contains(CACHE_PREFIX + mRaceSelected.getId()));
+        }
+        if (mRaceNext != null) {
+            // See if race questions are now available but weren't previously
+            mChanged |= (mOnCreateViewTime < mRaceNext.getQuestionTimestamp()) && mRaceNext.inProgress();
             // Check if questions form needs to disappear because race started
-            mChanged |= !mRace.isFuture();
+            mChanged |= !mRaceNext.isFuture();
         }
 
         if (mChanged) {
             Util.log("Questions: onResume: notifyChanged");
+            mRaceSelected = null;
             notifyChanged();
         }
     }
@@ -254,6 +268,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
     public void onScheduleUpdate(ScheduleUpdateEvent event) {
         Util.log("Questions: onScheduleUpdate");
         mChanged = true;
+        mRaceSelected = null;
         notifyChanged();
     }
 
@@ -261,6 +276,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
     public void onRaceAlarm(RaceAlarmEvent event) {
         Util.log("Questions: onRaceAlarm");
         mChanged = true;
+        mRaceSelected = null;
         notifyChanged();
     }
 
@@ -287,25 +303,18 @@ public final class Questions extends TabFragment implements View.OnClickListener
         }
     }
 
-    private class DriverAdapter extends ArrayAdapter<Driver> {
-        private Context mContext;
-
-        public DriverAdapter(Context context, int textViewResourceId) {
-            super(context, textViewResourceId);
-            mContext = context;
-
-            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    private class RaceSelectedListener implements OnItemSelectedListener {
+        public void onItemSelected(AdapterView<?> parent, View v, int pos, long id) {
+            Race race = (Race) parent.getItemAtPosition(pos);
+            if (mRaceSelected.getId() != race.getId()) {
+                mRaceSelected = race;
+                Util.log("Questions: Selected race = " + mRaceSelected.getId());
+                mChanged = true;
+                notifyChanged();
+            }
         }
 
-        @Override
-        public int getCount() {
-            return Driver.getNumDrivers(mContext);
-        }
-
-        @Override
-        public Driver getItem(int position) {
-            return Driver.newInstance(mContext, position);
-        }
+        public void onNothingSelected(AdapterView<?> parent) {}
     }
 
     private class WinnerSelectedListener implements OnItemSelectedListener {
@@ -382,7 +391,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
         Util.log("Questions: onGet: " + json);
 
         SharedPreferences cache = context.getSharedPreferences(QCACHE, Activity.MODE_PRIVATE);
-        cache.edit().putString(CACHE_PREFIX + mRace.getId(), json).commit();
+        cache.edit().putString(CACHE_PREFIX + mRaceNext.getId(), json).commit();
 
         // Verify application wasn't closed before callback returned
         if (getActivity() != null) {
@@ -397,7 +406,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
         Toast.makeText(context, R.string.questions_success, Toast.LENGTH_SHORT).show();
 
         SharedPreferences cache = context.getSharedPreferences(ACACHE, Activity.MODE_PRIVATE);
-        cache.edit().putString(CACHE_PREFIX + mRace.getId(), json).commit();
+        cache.edit().putString(CACHE_PREFIX + mRaceNext.getId(), json).commit();
 
         // Verify application wasn't closed before callback returned
         if (getActivity() != null) {
