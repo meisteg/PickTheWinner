@@ -82,6 +82,8 @@ public final class Questions extends TabFragment implements View.OnClickListener
     private boolean mSending = false;
     private long mOnCreateViewTime = 0;
     private RaceAnswers mRa;
+    private Spinner mRaceSpinner = null;
+    private QuestionsRaceAdapter mRaceAdapter;
 
     public static Questions newInstance(Context context) {
         Questions fragment = new Questions();
@@ -97,15 +99,15 @@ public final class Questions extends TabFragment implements View.OnClickListener
         mSetupNeeded = GAE.isAccountSetupNeeded(getActivity());
         mChanged = false;
         mRa = null;
-        QuestionsRaceAdapter raceAdapter = new QuestionsRaceAdapter(getActivity());
+        mRaceAdapter = new QuestionsRaceAdapter(getActivity());
         mOnCreateViewTime = System.currentTimeMillis();
         setRetainInstance(true);
 
         if (mRaceSelected == null) {
             if (mRaceNext != null) {
                 mRaceSelected = mRaceNext;
-            } else if (raceAdapter.getCount() > 0) {
-                mRaceSelected = raceAdapter.getItem(raceAdapter.getCount()-1);
+            } else if (mRaceAdapter.getCount() > 0) {
+                mRaceSelected = mRaceAdapter.getItem(mRaceAdapter.getCount()-1);
             }
         }
 
@@ -123,7 +125,6 @@ public final class Questions extends TabFragment implements View.OnClickListener
                 Button retry = (Button) v.findViewById(R.id.retry);
                 retry.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
-                        mChanged = true;
                         notifyChanged();
                     }
                 });
@@ -217,11 +218,11 @@ public final class Questions extends TabFragment implements View.OnClickListener
             time.setText(mRaceSelected.getQuestionDateTime(getActivity()));
         }
 
-        Spinner raceSpinner = (Spinner) v.findViewById(R.id.race_spinner);
-        if (raceSpinner != null) {
-            raceSpinner.setAdapter(raceAdapter);
-            raceSpinner.setSelection(raceAdapter.getPosition(mRaceSelected));
-            raceSpinner.setOnItemSelectedListener(new RaceSelectedListener());
+        mRaceSpinner = (Spinner) v.findViewById(R.id.race_spinner);
+        if (mRaceSpinner != null) {
+            mRaceSpinner.setAdapter(mRaceAdapter);
+            mRaceSpinner.setSelection(mRaceAdapter.getPosition(mRaceSelected));
+            mRaceSpinner.setOnItemSelectedListener(new RaceSelectedListener());
         }
 
         return v;
@@ -248,8 +249,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
 
         if (mChanged) {
             Util.log("Questions: onResume: notifyChanged");
-            mRaceSelected = null;
-            notifyChanged();
+            resetRaceSelected();
         }
     }
 
@@ -264,20 +264,33 @@ public final class Questions extends TabFragment implements View.OnClickListener
         return mChanged;
     }
 
+    @Override
+    protected void notifyChanged() {
+        mChanged = true;
+        super.notifyChanged();
+    }
+
     @Subscribe
     public void onScheduleUpdate(ScheduleUpdateEvent event) {
         Util.log("Questions: onScheduleUpdate");
-        mChanged = true;
-        mRaceSelected = null;
-        notifyChanged();
+        resetRaceSelected();
     }
 
     @Subscribe
     public void onRaceAlarm(RaceAlarmEvent event) {
         Util.log("Questions: onRaceAlarm");
-        mChanged = true;
-        mRaceSelected = null;
-        notifyChanged();
+        resetRaceSelected();
+    }
+
+    private void resetRaceSelected() {
+        // Workaround to ensure the spinner is set back to next race
+        if ((mRaceSpinner != null) && (mRaceAdapter.getCount() > 0) &&
+                (mRaceSpinner.getSelectedItemPosition() != (mRaceAdapter.getCount() - 1))) {
+            // Making new selection causes notifyChanged to be called by listener
+            mRaceSpinner.setSelection(mRaceAdapter.getCount() - 1);
+        } else {
+            notifyChanged();
+        }
     }
 
     private static class RaceQuestions {
@@ -309,7 +322,6 @@ public final class Questions extends TabFragment implements View.OnClickListener
             if (mRaceSelected.getId() != race.getId()) {
                 mRaceSelected = race;
                 Util.log("Questions: Selected race = " + mRaceSelected.getId());
-                mChanged = true;
                 notifyChanged();
             }
         }
@@ -362,7 +374,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
     @Override
     public void onClick(View v) {
         mScroll = 0;
-        mChanged = mSending = true;
+        mSending = true;
         notifyChanged();
 
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
@@ -381,7 +393,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
         // Verify application wasn't closed before callback returned
         if (getActivity() != null) {
             mSending = false;
-            mFailedConnect = mChanged = true;
+            mFailedConnect = true;
             notifyChanged();
         }
     }
@@ -395,7 +407,6 @@ public final class Questions extends TabFragment implements View.OnClickListener
 
         // Verify application wasn't closed before callback returned
         if (getActivity() != null) {
-            mChanged = true;
             notifyChanged();
         }
     }
@@ -411,7 +422,6 @@ public final class Questions extends TabFragment implements View.OnClickListener
         // Verify application wasn't closed before callback returned
         if (getActivity() != null) {
             mSending = false;
-            mChanged = true;
             notifyChanged();
         }
     }
