@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,6 +47,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
 
     public final static String QCACHE = "question_cache";
     public final static String ACACHE = "answer_cache";
+    public final static String CACACHE = "correct_answer_cache";
     public final static String CACHE_PREFIX = Calendar.getInstance().get(Calendar.YEAR) + "_race";
 
     @SuppressWarnings("unused")
@@ -102,6 +104,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
         mRaceAdapter = new QuestionsRaceAdapter(getActivity());
         mOnCreateViewTime = System.currentTimeMillis();
         setRetainInstance(true);
+        boolean spinnerEnable = true;
 
         if (mRaceSelected == null) {
             if (mRaceNext != null) {
@@ -200,6 +203,80 @@ public final class Questions extends TabFragment implements View.OnClickListener
 
                 TextView a5 = (TextView) v.findViewById(R.id.answer5);
                 a5.setText(res.getStringArray(R.array.num_leaders)[mRa.a5]);
+
+                if (!mRaceSelected.isFuture()) {
+                    cache = getActivity().getSharedPreferences(CACACHE, Activity.MODE_PRIVATE);
+                    json = cache.getString(CACHE_PREFIX + mRaceSelected.getId(), null);
+                    if (json == null) {
+                        getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
+                        spinnerEnable = false;
+                        GAE.getInstance(getActivity()).getPage(
+                                new CorrectAnswersListener(mRaceSelected.getId()),
+                                "answers?year=" + mRaceSelected.getStartYear() +
+                                "&race_id=" + mRaceSelected.getId());
+                    } else {
+                        Util.log("Questions: Correct answers available");
+
+                        RaceAnswers rca = RaceAnswers.fromJson(json);
+
+                        // Have to check for null in case there is no correct answer
+                        if ((rca.a1 != null) && (rca.a1 >= 0)) {
+                            if (rca.a1 == mRa.a1) {
+                                a1.setTextColor(res.getColor(R.color.answer_right));
+                            } else {
+                                a1.setPaintFlags(a1.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                                a1.setTextColor(res.getColor(R.color.answer_wrong));
+                                TextView c1 = (TextView) v.findViewById(R.id.correct1);
+                                c1.setText(Driver.newInstance(res, rca.a1).getName());
+                                c1.setVisibility(View.VISIBLE);
+                            }
+                        }
+                        if ((rca.a2 != null) && (rca.a2 >= 0)) {
+                            if (rca.a2 == mRa.a2) {
+                                a2.setTextColor(res.getColor(R.color.answer_right));
+                            } else {
+                                a2.setPaintFlags(a2.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                                a2.setTextColor(res.getColor(R.color.answer_wrong));
+                                TextView c2 = (TextView) v.findViewById(R.id.correct2);
+                                c2.setText(rq.a2[rca.a2]);
+                                c2.setVisibility(View.VISIBLE);
+                            }
+                        }
+                        if ((rca.a3 != null) && (rca.a3 >= 0)) {
+                            if (rca.a3 == mRa.a3) {
+                                a3.setTextColor(res.getColor(R.color.answer_right));
+                            } else {
+                                a3.setPaintFlags(a3.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                                a3.setTextColor(res.getColor(R.color.answer_wrong));
+                                TextView c3 = (TextView) v.findViewById(R.id.correct3);
+                                c3.setText(rq.a3[rca.a3]);
+                                c3.setVisibility(View.VISIBLE);
+                            }
+                        }
+                        if ((rca.a4 != null) && (rca.a4 >= 0)) {
+                            if (rca.a4 == mRa.a4) {
+                                a4.setTextColor(res.getColor(R.color.answer_right));
+                            } else {
+                                a4.setPaintFlags(a4.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                                a4.setTextColor(res.getColor(R.color.answer_wrong));
+                                TextView c4 = (TextView) v.findViewById(R.id.correct4);
+                                c4.setText(Driver.newInstance(res, rca.a4).getName());
+                                c4.setVisibility(View.VISIBLE);
+                            }
+                        }
+                        if ((rca.a5 != null) && (rca.a5 >= 0)) {
+                            if (rca.a5 == mRa.a5) {
+                                a5.setTextColor(res.getColor(R.color.answer_right));
+                            } else {
+                                a5.setPaintFlags(a5.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                                a5.setTextColor(res.getColor(R.color.answer_wrong));
+                                TextView c5 = (TextView) v.findViewById(R.id.correct5);
+                                c5.setText(res.getStringArray(R.array.num_leaders)[rca.a5]);
+                                c5.setVisibility(View.VISIBLE);
+                            }
+                        }
+                    } // Correct answers available
+                } // !mRaceSelected.isFuture()
             }
 
             TextView q2 = (TextView) v.findViewById(R.id.question2);
@@ -223,6 +300,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
             mRaceSpinner.setAdapter(mRaceAdapter);
             mRaceSpinner.setSelection(mRaceAdapter.getPosition(mRaceSelected));
             mRaceSpinner.setOnItemSelectedListener(new RaceSelectedListener());
+            mRaceSpinner.setEnabled(spinnerEnable);
         }
 
         return v;
@@ -305,11 +383,11 @@ public final class Questions extends TabFragment implements View.OnClickListener
     }
 
     private static class RaceAnswers {
-        public int a1;
-        public int a2;
-        public int a3;
-        public int a4;
-        public int a5;
+        public Integer a1;
+        public Integer a2;
+        public Integer a3;
+        public Integer a4;
+        public Integer a5;
 
         public static RaceAnswers fromJson(String json) {
             return new Gson().fromJson(json, RaceAnswers.class);
@@ -369,6 +447,54 @@ public final class Questions extends TabFragment implements View.OnClickListener
         }
 
         public void onNothingSelected(AdapterView<?> parent) {}
+    }
+
+    private class CorrectAnswersListener implements GaeListener {
+        private int raceId;
+
+        public CorrectAnswersListener(int id) {
+            raceId = id;
+        }
+
+        @Override
+        public void onFailedConnect(Context context) {
+            Util.log("CorrectAnswersListener: onFailedConnect");
+
+            // Check for null in case race alarm has fired, changing the view
+            if (mRaceSpinner != null) {
+                mRaceSpinner.setEnabled(true);
+            }
+
+            // Verify application wasn't closed before callback returned
+            if (getSherlockActivity() != null) {
+                getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
+            }
+        }
+
+        @Override
+        public void onGet(Context context, String json) {
+            Util.log("CorrectAnswersListener: onGet: " + json);
+
+            SharedPreferences cache = context.getSharedPreferences(CACACHE, Activity.MODE_PRIVATE);
+            cache.edit().putString(CACHE_PREFIX + raceId, json).commit();
+
+            // Check for null in case race alarm has fired, changing the view
+            if (mRaceSpinner != null) {
+                mRaceSpinner.setEnabled(true);
+            }
+
+            // Verify application wasn't closed before callback returned
+            if (getSherlockActivity() != null) {
+                getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
+                notifyChanged();
+            }
+        }
+
+        @Override
+        public void onConnectSuccess(Context context, String json) {}
+
+        @Override
+        public void onLaunchIntent(Intent launch) {}
     }
 
     @Override

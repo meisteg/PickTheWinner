@@ -15,6 +15,9 @@
  */
 package com.meiste.greg.ptw;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+
 import android.content.Context;
 import android.text.format.DateUtils;
 
@@ -108,6 +111,11 @@ public final class Race {
 
     public long getStartTimestamp() {
         return mStart;
+    }
+
+    public String getStartYear() {
+        SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
+        return yearFormat.format(new Timestamp(mStart));
     }
 
     public String getQuestionDateTime(Context context) {

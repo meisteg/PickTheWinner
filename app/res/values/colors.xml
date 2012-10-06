@@ -21,6 +21,9 @@
     <color name="tab_text">#AA000000</color>
     <color name="tab_selected">#FF000000</color>
     
+    <color name="answer_right">#FF1A8800</color>
+    <color name="answer_wrong">#FFFF0000</color>
+    
     <color name="standings_header">#FFCCCCCC</color>
     <color name="standings_chase">#88FFFF00</color>
     <color name="standings_self">#8800FF00</color>

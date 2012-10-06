@@ -71,6 +71,11 @@
         <item name="android:textStyle">italic</item>
     </style>
     
+    <style name="QuestionsCorrectAnswer" parent="QuestionsAnswer">
+        <item name="android:textColor">@color/answer_right</item>
+        <item name="android:visibility">gone</item>
+    </style>
+    
     <style name="StandingsAfter">
         <item name="android:textSize">18sp</item>
         <item name="android:layout_height">wrap_content</item>

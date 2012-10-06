@@ -37,18 +37,23 @@
         
         <TextView style="@style/QuestionsText" android:text="@string/questions_1" />
         <TextView style="@style/QuestionsAnswer" android:id="@+id/answer1" />
+        <TextView style="@style/QuestionsCorrectAnswer" android:id="@+id/correct1" />
         
         <TextView style="@style/QuestionsText" android:id="@+id/question2" />
         <TextView style="@style/QuestionsAnswer" android:id="@+id/answer2" />
+        <TextView style="@style/QuestionsCorrectAnswer" android:id="@+id/correct2" />
         
         <TextView style="@style/QuestionsText" android:id="@+id/question3" />
         <TextView style="@style/QuestionsAnswer" android:id="@+id/answer3" />
+        <TextView style="@style/QuestionsCorrectAnswer" android:id="@+id/correct3" />
         
         <TextView style="@style/QuestionsText" android:text="@string/questions_4" />
         <TextView style="@style/QuestionsAnswer" android:id="@+id/answer4" />
+        <TextView style="@style/QuestionsCorrectAnswer" android:id="@+id/correct4" />
         
         <TextView style="@style/QuestionsText" android:text="@string/questions_5" />
         <TextView style="@style/QuestionsAnswer" android:id="@+id/answer5" />
+        <TextView style="@style/QuestionsCorrectAnswer" android:id="@+id/correct5" />
         
     </LinearLayout>
 
