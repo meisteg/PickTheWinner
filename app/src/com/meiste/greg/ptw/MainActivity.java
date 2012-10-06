@@ -23,6 +23,7 @@ import android.support.v4.view.ViewPager;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Window;
 import com.google.ads.Ad;
 import com.google.ads.AdListener;
 import com.google.ads.AdRequest;
@@ -45,11 +46,18 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // This has to be called before setContentView
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+
         if (Eula.show(this)) {
             onEulaAgreedTo();
         }
 
         setContentView(R.layout.main);
+
+        // Need to explicitly set to false else it will incorrectly appear on
+        // older Android versions. Must be after setContentView.
+        setSupportProgressBarIndeterminateVisibility(false);
 
         mPager = (ViewPager)findViewById(R.id.pager);
         mPager.setOffscreenPageLimit(2);
