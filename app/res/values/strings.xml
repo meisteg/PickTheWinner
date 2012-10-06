@@ -95,7 +95,7 @@
         24 hours of the race results being made official by NASCAR.</string>
     <string name="chase_header">The Chase</string>
     <string name="chase">After the 26th race of the season the players in the top 10 in points
-        are automatically qualified for The Chase. In addition, there are two "wild card"
+        are automatically qualified for The Chase. In addition, there are two \"wild card\"
         qualifiers, specifically the two players with the most race wins who are ranked between
         11th and 20th in points.\n\nPlayers who qualify for The Chase will have their point totals
         reset to 5,000 points. The 10 automatic qualifiers receive a bonus of 10 points for
@@ -136,7 +136,9 @@
     
     <!-- Suggest Strings -->
     <string name="suggest_para1">You can submit question ideas for the next race at:</string>
-    <string name="suggest_para2">It is optional and does not earn you any points.</string>
+    <string name="suggest_para2">It is optional and does not earn you any points. Questions
+        should be about the outcome of the race and not be fact questions that can be researched
+        for an answer.</string>
     <string name="suggest_hint">Enter question suggestion here</string>
     <string name="suggest_no_race">Thanks for all your question suggestions this season.</string>
     <string name="suggest_success">Thanks for your suggestion!</string>
