@@ -17,11 +17,11 @@ package com.meiste.greg.ptw;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
 
+import com.actionbarsherlock.app.SherlockFragment;
 import com.meiste.greg.ptw.TabFragmentAdapter.FragmentListener;
 
-public class TabFragment extends Fragment {
+public class TabFragment extends SherlockFragment {
     private static final String KEY_TITLE = "TabFragment:Title";
     private String mTitle = "???";
     private FragmentListener mFragmentListener;
