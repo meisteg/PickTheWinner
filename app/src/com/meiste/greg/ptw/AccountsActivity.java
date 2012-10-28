@@ -128,7 +128,9 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
 
     @Override
     public void onFailedConnect(Context context) {
-        Toast.makeText(this, R.string.failed_connect, Toast.LENGTH_SHORT).show();
+        // If the connect succeeds but the get history fails, don't show error toast
+        if (GAE.isAccountSetupNeeded(context))
+            Toast.makeText(this, R.string.failed_connect, Toast.LENGTH_SHORT).show();
         finish();
     }
 
@@ -139,9 +141,13 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
 
     @Override
     public void onConnectSuccess(Context context, String json) {
-        finish();
+        Util.setAccountSetupTime(context);
+        mGae.getPage(this, "history");
     }
 
     @Override
-    public void onGet(Context context, String json) {}
+    public void onGet(Context context, String json) {
+        PlayerHistory.fromJson(json).commit(context);
+        finish();
+    }
 }

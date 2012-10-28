@@ -24,6 +24,7 @@ public final class Util {
 
     private final static String TAG = "PickTheWinner";
     private final static String PREFS_STATE = "state";
+    private final static String PREFS_SETUP = "setup";
 
     public static void log(String msg) {
         if (BuildConfig.DEBUG) Log.d(TAG, msg);
@@ -31,5 +32,13 @@ public final class Util {
 
     public static SharedPreferences getState(Context context) {
         return context.getSharedPreferences(PREFS_STATE, Activity.MODE_PRIVATE);
+    }
+
+    public static long getAccountSetupTime(Context context) {
+        return getState(context).getLong(PREFS_SETUP, 0);
+    }
+
+    public static void setAccountSetupTime(Context context) {
+        getState(context).edit().putLong(PREFS_SETUP, System.currentTimeMillis()).commit();
     }
 }

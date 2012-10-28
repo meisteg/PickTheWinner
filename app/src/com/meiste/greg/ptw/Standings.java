@@ -49,6 +49,7 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
     private PullToRefreshListView mPullToRefresh;
     private PlayerAdapter mAdapter;
     private TextView mAfterRace;
+    private long mOnCreateViewTime = 0;
 
     private PrivacyDialog mDialog;
     private boolean mDialogResume = false;
@@ -64,6 +65,7 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mSetupNeeded = GAE.isAccountSetupNeeded(getActivity());
         mChanged = false;
+        mOnCreateViewTime = System.currentTimeMillis();
         setRetainInstance(true);
 
         if (mSetupNeeded)
@@ -126,7 +128,8 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
     public void onResume() {
         super.onResume();
 
-        if (mSetupNeeded != GAE.isAccountSetupNeeded(getActivity())) {
+        if ((mSetupNeeded != GAE.isAccountSetupNeeded(getActivity())) ||
+                (mOnCreateViewTime < Util.getAccountSetupTime(getActivity()))) {
             Util.log("Standings: onResume: notifyChanged");
             notifyChanged();
         } else if ((mDialog != null) && mDialogResume) {
@@ -147,9 +150,10 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
 
     @Override
     public boolean isChanged() {
-        // Must check for account status change separately in case another
-        // tab noticed the change and already called notifyChanged().
-        return mChanged || (mSetupNeeded != GAE.isAccountSetupNeeded(getActivity()));
+        // Must check for account status change or account setup separately in
+        // case another tab noticed the change and already called notifyChanged().
+        return mChanged || (mSetupNeeded != GAE.isAccountSetupNeeded(getActivity())) ||
+                (mOnCreateViewTime < Util.getAccountSetupTime(getActivity()));
     }
 
     private boolean isStandingsPresent() {

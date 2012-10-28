@@ -27,4 +27,8 @@ public final class RaceAnswers {
     public static RaceAnswers fromJson(String json) {
         return new Gson().fromJson(json, RaceAnswers.class);
     }
+
+    public String toJson() {
+        return new Gson().toJson(this);
+    }
 }

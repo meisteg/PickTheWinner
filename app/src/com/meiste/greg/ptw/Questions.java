@@ -83,7 +83,6 @@ public final class Questions extends TabFragment implements View.OnClickListener
     private boolean mFailedConnect = false;
     private boolean mSending = false;
     private long mOnCreateViewTime = 0;
-    private RaceAnswers mRa;
     private Spinner mRaceSpinner = null;
     private QuestionsRaceAdapter mRaceAdapter;
 
@@ -100,7 +99,6 @@ public final class Questions extends TabFragment implements View.OnClickListener
         mRaceNext = Race.getNext(getActivity(), false, true);
         mSetupNeeded = GAE.isAccountSetupNeeded(getActivity());
         mChanged = false;
-        mRa = null;
         mRaceAdapter = new QuestionsRaceAdapter(getActivity());
         mOnCreateViewTime = System.currentTimeMillis();
         setRetainInstance(true);
@@ -187,22 +185,22 @@ public final class Questions extends TabFragment implements View.OnClickListener
 
                 v = inflater.inflate(R.layout.questions_answered, container, false);
                 Resources res = getActivity().getResources();
-                mRa = RaceAnswers.fromJson(json);
+                RaceAnswers ra = RaceAnswers.fromJson(json);
 
                 TextView a1 = (TextView) v.findViewById(R.id.answer1);
-                a1.setText(Driver.newInstance(res, mRa.a1).getName());
+                a1.setText(Driver.newInstance(res, ra.a1).getName());
 
                 TextView a2 = (TextView) v.findViewById(R.id.answer2);
-                a2.setText(rq.a2[mRa.a2]);
+                a2.setText(rq.a2[ra.a2]);
 
                 TextView a3 = (TextView) v.findViewById(R.id.answer3);
-                a3.setText(rq.a3[mRa.a3]);
+                a3.setText(rq.a3[ra.a3]);
 
                 TextView a4 = (TextView) v.findViewById(R.id.answer4);
-                a4.setText(Driver.newInstance(res, mRa.a4).getName());
+                a4.setText(Driver.newInstance(res, ra.a4).getName());
 
                 TextView a5 = (TextView) v.findViewById(R.id.answer5);
-                a5.setText(res.getStringArray(R.array.num_leaders)[mRa.a5]);
+                a5.setText(res.getStringArray(R.array.num_leaders)[ra.a5]);
 
                 if (!mRaceSelected.isFuture()) {
                     cache = getActivity().getSharedPreferences(CACACHE, Activity.MODE_PRIVATE);
@@ -221,7 +219,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
 
                         // Have to check for null in case there is no correct answer
                         if ((rca.a1 != null) && (rca.a1 >= 0)) {
-                            if (rca.a1 == mRa.a1) {
+                            if (rca.a1 == ra.a1) {
                                 a1.setTextColor(res.getColor(R.color.answer_right));
                             } else {
                                 a1.setPaintFlags(a1.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
@@ -232,7 +230,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
                             }
                         }
                         if ((rca.a2 != null) && (rca.a2 >= 0)) {
-                            if (rca.a2 == mRa.a2) {
+                            if (rca.a2 == ra.a2) {
                                 a2.setTextColor(res.getColor(R.color.answer_right));
                             } else {
                                 a2.setPaintFlags(a2.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
@@ -243,7 +241,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
                             }
                         }
                         if ((rca.a3 != null) && (rca.a3 >= 0)) {
-                            if (rca.a3 == mRa.a3) {
+                            if (rca.a3 == ra.a3) {
                                 a3.setTextColor(res.getColor(R.color.answer_right));
                             } else {
                                 a3.setPaintFlags(a3.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
@@ -254,7 +252,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
                             }
                         }
                         if ((rca.a4 != null) && (rca.a4 >= 0)) {
-                            if (rca.a4 == mRa.a4) {
+                            if (rca.a4 == ra.a4) {
                                 a4.setTextColor(res.getColor(R.color.answer_right));
                             } else {
                                 a4.setPaintFlags(a4.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
@@ -265,7 +263,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
                             }
                         }
                         if ((rca.a5 != null) && (rca.a5 >= 0)) {
-                            if (rca.a5 == mRa.a5) {
+                            if (rca.a5 == ra.a5) {
                                 a5.setTextColor(res.getColor(R.color.answer_right));
                             } else {
                                 a5.setPaintFlags(a5.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
@@ -310,14 +308,11 @@ public final class Questions extends TabFragment implements View.OnClickListener
     public void onResume() {
         super.onResume();
         BusProvider.getInstance().register(this);
-        SharedPreferences cache = getActivity().getSharedPreferences(ACACHE, Activity.MODE_PRIVATE);
 
         // Check if user changed their account status
         mChanged = mSetupNeeded != GAE.isAccountSetupNeeded(getActivity());
-        if (mRaceSelected != null) {
-            // See if race answers have been cleared by a new account connect
-            mChanged |= ((mRa != null) && !cache.contains(CACHE_PREFIX + mRaceSelected.getId()));
-        }
+        // Check if user has switched accounts
+        mChanged |= mOnCreateViewTime < Util.getAccountSetupTime(getActivity());
         if (mRaceNext != null) {
             // See if race questions are now available but weren't previously
             mChanged |= (mOnCreateViewTime < mRaceNext.getQuestionTimestamp()) && mRaceNext.inProgress();
