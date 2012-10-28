@@ -49,6 +49,25 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
         setContentView(R.layout.connect);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        int connectId = R.id.right_button;
+        int exitId = R.id.left_button;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            // Android versions prior to ICS have the affirmative on the left
+            connectId = R.id.left_button;
+            exitId = R.id.right_button;
+        }
+
+        final Button connectButton = (Button) findViewById(connectId);
+        connectButton.setText(R.string.connect);
+
+        final Button exitButton = (Button) findViewById(exitId);
+        exitButton.setText(R.string.exit);
+        exitButton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
         mGae = GAE.getInstance(getApplicationContext());
         List<String> accounts = mGae.getGoogleAccounts();
         if (accounts.size() == 0) {
@@ -68,6 +87,7 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
             });
             builder.setIcon(android.R.drawable.stat_sys_warning);
             builder.setTitle(R.string.attention);
+            builder.setCancelable(false);
             builder.show();
         } else {
             final ListView listView = (ListView) findViewById(R.id.select_account);
@@ -75,16 +95,6 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
             listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
             listView.setItemChecked(mAccountSelectedPosition, true);
 
-            int connectId = R.id.right_button;
-            int exitId = R.id.left_button;
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                // Android versions prior to ICS have the affirmative on the left
-                connectId = R.id.left_button;
-                exitId = R.id.right_button;
-            }
-
-            final Button connectButton = (Button) findViewById(connectId);
-            connectButton.setText(R.string.connect);
             connectButton.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     mAccountSelectedPosition = listView.getCheckedItemPosition();
@@ -92,14 +102,6 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
                     mAccountName = (String) account.getText();
                     setContentView(R.layout.connecting);
                     mGae.connect(AccountsActivity.this, mAccountName);
-                }
-            });
-
-            final Button exitButton = (Button) findViewById(exitId);
-            exitButton.setText(R.string.exit);
-            exitButton.setOnClickListener(new OnClickListener() {
-                public void onClick(View v) {
-                    finish();
                 }
             });
         }
