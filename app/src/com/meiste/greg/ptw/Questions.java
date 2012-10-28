@@ -371,29 +371,6 @@ public final class Questions extends TabFragment implements View.OnClickListener
         }
     }
 
-    private static class RaceQuestions {
-        public String q2;
-        public String[] a2;
-        public String q3;
-        public String[] a3;
-
-        public static RaceQuestions fromJson(String json) {
-            return new Gson().fromJson(json, RaceQuestions.class);
-        }
-    }
-
-    private static class RaceAnswers {
-        public Integer a1;
-        public Integer a2;
-        public Integer a3;
-        public Integer a4;
-        public Integer a5;
-
-        public static RaceAnswers fromJson(String json) {
-            return new Gson().fromJson(json, RaceAnswers.class);
-        }
-    }
-
     private class RaceSelectedListener implements OnItemSelectedListener {
         public void onItemSelected(AdapterView<?> parent, View v, int pos, long id) {
             Race race = (Race) parent.getItemAtPosition(pos);
