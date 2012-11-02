@@ -41,7 +41,8 @@
             android:layout_height="wrap_content"
             android:hint="@string/suggest_hint"
             android:layout_marginTop="20sp"
-            android:maxLines="3" >
+            android:maxLines="3"
+            android:inputType="textCapSentences" >
     
             <requestFocus />
         </EditText>
