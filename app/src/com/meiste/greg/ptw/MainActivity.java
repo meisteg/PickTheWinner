@@ -29,6 +29,7 @@ import com.google.ads.AdListener;
 import com.google.ads.AdRequest;
 import com.google.ads.AdRequest.ErrorCode;
 import com.google.ads.AdView;
+import com.google.android.gcm.GCMRegistrar;
 import com.viewpagerindicator.TitlePageIndicator;
 
 public class MainActivity extends SherlockFragmentActivity implements Eula.OnEulaAgreedTo {
@@ -45,6 +46,11 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (BuildConfig.DEBUG) {
+            GCMRegistrar.checkDevice(this);
+            GCMRegistrar.checkManifest(this);
+        }
 
         // This has to be called before setContentView
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
@@ -100,6 +106,9 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
     public void onDestroy() {
         mAdView.removeAllViews();
         mAdView.destroy();
+
+        GCMRegistrar.onDestroy(getApplicationContext());
+
         super.onDestroy();
     }
 
@@ -133,6 +142,13 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
     public void onEulaAgreedTo() {
         RaceAlarm.set(this);
         QuestionAlarm.set(this);
+
+        if (!GCMRegistrar.isRegistered(this)) {
+            Util.log("Registering with GCM");
+            GCMRegistrar.register(getApplicationContext(), Util.GCM_SENDER_ID);
+        } else {
+            Util.log("Already registered with GCM");
+        }
     }
 
     private int getTab(Intent intent) {

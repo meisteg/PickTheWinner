@@ -22,6 +22,8 @@ import android.util.Log;
 
 public final class Util {
 
+    public final static String GCM_SENDER_ID = "540948604089";
+
     private final static String TAG = "PickTheWinner";
     private final static String PREFS_STATE = "state";
     private final static String PREFS_SETUP = "setup";

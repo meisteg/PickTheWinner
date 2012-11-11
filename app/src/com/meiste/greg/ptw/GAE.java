@@ -55,7 +55,8 @@ import android.preference.PreferenceManager;
 
 public final class GAE {
 
-    private static final String PROD_URL = "https://ptwgame.appspot.com";
+    public static final String PROD_URL = "https://ptwgame.appspot.com";
+
     private static final String AUTH_COOKIE_NAME = "SACSID";
     // Timeout in milliseconds until a connection is established.
     private static final int TIMEOUT_CONNECTION = 10000;
