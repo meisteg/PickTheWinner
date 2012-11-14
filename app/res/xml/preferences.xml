@@ -33,6 +33,11 @@
             android:title="@string/remind_race"
             android:summary="@string/remind_race_summary"
             android:defaultValue="true" />
+        <CheckBoxPreference
+            android:key="remind.results"
+            android:title="@string/remind_results"
+            android:summary="@string/remind_results_summary"
+            android:defaultValue="true" />
     </PreferenceCategory>
     <PreferenceCategory
         android:key="reminder_settings_category"

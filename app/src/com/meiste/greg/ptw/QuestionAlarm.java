@@ -71,16 +71,16 @@ public final class QuestionAlarm extends BroadcastReceiver {
 
         // Only show notification if user wants question reminders
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        if (prefs.getBoolean(EditPreferences.KEY_REMIND_QUESTIONS, true)) {
+        if (prefs.getBoolean(EditPreferences.KEY_NOTIFY_QUESTIONS, true)) {
             Intent notificationIntent = new Intent(context, MainActivity.class);
             notificationIntent.putExtra(MainActivity.INTENT_TAB, 1);
             PendingIntent pi = PendingIntent.getActivity(context, 0, notificationIntent,
                     PendingIntent.FLAG_CANCEL_CURRENT);
 
             int defaults = 0;
-            if (prefs.getBoolean(EditPreferences.KEY_REMIND_VIBRATE, true))
+            if (prefs.getBoolean(EditPreferences.KEY_NOTIFY_VIBRATE, true))
                 defaults |= Notification.DEFAULT_VIBRATE;
-            if (prefs.getBoolean(EditPreferences.KEY_REMIND_LED, true))
+            if (prefs.getBoolean(EditPreferences.KEY_NOTIFY_LED, true))
                 defaults |= Notification.DEFAULT_LIGHTS;
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
@@ -91,7 +91,7 @@ public final class QuestionAlarm extends BroadcastReceiver {
             .setContentIntent(pi)
             .setAutoCancel(true)
             .setDefaults(defaults)
-            .setSound(Uri.parse(prefs.getString(EditPreferences.KEY_REMIND_RINGTONE,
+            .setSound(Uri.parse(prefs.getString(EditPreferences.KEY_NOTIFY_RINGTONE,
                     "content://settings/system/notification_sound")));
 
             String ns = Context.NOTIFICATION_SERVICE;

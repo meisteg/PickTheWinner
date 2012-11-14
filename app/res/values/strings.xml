@@ -39,7 +39,7 @@
     <string name="hide_name">Hide my player name</string>
     <string name="in_the_chase">In The Chase</string>
     <string name="led">Phone LED</string>
-    <string name="led_summary">Flash LED for reminders</string>
+    <string name="led_summary">Flash LED for notifications</string>
     <string name="legal">Legal</string>
     <string name="legal_content">This application is NOT affiliated with or endorsed by NASCAR®.
         NASCAR® and Sprint Cup® are registered trademarks of the National Association for Stock
@@ -62,10 +62,12 @@
     <string name="remind_race_notify">Race reminder</string>
     <string name="remind_race_summary">Show when it is time to watch the race</string>
     <string name="remind_race_ticker">Time to watch the %s</string>
-    <string name="reminder_settings">Reminder Settings</string>
+    <string name="remind_results">Results available</string>
+    <string name="remind_results_summary">Show when the results have been posted</string>
+    <string name="reminder_settings">Notification Settings</string>
     <string name="retry">Retry</string>
     <string name="ringtone">Ringtone</string>
-    <string name="ringtone_summary">Set a ringtone for reminders</string>
+    <string name="ringtone_summary">Set a ringtone for notifications</string>
     <string name="select_account">Select the account you wish to authorize:</string>
     <string name="send">Send</string>
     <string name="settings">Settings</string>
@@ -78,7 +80,7 @@
     <string name="track_layout">Track layout</string>
     <string name="version">2.0.0-SNAPSHOT</string>
     <string name="vibrate">Vibrate</string>
-    <string name="vibrate_summary">Vibrate for reminders</string>
+    <string name="vibrate_summary">Vibrate for notifications</string>
     
     <!-- Rule Book Strings -->
     <string name="scoring_header">Weekly Scoring</string>

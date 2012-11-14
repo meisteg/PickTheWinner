@@ -34,11 +34,12 @@ public class EditPreferences extends SherlockPreferenceActivity implements OnSha
     public static final String KEY_ACCOUNT_EMAIL = "account.email";
     public static final String KEY_ACCOUNT_COOKIE = "account.cookie";
 
-    public static final String KEY_REMIND_QUESTIONS = "remind.questions";
-    public static final String KEY_REMIND_RACE = "remind.race";
-    public static final String KEY_REMIND_VIBRATE = "remind.vibrate";
-    public static final String KEY_REMIND_LED = "remind.led";
-    public static final String KEY_REMIND_RINGTONE = "remind.ringtone";
+    public static final String KEY_NOTIFY_QUESTIONS = "remind.questions";
+    public static final String KEY_NOTIFY_RACE = "remind.race";
+    public static final String KEY_NOTIFY_RESULTS = "remind.results";
+    public static final String KEY_NOTIFY_VIBRATE = "remind.vibrate";
+    public static final String KEY_NOTIFY_LED = "remind.led";
+    public static final String KEY_NOTIFY_RINGTONE = "remind.ringtone";
 
     private static final String KEY_ACCOUNT_SCREEN = "account_screen";
     private static final String KEY_REMINDER_SETTINGS = "reminder_settings_category";
@@ -55,13 +56,14 @@ public class EditPreferences extends SherlockPreferenceActivity implements OnSha
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mVibrate = findPreference(KEY_REMIND_VIBRATE);
+        mVibrate = findPreference(KEY_NOTIFY_VIBRATE);
         boolean methodAvailable = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
         Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         if (methodAvailable && (vibrator == null || !vibrator.hasVibrator())) {
             Util.log("Remove vibrator option since vibrator not present");
             PreferenceCategory pc = (PreferenceCategory)findPreference(KEY_REMINDER_SETTINGS);
             pc.removePreference(mVibrate);
+            mVibrate = null;
         }
 
         if (BuildConfig.DEBUG) {
@@ -93,30 +95,21 @@ public class EditPreferences extends SherlockPreferenceActivity implements OnSha
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-        if (key.equals(KEY_REMIND_QUESTIONS)) {
-            if (prefs.getBoolean(key, true)) {
-                QuestionAlarm.set(this);
-            }
-            reminderCheck(prefs);
-        } else if (key.equals(KEY_REMIND_RACE)) {
-            if (prefs.getBoolean(key, true)) {
-                RaceAlarm.set(this);
-            }
-            reminderCheck(prefs);
-        }
+        reminderCheck(prefs);
     }
 
     @SuppressWarnings("deprecation")
     private void reminderCheck(SharedPreferences prefs) {
-        if (prefs.getBoolean(KEY_REMIND_QUESTIONS, true) ||
-                prefs.getBoolean(KEY_REMIND_RACE, true)) {
-            findPreference(KEY_REMIND_LED).setEnabled(true);
-            findPreference(KEY_REMIND_RINGTONE).setEnabled(true);
+        if (prefs.getBoolean(KEY_NOTIFY_QUESTIONS, true) ||
+                prefs.getBoolean(KEY_NOTIFY_RACE, true) ||
+                prefs.getBoolean(KEY_NOTIFY_RESULTS, true)) {
+            findPreference(KEY_NOTIFY_LED).setEnabled(true);
+            findPreference(KEY_NOTIFY_RINGTONE).setEnabled(true);
             if (mVibrate != null)
                 mVibrate.setEnabled(true);
         } else {
-            findPreference(KEY_REMIND_LED).setEnabled(false);
-            findPreference(KEY_REMIND_RINGTONE).setEnabled(false);
+            findPreference(KEY_NOTIFY_LED).setEnabled(false);
+            findPreference(KEY_NOTIFY_RINGTONE).setEnabled(false);
             if (mVibrate != null)
                 mVibrate.setEnabled(false);
         }

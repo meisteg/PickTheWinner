@@ -64,7 +64,7 @@ public final class RaceAlarm extends BroadcastReceiver {
 
         // Only show notification if user wants race reminders
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        if (prefs.getBoolean(EditPreferences.KEY_REMIND_RACE, true)) {
+        if (prefs.getBoolean(EditPreferences.KEY_NOTIFY_RACE, true)) {
             Intent notificationIntent = new Intent(context, RaceActivity.class);
             notificationIntent.putExtra(RaceActivity.INTENT_ID, race.getId());
             notificationIntent.putExtra(RaceActivity.INTENT_ALARM, true);
@@ -72,9 +72,9 @@ public final class RaceAlarm extends BroadcastReceiver {
                     PendingIntent.FLAG_CANCEL_CURRENT);
 
             int defaults = 0;
-            if (prefs.getBoolean(EditPreferences.KEY_REMIND_VIBRATE, true))
+            if (prefs.getBoolean(EditPreferences.KEY_NOTIFY_VIBRATE, true))
                 defaults |= Notification.DEFAULT_VIBRATE;
-            if (prefs.getBoolean(EditPreferences.KEY_REMIND_LED, true))
+            if (prefs.getBoolean(EditPreferences.KEY_NOTIFY_LED, true))
                 defaults |= Notification.DEFAULT_LIGHTS;
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
@@ -85,7 +85,7 @@ public final class RaceAlarm extends BroadcastReceiver {
             .setContentIntent(pi)
             .setAutoCancel(true)
             .setDefaults(defaults)
-            .setSound(Uri.parse(prefs.getString(EditPreferences.KEY_REMIND_RINGTONE,
+            .setSound(Uri.parse(prefs.getString(EditPreferences.KEY_NOTIFY_RINGTONE,
                     "content://settings/system/notification_sound")));
 
             String ns = Context.NOTIFICATION_SERVICE;
