@@ -48,8 +48,8 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
     private _Standings mStandings;
     private Context mContext;
 
-    public PlayerAdapter(Context context, int textViewResourceId) {
-        super(context, textViewResourceId);
+    public PlayerAdapter(Context context) {
+        super(context, R.layout.schedule_row);
         mContext = context;
         init();
     }

@@ -136,6 +136,11 @@ public class GCMIntentService extends GCMBaseIntentService {
 
         /* Next update standings */
         for (int i = 1; i <= MAX_ATTEMPTS; i++) {
+            if (GAE.isAccountSetupNeeded(this)) {
+                Util.log("Skipping Standings sync since account not setup");
+                break;
+            }
+
             Util.log("Attempt #" + i + " to sync standings from PTW server");
             GAE.getInstance(getApplicationContext()).getPage(standingsListener, "standings");
             try {
@@ -229,7 +234,11 @@ public class GCMIntentService extends GCMBaseIntentService {
         @Override
         public void onGet(Context context, String json) {
             Util.log("scheduleListener: onGet");
-            // TODO
+
+            Races.update(context, json);
+            RaceAlarm.reset(context);
+            BusProvider.getInstance().post(new ScheduleUpdateEvent());
+
             super.onGet(context, json);
         }
     };
@@ -238,7 +247,21 @@ public class GCMIntentService extends GCMBaseIntentService {
         @Override
         public void onGet(Context context, String json) {
             Util.log("standingsListener: onGet");
-            // TODO
+
+            final PlayerAdapter pAdapter = new PlayerAdapter(getApplicationContext());
+            String beforeUpdate = pAdapter.getRaceAfter();
+
+            Standings.update(context, json);
+            BusProvider.getInstance().post(new StandingsUpdateEvent());
+
+            pAdapter.notifyDataSetChanged();
+            String afterUpdate = pAdapter.getRaceAfter();
+
+            if (!beforeUpdate.equals(afterUpdate)) {
+                Util.log("Notifying user of standings update");
+                // TODO: Notify user if setting enabled
+            }
+
             super.onGet(context, json);
         }
     };

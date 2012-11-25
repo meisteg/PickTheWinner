@@ -30,6 +30,7 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.meiste.greg.ptw.GAE.GaeListener;
+import com.squareup.otto.Subscribe;
 
 public final class Schedule extends TabFragment implements OnRefreshListener<ListView>, GaeListener  {
 
@@ -65,12 +66,25 @@ public final class Schedule extends TabFragment implements OnRefreshListener<Lis
             }
         });
 
+        BusProvider.getInstance().register(this);
         return v;
+    }
+
+    @Override
+    public void onDestroyView() {
+        BusProvider.getInstance().unregister(this);
+        super.onDestroyView();
     }
 
     @Override
     public void onRefresh(PullToRefreshBase<ListView> refreshView) {
         GAE.getInstance(getActivity()).getPage(this, "schedule");
+    }
+
+    @Subscribe
+    public void onScheduleUpdate(ScheduleUpdateEvent event) {
+        Util.log("Schedule: onScheduleUpdate");
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -82,7 +96,6 @@ public final class Schedule extends TabFragment implements OnRefreshListener<Lis
     @Override
     public void onGet(Context context, String json) {
         Races.update(context, json);
-        mAdapter.notifyDataSetChanged();
         RaceAlarm.reset(context);
         mPullToRefresh.onRefreshComplete();
         BusProvider.getInstance().post(new ScheduleUpdateEvent());

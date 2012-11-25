@@ -37,6 +37,7 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.meiste.greg.ptw.GAE.GaeListener;
+import com.squareup.otto.Subscribe;
 
 public final class Standings extends TabFragment implements OnRefreshListener<ListView>, GaeListener, DialogInterface.OnClickListener {
     public static final String FILENAME = "standings";
@@ -67,6 +68,7 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
         mChanged = false;
         mOnCreateViewTime = System.currentTimeMillis();
         setRetainInstance(true);
+        BusProvider.getInstance().register(this);
 
         if (mSetupNeeded)
             return inflater.inflate(R.layout.no_account, container, false);
@@ -97,7 +99,7 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
 
         ListView lv = mPullToRefresh.getRefreshableView();
         View header = inflater.inflate(R.layout.standings_header, lv, false);
-        mAdapter = new PlayerAdapter(getActivity(), R.layout.schedule_row);
+        mAdapter = new PlayerAdapter(getActivity());
         mAfterRace = (TextView) header.findViewById(R.id.after);
         mAfterRace.setText(getActivity().getString(R.string.standings_after, mAdapter.getRaceAfter()));
         lv.addHeaderView(header, null, false);
@@ -149,6 +151,12 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
     }
 
     @Override
+    public void onDestroyView() {
+        BusProvider.getInstance().unregister(this);
+        super.onDestroyView();
+    }
+
+    @Override
     public boolean isChanged() {
         // Must check for account status change or account setup separately in
         // case another tab noticed the change and already called notifyChanged().
@@ -164,6 +172,15 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
     @Override
     public void onRefresh(PullToRefreshBase<ListView> refreshView) {
         GAE.getInstance(getActivity()).getPage(this, "standings");
+    }
+
+    @Subscribe
+    public void onStandingsUpdate(StandingsUpdateEvent event) {
+        Util.log("Standings: onStandingsUpdate");
+        if (mAdapter != null) {
+            mAdapter.notifyDataSetChanged();
+            mAfterRace.setText(getActivity().getString(R.string.standings_after, mAdapter.getRaceAfter()));
+        }
     }
 
     @Override
@@ -186,20 +203,12 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
     @Override
     public void onGet(Context context, String json) {
         Util.log("Standings: onGet");
-
-        try {
-            FileOutputStream fos = context.openFileOutput(FILENAME, Context.MODE_PRIVATE);
-            fos.write(json.getBytes());
-            fos.close();
-        } catch (Exception e) {
-            Util.log("Failed to save new standings");
-        }
+        update(context, json);
 
         // mConnecting not set for pull to refresh case
         if (!mConnecting) {
-            mAdapter.notifyDataSetChanged();
-            mAfterRace.setText(context.getString(R.string.standings_after, mAdapter.getRaceAfter()));
             mPullToRefresh.onRefreshComplete();
+            BusProvider.getInstance().post(new StandingsUpdateEvent());
         }
         // Verify application wasn't closed before callback returned
         else if (getActivity() != null) {
@@ -227,6 +236,16 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
             mConnecting = mChanged = true;
             notifyChanged();
             GAE.getInstance(getActivity()).postPage(this, "standings", json);
+        }
+    }
+
+    public static void update(Context context, String json) {
+        try {
+            FileOutputStream fos = context.openFileOutput(FILENAME, Context.MODE_PRIVATE);
+            fos.write(json.getBytes());
+            fos.close();
+        } catch (Exception e) {
+            Util.log("Failed to save new standings");
         }
     }
 }
