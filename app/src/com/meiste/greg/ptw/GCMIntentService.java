@@ -24,17 +24,21 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.Semaphore;
 
 import android.content.Context;
 import android.content.Intent;
 
 import com.google.android.gcm.GCMBaseIntentService;
 import com.google.android.gcm.GCMRegistrar;
+import com.meiste.greg.ptw.GAE.GaeListener;
 
 public class GCMIntentService extends GCMBaseIntentService {
 
     private static final int MAX_ATTEMPTS = 5;
     private static final int BACKOFF_MILLI_SECONDS = 2000;
+    private final Semaphore sem = new Semaphore(0);
+    private boolean mGaeSuccess = false;
 
     public GCMIntentService() {
         super(Util.GCM_SENDER_ID);
@@ -105,13 +109,54 @@ public class GCMIntentService extends GCMBaseIntentService {
     @Override
     protected void onMessage(Context context, Intent intent) {
         Util.log("Received message from GCM");
-        /* TODO: Update standings and notify user */
+        long backoff = BACKOFF_MILLI_SECONDS;
+
+        /* First update schedule */
+        for (int i = 1; i <= MAX_ATTEMPTS; i++) {
+            Util.log("Attempt #" + i + " to sync schedule from PTW server");
+            GAE.getInstance(getApplicationContext()).getPage(scheduleListener, "schedule");
+            try {
+                sem.acquire();
+            } catch (InterruptedException e) {}
+
+            if (mGaeSuccess || (i == MAX_ATTEMPTS))
+                break;
+            try {
+                Util.log("Sleeping for " + backoff + " ms before retry");
+                Thread.sleep(backoff);
+            } catch (InterruptedException e) {}
+
+            // increase backoff exponentially
+            backoff *= 2;
+        }
+
+        /* Reset variables */
+        backoff = BACKOFF_MILLI_SECONDS;
+        mGaeSuccess = false;
+
+        /* Next update standings */
+        for (int i = 1; i <= MAX_ATTEMPTS; i++) {
+            Util.log("Attempt #" + i + " to sync standings from PTW server");
+            GAE.getInstance(getApplicationContext()).getPage(standingsListener, "standings");
+            try {
+                sem.acquire();
+            } catch (InterruptedException e) {}
+
+            if (mGaeSuccess || (i == MAX_ATTEMPTS))
+                break;
+            try {
+                Util.log("Sleeping for " + backoff + " ms before retry");
+                Thread.sleep(backoff);
+            } catch (InterruptedException e) {}
+
+            // increase backoff exponentially
+            backoff *= 2;
+        }
     }
 
     @Override
     protected void onDeletedMessages(Context context, int total) {
         Util.log("Received deleted messages notification from GCM");
-        /* TODO: Update standings and notify user */
     }
 
     @Override
@@ -177,6 +222,53 @@ public class GCMIntentService extends GCMBaseIntentService {
             if (conn != null) {
                 conn.disconnect();
             }
+        }
+    }
+
+    private GcmGaeListener scheduleListener = new GcmGaeListener() {
+        @Override
+        public void onGet(Context context, String json) {
+            Util.log("scheduleListener: onGet");
+            // TODO
+            super.onGet(context, json);
+        }
+    };
+
+    private GcmGaeListener standingsListener = new GcmGaeListener() {
+        @Override
+        public void onGet(Context context, String json) {
+            Util.log("standingsListener: onGet");
+            // TODO
+            super.onGet(context, json);
+        }
+    };
+
+    private class GcmGaeListener implements GaeListener {
+        @Override
+        public void onGet(Context context, String json) {
+            mGaeSuccess = true;
+            sem.release();
+        }
+
+        @Override
+        public void onFailedConnect(Context context) {
+            Util.log("GcmGaeListener: onFailedConnect");
+            mGaeSuccess = false;
+            sem.release();
+        }
+
+        @Override
+        public void onLaunchIntent(Intent launch) {
+            // Should never happen, but release semaphore to prevent stuck wakelock
+            mGaeSuccess = false;
+            sem.release();
+        }
+
+        @Override
+        public void onConnectSuccess(Context context, String json) {
+            // Should never happen, but release semaphore to prevent stuck wakelock
+            mGaeSuccess = false;
+            sem.release();
         }
     }
 }
