@@ -64,6 +64,7 @@
     <string name="remind_race_ticker">Time to watch the %s</string>
     <string name="remind_results">Results available</string>
     <string name="remind_results_summary">Show when the results have been posted</string>
+    <string name="remind_results_notify">Results available for %s</string>
     <string name="reminder_settings">Notification Settings</string>
     <string name="retry">Retry</string>
     <string name="ringtone">Ringtone</string>

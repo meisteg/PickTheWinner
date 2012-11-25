@@ -26,8 +26,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Semaphore;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
+import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
 
 import com.google.android.gcm.GCMBaseIntentService;
 import com.google.android.gcm.GCMRegistrar;
@@ -259,7 +266,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 
             if (!beforeUpdate.equals(afterUpdate)) {
                 Util.log("Notifying user of standings update");
-                // TODO: Notify user if setting enabled
+                showResultsNotification(context, afterUpdate);
             }
 
             super.onGet(context, json);
@@ -292,6 +299,38 @@ public class GCMIntentService extends GCMBaseIntentService {
             // Should never happen, but release semaphore to prevent stuck wakelock
             mGaeSuccess = false;
             sem.release();
+        }
+    }
+
+    private void showResultsNotification(Context context, String race) {
+        // Only show notification if user wants results notifications
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        if (prefs.getBoolean(EditPreferences.KEY_NOTIFY_RESULTS, true)) {
+            Intent notificationIntent = new Intent(context, MainActivity.class);
+            notificationIntent.putExtra(MainActivity.INTENT_TAB, 2);
+            PendingIntent pi = PendingIntent.getActivity(context, 0, notificationIntent,
+                    PendingIntent.FLAG_CANCEL_CURRENT);
+
+            int defaults = 0;
+            if (prefs.getBoolean(EditPreferences.KEY_NOTIFY_VIBRATE, true))
+                defaults |= Notification.DEFAULT_VIBRATE;
+            if (prefs.getBoolean(EditPreferences.KEY_NOTIFY_LED, true))
+                defaults |= Notification.DEFAULT_LIGHTS;
+
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+            .setSmallIcon(R.drawable.ic_stat_steering_wheel)
+            .setTicker(context.getString(R.string.remind_results_notify, race))
+            .setContentTitle(context.getString(R.string.app_name))
+            .setContentText(context.getString(R.string.remind_results_notify, race))
+            .setContentIntent(pi)
+            .setAutoCancel(true)
+            .setDefaults(defaults)
+            .setSound(Uri.parse(prefs.getString(EditPreferences.KEY_NOTIFY_RINGTONE,
+                    "content://settings/system/notification_sound")));
+
+            String ns = Context.NOTIFICATION_SERVICE;
+            NotificationManager nm = (NotificationManager) context.getSystemService(ns);
+            nm.notify(R.string.remind_results_notify, builder.getNotification());
         }
     }
 }
