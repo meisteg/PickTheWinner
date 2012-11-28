@@ -28,6 +28,7 @@
     <color name="standings_chase">#88FFFF00</color>
     <color name="standings_self">#8800FF00</color>
     <color name="standings_other">#FFFFFFFF</color>
+    <color name="standings_footer">#FFCCCCCC</color>
     
     <color name="schedule_past">#FFCCCCCC</color>
     <color name="schedule_future">#FFFFFFFF</color>

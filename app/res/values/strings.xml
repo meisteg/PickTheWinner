@@ -136,6 +136,8 @@
     <string name="standings_points">Points</string>
     <string name="standings_races">Races</string>
     <string name="standings_wins">Wins</string>
+    <string name="standings_footer">Only Top %d players are shown. Players in yellow are currently
+        in the Chase. The green bar indicates your place in the standings.</string>
     
     <!-- Suggest Strings -->
     <string name="suggest_para1">You can submit question ideas for the next race at:</string>

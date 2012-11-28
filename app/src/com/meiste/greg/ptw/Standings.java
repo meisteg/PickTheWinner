@@ -50,6 +50,7 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
     private PullToRefreshListView mPullToRefresh;
     private PlayerAdapter mAdapter;
     private TextView mAfterRace;
+    private TextView mFooter;
     private long mOnCreateViewTime = 0;
 
     private PrivacyDialog mDialog;
@@ -98,11 +99,15 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
         mPullToRefresh.setOnRefreshListener(this);
 
         ListView lv = mPullToRefresh.getRefreshableView();
-        View header = inflater.inflate(R.layout.standings_header, lv, false);
+        final View header = inflater.inflate(R.layout.standings_header, lv, false);
         mAdapter = new PlayerAdapter(getActivity());
         mAfterRace = (TextView) header.findViewById(R.id.after);
         mAfterRace.setText(getActivity().getString(R.string.standings_after, mAdapter.getRaceAfter()));
         lv.addHeaderView(header, null, false);
+        final View footer = inflater.inflate(R.layout.standings_footer, lv, false);
+        mFooter = (TextView) footer.findViewById(R.id.standings_footer);
+        mFooter.setText(getActivity().getString(R.string.standings_footer, mAdapter.getCountWithoutPlayer()));
+        lv.addFooterView(footer, null, false);
         lv.setAdapter(mAdapter);
 
         lv.setOnItemClickListener(new OnItemClickListener() {
@@ -180,6 +185,7 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
         if (mAdapter != null) {
             mAdapter.notifyDataSetChanged();
             mAfterRace.setText(getActivity().getString(R.string.standings_after, mAdapter.getRaceAfter()));
+            mFooter.setText(getActivity().getString(R.string.standings_footer, mAdapter.getCountWithoutPlayer()));
         }
     }
 

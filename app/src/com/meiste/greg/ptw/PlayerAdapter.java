@@ -114,6 +114,10 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
         return mStandings.standings.length;
     }
 
+    public int getCountWithoutPlayer() {
+        return mStandings.standings.length;
+    }
+
     @Override
     public void notifyDataSetChanged() {
         init();
