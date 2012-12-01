@@ -31,14 +31,25 @@ public final class Races {
     private static Race[] sRaces;
 
     public static Race[] get(Context context) {
+        Race[] lRaces;
+        Race[] iRaces;
+
         synchronized (sRacesSync) {
             if (sRaces == null) {
                 Util.log("Populating race array");
 
-                sRaces = getLatest(context);
-                if (sRaces == null) {
+                lRaces = getLatest(context);
+                iRaces = getIncluded(context);
+                if ((lRaces == null) || (lRaces.length <= 0)) {
                     // User doesn't have updated schedule, so use included schedule
-                    sRaces = getIncluded(context);
+                    sRaces = iRaces;
+                } else if (lRaces[lRaces.length-1].getStartTimestamp() < iRaces[0].getStartTimestamp()) {
+                    // Included schedule is newer than updated schedule
+                    sRaces = iRaces;
+                    Util.log("Removing downloaded schedule because included is newer");
+                    context.deleteFile(FILENAME);
+                } else {
+                    sRaces = lRaces;
                 }
             }
         }
