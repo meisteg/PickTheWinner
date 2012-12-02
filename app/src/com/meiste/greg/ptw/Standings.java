@@ -72,7 +72,7 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
         BusProvider.getInstance().register(this);
 
         if (mSetupNeeded)
-            return inflater.inflate(R.layout.no_account, container, false);
+            return Util.getAccountSetupView(getActivity(), inflater, container);
         else if (mFailedConnect) {
             mFailedConnect = false;
             View v = inflater.inflate(R.layout.no_connection, container, false);

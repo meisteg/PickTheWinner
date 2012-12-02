@@ -19,7 +19,7 @@
     <string name="about">About</string>
     <string name="account">Account</string>
     <string name="account_needed">Please select an account</string>
-    <string name="account_setup_needed">To play Pick The Winner, please open the app Settings and select a Google account.</string>
+    <string name="account_setup_needed"><b>Account setup required</b>\nTap to select account</string>
     <string name="add_account">Add account&#8230;</string>
     <string name="admob_id">a14f6e08f942b9e</string>
     <string name="app_name">Pick The Winner</string>

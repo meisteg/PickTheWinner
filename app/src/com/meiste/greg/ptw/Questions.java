@@ -112,10 +112,10 @@ public final class Questions extends TabFragment implements View.OnClickListener
             }
         }
 
-        if (mRaceSelected == null) {
+        if (mSetupNeeded) {
+            return Util.getAccountSetupView(getActivity(), inflater, container);
+        } else if (mRaceSelected == null) {
             return inflater.inflate(R.layout.questions_no_race, container, false);
-        } else if (mSetupNeeded) {
-            return inflater.inflate(R.layout.no_account, container, false);
         } else if (mSending) {
             return inflater.inflate(R.layout.connecting, container, false);
         } else if (mRaceSelected.inProgress() || !mRaceSelected.isFuture()) {

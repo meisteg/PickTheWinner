@@ -17,8 +17,14 @@ package com.meiste.greg.ptw;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 public final class Util {
 
@@ -42,5 +48,19 @@ public final class Util {
 
     public static void setAccountSetupTime(Context context) {
         getState(context).edit().putLong(PREFS_SETUP, System.currentTimeMillis()).commit();
+    }
+
+    public static View getAccountSetupView(final Context context, LayoutInflater inflater, ViewGroup container) {
+        final View v = inflater.inflate(R.layout.no_account, container, false);
+        TextView textView = (TextView) v.findViewById(R.id.setup_text);
+        textView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, AccountsActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+                context.startActivity(intent);
+            }
+        });
+        return v;
     }
 }

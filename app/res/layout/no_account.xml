@@ -22,6 +22,8 @@
     android:paddingLeft="20sp"
     android:paddingRight="20sp" >
     
-    <TextView style="@style/NoRaceText" android:text="@string/account_setup_needed" />
+    <TextView android:id="@+id/setup_text"
+        style="@style/NoRaceText"
+        android:text="@string/account_setup_needed" />
 
 </LinearLayout>
