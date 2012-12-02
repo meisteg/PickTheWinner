@@ -256,17 +256,17 @@ public class GCMIntentService extends GCMBaseIntentService {
             Util.log("standingsListener: onGet");
 
             final PlayerAdapter pAdapter = new PlayerAdapter(getApplicationContext());
-            String beforeUpdate = pAdapter.getRaceAfter();
+            int beforeUpdate = pAdapter.getRaceAfterNum();
 
             Standings.update(context, json);
             BusProvider.getInstance().post(new StandingsUpdateEvent());
 
             pAdapter.notifyDataSetChanged();
-            String afterUpdate = pAdapter.getRaceAfter();
+            int afterUpdate = pAdapter.getRaceAfterNum();
 
-            if (!beforeUpdate.equals(afterUpdate)) {
+            if ((beforeUpdate != afterUpdate) && (afterUpdate > 0)) {
                 Util.log("Notifying user of standings update");
-                showResultsNotification(context, afterUpdate);
+                showResultsNotification(context, pAdapter.getRaceAfterName());
             }
 
             super.onGet(context, json);

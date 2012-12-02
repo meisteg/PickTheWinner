@@ -102,11 +102,11 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
         final View header = inflater.inflate(R.layout.standings_header, lv, false);
         mAdapter = new PlayerAdapter(getActivity());
         mAfterRace = (TextView) header.findViewById(R.id.after);
-        mAfterRace.setText(getActivity().getString(R.string.standings_after, mAdapter.getRaceAfter()));
+        mAfterRace.setText(getRaceAfterText(getActivity()));
         lv.addHeaderView(header, null, false);
         final View footer = inflater.inflate(R.layout.standings_footer, lv, false);
         mFooter = (TextView) footer.findViewById(R.id.standings_footer);
-        mFooter.setText(getActivity().getString(R.string.standings_footer, mAdapter.getCountWithoutPlayer()));
+        mFooter.setText(getFooterText(getActivity()));
         lv.addFooterView(footer, null, false);
         lv.setAdapter(mAdapter);
 
@@ -174,6 +174,18 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
         return file.exists();
     }
 
+    private String getRaceAfterText(Context context) {
+        if (mAdapter.getRaceAfterNum() > 0)
+            return context.getString(R.string.standings_after, mAdapter.getRaceAfterName());
+
+        return context.getString(R.string.standings_preseason);
+    }
+
+    private String getFooterText(Context context) {
+        int topX = Math.max(mAdapter.getCountWithoutPlayer(), 25);
+        return context.getString(R.string.standings_footer, topX);
+    }
+
     @Override
     public void onRefresh(PullToRefreshBase<ListView> refreshView) {
         GAE.getInstance(getActivity()).getPage(this, "standings");
@@ -184,8 +196,8 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
         Util.log("Standings: onStandingsUpdate");
         if (mAdapter != null) {
             mAdapter.notifyDataSetChanged();
-            mAfterRace.setText(getActivity().getString(R.string.standings_after, mAdapter.getRaceAfter()));
-            mFooter.setText(getActivity().getString(R.string.standings_footer, mAdapter.getCountWithoutPlayer()));
+            mAfterRace.setText(getRaceAfterText(getActivity()));
+            mFooter.setText(getFooterText(getActivity()));
         }
     }
 

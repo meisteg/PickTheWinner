@@ -186,8 +186,12 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
         return false;
     }
 
-    public String getRaceAfter() {
+    public String getRaceAfterName() {
         return Race.getInstance(mContext, mStandings.race_id).getTrack(Race.NAME_SHORT);
+    }
+
+    public int getRaceAfterNum() {
+        return mStandings.race_id;
     }
 
     public String getPlayerName() {
