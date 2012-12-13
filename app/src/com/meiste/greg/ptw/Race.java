@@ -128,8 +128,8 @@ public final class Race {
         return mQuestion;
     }
 
-    public int getLayoutId(Context context) {
-        return context.getResources().getIdentifier(mLayout, "drawable", context.getPackageName());
+    public String getAbbr() {
+        return mLayout;
     }
 
     public String getTrackSize(Context context) {

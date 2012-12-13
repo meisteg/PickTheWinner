@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2012 Gregory S. Meiste <http://gregmeiste.com>
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<com.meiste.greg.ptw.ObservableScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scroll"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:scrollbars="vertical"
+    android:fillViewport="true" >
+    
+    <LinearLayout
+        android:layout_height="fill_parent" 
+        android:layout_width="fill_parent">
+        
+        <RelativeLayout
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:orientation="vertical"
+            android:padding="20sp" >
+            
+            <TextView
+                android:id="@+id/race_num"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_marginBottom="14sp"
+	            android:textSize="@dimen/DetailsTop"
+	            android:layout_alignParentLeft="true"
+	            android:layout_toLeftOf="@+id/race_in_chase" />
+            <TextView
+                android:id="@id/race_in_chase"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="@string/in_the_chase"
+	            android:textSize="@dimen/DetailsTop"
+	            android:background="@drawable/inthechase"
+	            android:paddingLeft="20sp"
+	            android:paddingRight="20sp"
+	            android:visibility="gone"
+	            android:layout_alignParentRight="true" />
+            
+            <TextView
+                android:id="@+id/race_name"
+                style="@style/RaceDetailsName"
+                android:layout_below="@id/race_num" />
+            <TextView
+                android:id="@+id/race_track"
+                style="@style/RaceDetailsText"
+                android:paddingBottom="20sp"
+                android:layout_below="@id/race_name" />
+            
+            <TextView
+                android:id="@+id/race_time"
+                style="@style/RaceDetailsText"
+                android:layout_below="@id/race_track" />
+            <TextView
+                android:id="@+id/race_tv"
+                style="@style/RaceDetailsText"
+                android:paddingBottom="20sp"
+                android:layout_below="@id/race_time" />
+            
+            <TextView
+                android:id="@+id/race_track_size"
+                style="@style/RaceDetailsText"
+                android:layout_below="@id/race_tv" />
+            
+        </RelativeLayout>
+    
+        <fragment
+            android:id="@+id/map"
+            android:layout_width="0px"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.5"
+            class="com.google.android.gms.maps.SupportMapFragment" />
+        
+    </LinearLayout>
+    
+</com.meiste.greg.ptw.ObservableScrollView>

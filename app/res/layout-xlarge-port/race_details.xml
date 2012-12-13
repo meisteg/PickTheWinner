@@ -71,7 +71,7 @@
         <fragment
             android:id="@+id/map"
             android:layout_width="match_parent"
-            android:layout_height="250dp"
+            android:layout_height="500dp"
             android:layout_marginTop="20sp"
             android:layout_marginBottom="20sp"
             class="com.google.android.gms.maps.SupportMapFragment"
