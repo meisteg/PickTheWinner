@@ -48,7 +48,7 @@ public class GCMIntentService extends GCMBaseIntentService {
     private boolean mGaeSuccess = false;
 
     public GCMIntentService() {
-        super(Util.GCM_SENDER_ID);
+        super(PTW.GCM_SENDER_ID);
     }
 
     @Override

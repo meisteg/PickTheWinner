@@ -156,4 +156,9 @@
     <string name="details_tv">TV: %s</string>
     <string name="details_size">Track Size: %s miles</string>
     
+    <!-- Ad Strings -->
+    <string name="ads_remove">Remove Ads</string>
+    <string name="ads_success">Ads are now removed.</string>
+    <string name="ads_error">Error purchasing: %s</string>
+    
 </resources>
