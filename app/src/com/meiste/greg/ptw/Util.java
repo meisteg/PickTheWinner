@@ -31,8 +31,10 @@ public final class Util {
     private final static String PREFS_STATE = "state";
     private final static String PREFS_SETUP = "setup";
 
+    public static boolean LOGGING_ENABLED = BuildConfig.DEBUG;
+
     public static void log(String msg) {
-        if (BuildConfig.DEBUG) Log.d(PTW.TAG, msg);
+        if (LOGGING_ENABLED) Log.d(PTW.TAG, msg);
     }
 
     public static SharedPreferences getState(Context context) {

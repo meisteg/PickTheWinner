@@ -26,6 +26,7 @@ import android.os.Vibrator;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
@@ -45,6 +46,9 @@ public class EditPreferences extends SherlockPreferenceActivity implements OnSha
     private static final String KEY_REMINDER_SETTINGS = "reminder_settings_category";
     private static final String KEY_BUILD = "build";
 
+    private static final int TAPS_TO_ENABLE_LOGGING = 7;
+
+    private int mLogHitCountdown;
     private Preference mVibrate;
 
     @TargetApi(11)
@@ -84,6 +88,8 @@ public class EditPreferences extends SherlockPreferenceActivity implements OnSha
 
         Preference account = findPreference(KEY_ACCOUNT_SCREEN);
         account.setSummary(prefs.getString(KEY_ACCOUNT_EMAIL, getString(R.string.account_needed)));
+
+        mLogHitCountdown = TAPS_TO_ENABLE_LOGGING;
     }
 
     @Override
@@ -124,5 +130,18 @@ public class EditPreferences extends SherlockPreferenceActivity implements OnSha
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
+        if (preference.getKey().equals(KEY_BUILD) && (mLogHitCountdown > 0)) {
+            mLogHitCountdown--;
+            if ((mLogHitCountdown == 0) && !Util.LOGGING_ENABLED) {
+                Util.LOGGING_ENABLED = true;
+                Util.log("Debug logging is temporarily enabled");
+            }
+        }
+        return super.onPreferenceTreeClick(preferenceScreen, preference);
     }
 }
