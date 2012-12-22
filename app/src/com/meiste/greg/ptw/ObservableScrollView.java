@@ -26,24 +26,24 @@ public final class ObservableScrollView extends ScrollView {
 
     private ScrollViewListener mScrollViewListener = null;
 
-    public ObservableScrollView(Context context) {
+    public ObservableScrollView(final Context context) {
         super(context);
     }
 
-    public ObservableScrollView(Context context, AttributeSet attrs, int defStyle) {
+    public ObservableScrollView(final Context context, final AttributeSet attrs, final int defStyle) {
         super(context, attrs, defStyle);
     }
 
-    public ObservableScrollView(Context context, AttributeSet attrs) {
+    public ObservableScrollView(final Context context, final AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public void setScrollViewListener(ScrollViewListener l) {
+    public void setScrollViewListener(final ScrollViewListener l) {
         mScrollViewListener = l;
     }
 
     @Override
-    protected void onScrollChanged(int x, int y, int oldx, int oldy) {
+    protected void onScrollChanged(final int x, final int y, final int oldx, final int oldy) {
         super.onScrollChanged(x, y, oldx, oldy);
         if (mScrollViewListener != null) {
             mScrollViewListener.onScrollChanged(this, x, y, oldx, oldy);

@@ -24,7 +24,7 @@ public final class RaceAnswers {
     public Integer a4;
     public Integer a5;
 
-    public static RaceAnswers fromJson(String json) {
+    public static RaceAnswers fromJson(final String json) {
         return new Gson().fromJson(json, RaceAnswers.class);
     }
 

@@ -23,7 +23,7 @@ public final class RaceQuestions {
     public String q3;
     public String[] a3;
 
-    public static RaceQuestions fromJson(String json) {
+    public static RaceQuestions fromJson(final String json) {
         return new Gson().fromJson(json, RaceQuestions.class);
     }
 

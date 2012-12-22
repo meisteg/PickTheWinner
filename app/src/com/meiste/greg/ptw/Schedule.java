@@ -37,29 +37,30 @@ public final class Schedule extends TabFragment implements OnRefreshListener<Lis
     private PullToRefreshListView mPullToRefresh;
     private RaceItemAdapter mAdapter;
 
-    public static Schedule newInstance(Context context) {
-        Schedule fragment = new Schedule();
+    public static Schedule newInstance(final Context context) {
+        final Schedule fragment = new Schedule();
         fragment.setTitle(context.getString(R.string.tab_schedule));
 
         return fragment;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.schedule, container, false);
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
+            final Bundle savedInstanceState) {
+        final View v = inflater.inflate(R.layout.schedule, container, false);
 
         mPullToRefresh = (PullToRefreshListView) v.findViewById(R.id.schedule);
         mPullToRefresh.setOnRefreshListener(this);
 
-        ListView lv = mPullToRefresh.getRefreshableView();
+        final ListView lv = mPullToRefresh.getRefreshableView();
         mAdapter = new RaceItemAdapter(getActivity(), R.layout.schedule_row);
         lv.setAdapter(mAdapter);
 
         lv.setOnItemClickListener(new OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v, int pos, long id) {
+            public void onItemClick(final AdapterView<?> parent, final View v, final int pos, final long id) {
                 Util.log("Starting activity for race " + id);
 
-                Intent intent = new Intent(getActivity(), RaceActivity.class);
+                final Intent intent = new Intent(getActivity(), RaceActivity.class);
                 intent.putExtra(RaceActivity.INTENT_ID, (int)id);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
                 startActivity(intent);
@@ -77,24 +78,24 @@ public final class Schedule extends TabFragment implements OnRefreshListener<Lis
     }
 
     @Override
-    public void onRefresh(PullToRefreshBase<ListView> refreshView) {
+    public void onRefresh(final PullToRefreshBase<ListView> refreshView) {
         GAE.getInstance(getActivity()).getPage(this, "schedule");
     }
 
     @Subscribe
-    public void onScheduleUpdate(ScheduleUpdateEvent event) {
+    public void onScheduleUpdate(final ScheduleUpdateEvent event) {
         Util.log("Schedule: onScheduleUpdate");
         mAdapter.notifyDataSetChanged();
     }
 
     @Override
-    public void onFailedConnect(Context context) {
+    public void onFailedConnect(final Context context) {
         mPullToRefresh.onRefreshComplete();
         Toast.makeText(context, R.string.failed_connect, Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void onGet(Context context, String json) {
+    public void onGet(final Context context, final String json) {
         Races.update(context, json);
         RaceAlarm.reset(context);
         mPullToRefresh.onRefreshComplete();
@@ -102,8 +103,8 @@ public final class Schedule extends TabFragment implements OnRefreshListener<Lis
     }
 
     @Override
-    public void onLaunchIntent(Intent launch) {}
+    public void onLaunchIntent(final Intent launch) {}
 
     @Override
-    public void onConnectSuccess(Context context, String json) {}
+    public void onConnectSuccess(final Context context, final String json) {}
 }

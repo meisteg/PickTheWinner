@@ -52,11 +52,11 @@ public class GCMIntentService extends GCMBaseIntentService {
     }
 
     @Override
-    protected void onRegistered(Context context, String regId) {
+    protected void onRegistered(final Context context, final String regId) {
         Util.log("Device registered with GCM: regId = " + regId);
 
-        String serverUrl = GAE.PROD_URL + "/register";
-        Map<String, String> params = new HashMap<String, String>();
+        final String serverUrl = GAE.PROD_URL + "/register";
+        final Map<String, String> params = new HashMap<String, String>();
         params.put("regId", regId);
         long backoff = BACKOFF_MILLI_SECONDS;
 
@@ -67,7 +67,7 @@ public class GCMIntentService extends GCMBaseIntentService {
                 GCMRegistrar.setRegisteredOnServer(context, true);
                 Util.log("Device successfully registered on PTW server");
                 return;
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 Util.log("Failed to register on attempt " + i + " with " + e);
                 if (i == MAX_ATTEMPTS) {
                     break;
@@ -75,7 +75,7 @@ public class GCMIntentService extends GCMBaseIntentService {
                 try {
                     Util.log("Sleeping for " + backoff + " ms before retry");
                     Thread.sleep(backoff);
-                } catch (InterruptedException e1) {
+                } catch (final InterruptedException e1) {
                     Util.log("Thread interrupted: abort remaining retries!");
                     Thread.currentThread().interrupt();
                     break;
@@ -90,20 +90,20 @@ public class GCMIntentService extends GCMBaseIntentService {
     }
 
     @Override
-    protected void onUnregistered(Context context, String regId) {
+    protected void onUnregistered(final Context context, final String regId) {
         Util.log("Device unregistered from GCM");
 
         if (!GCMRegistrar.isRegisteredOnServer(context))
             return;
 
-        String serverUrl = GAE.PROD_URL + "/unregister";
-        Map<String, String> params = new HashMap<String, String>();
+        final String serverUrl = GAE.PROD_URL + "/unregister";
+        final Map<String, String> params = new HashMap<String, String>();
         params.put("regId", regId);
         try {
             post(serverUrl, params);
             GCMRegistrar.setRegisteredOnServer(context, false);
             Util.log("Device unregistered from PTW server");
-        } catch (IOException e) {
+        } catch (final IOException e) {
             // At this point the device is unregistered from GCM, but still
             // registered in the server. It is not necessary to try to
             // unregister again: if the server tries to send a message to the
@@ -114,7 +114,7 @@ public class GCMIntentService extends GCMBaseIntentService {
     }
 
     @Override
-    protected void onMessage(Context context, Intent intent) {
+    protected void onMessage(final Context context, final Intent intent) {
         Util.log("Received message from GCM");
         long backoff = BACKOFF_MILLI_SECONDS;
 
@@ -124,14 +124,14 @@ public class GCMIntentService extends GCMBaseIntentService {
             GAE.getInstance(getApplicationContext()).getPage(scheduleListener, "schedule");
             try {
                 sem.acquire();
-            } catch (InterruptedException e) {}
+            } catch (final InterruptedException e) {}
 
             if (mGaeSuccess || (i == MAX_ATTEMPTS))
                 break;
             try {
                 Util.log("Sleeping for " + backoff + " ms before retry");
                 Thread.sleep(backoff);
-            } catch (InterruptedException e) {}
+            } catch (final InterruptedException e) {}
 
             // increase backoff exponentially
             backoff *= 2;
@@ -152,14 +152,14 @@ public class GCMIntentService extends GCMBaseIntentService {
             GAE.getInstance(getApplicationContext()).getPage(standingsListener, "standings");
             try {
                 sem.acquire();
-            } catch (InterruptedException e) {}
+            } catch (final InterruptedException e) {}
 
             if (mGaeSuccess || (i == MAX_ATTEMPTS))
                 break;
             try {
                 Util.log("Sleeping for " + backoff + " ms before retry");
                 Thread.sleep(backoff);
-            } catch (InterruptedException e) {}
+            } catch (final InterruptedException e) {}
 
             // increase backoff exponentially
             backoff *= 2;
@@ -167,17 +167,17 @@ public class GCMIntentService extends GCMBaseIntentService {
     }
 
     @Override
-    protected void onDeletedMessages(Context context, int total) {
+    protected void onDeletedMessages(final Context context, final int total) {
         Util.log("Received deleted messages notification from GCM");
     }
 
     @Override
-    public void onError(Context context, String errorId) {
+    public void onError(final Context context, final String errorId) {
         Util.log("Received error from GCM: " + errorId);
     }
 
     @Override
-    protected boolean onRecoverableError(Context context, String errorId) {
+    protected boolean onRecoverableError(final Context context, final String errorId) {
         Util.log("Received recoverable error from GCM: " + errorId);
         return super.onRecoverableError(context, errorId);
     }
@@ -190,28 +190,28 @@ public class GCMIntentService extends GCMBaseIntentService {
      *
      * @throws IOException propagated from POST.
      */
-    private static void post(String endpoint, Map<String, String> params)
+    private static void post(final String endpoint, final Map<String, String> params)
             throws IOException {
         URL url;
         try {
             url = new URL(endpoint);
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             throw new IllegalArgumentException("invalid url: " + endpoint);
         }
-        StringBuilder bodyBuilder = new StringBuilder();
-        Iterator<Entry<String, String>> iterator = params.entrySet().iterator();
+        final StringBuilder bodyBuilder = new StringBuilder();
+        final Iterator<Entry<String, String>> iterator = params.entrySet().iterator();
         // constructs the POST body using the parameters
         while (iterator.hasNext()) {
-            Entry<String, String> param = iterator.next();
+            final Entry<String, String> param = iterator.next();
             bodyBuilder.append(param.getKey()).append('=')
             .append(param.getValue());
             if (iterator.hasNext()) {
                 bodyBuilder.append('&');
             }
         }
-        String body = bodyBuilder.toString();
+        final String body = bodyBuilder.toString();
         Util.log("Posting '" + body + "' to " + url);
-        byte[] bytes = body.getBytes();
+        final byte[] bytes = body.getBytes();
         HttpURLConnection conn = null;
         try {
             conn = (HttpURLConnection) url.openConnection();
@@ -222,11 +222,11 @@ public class GCMIntentService extends GCMBaseIntentService {
             conn.setRequestProperty("Content-Type",
                     "application/x-www-form-urlencoded;charset=UTF-8");
             // post the request
-            OutputStream out = conn.getOutputStream();
+            final OutputStream out = conn.getOutputStream();
             out.write(bytes);
             out.close();
             // handle the response
-            int status = conn.getResponseCode();
+            final int status = conn.getResponseCode();
             if (status != 200) {
                 throw new IOException("Post failed with error code " + status);
             }
@@ -237,9 +237,9 @@ public class GCMIntentService extends GCMBaseIntentService {
         }
     }
 
-    private GcmGaeListener scheduleListener = new GcmGaeListener() {
+    private final GcmGaeListener scheduleListener = new GcmGaeListener() {
         @Override
-        public void onGet(Context context, String json) {
+        public void onGet(final Context context, final String json) {
             Util.log("scheduleListener: onGet");
 
             Races.update(context, json);
@@ -250,19 +250,19 @@ public class GCMIntentService extends GCMBaseIntentService {
         }
     };
 
-    private GcmGaeListener standingsListener = new GcmGaeListener() {
+    private final GcmGaeListener standingsListener = new GcmGaeListener() {
         @Override
-        public void onGet(Context context, String json) {
+        public void onGet(final Context context, final String json) {
             Util.log("standingsListener: onGet");
 
             final PlayerAdapter pAdapter = new PlayerAdapter(getApplicationContext());
-            int beforeUpdate = pAdapter.getRaceAfterNum();
+            final int beforeUpdate = pAdapter.getRaceAfterNum();
 
             Standings.update(context, json);
             BusProvider.getInstance().post(new StandingsUpdateEvent());
 
             pAdapter.notifyDataSetChanged();
-            int afterUpdate = pAdapter.getRaceAfterNum();
+            final int afterUpdate = pAdapter.getRaceAfterNum();
 
             if ((beforeUpdate != afterUpdate) && (afterUpdate > 0)) {
                 Util.log("Notifying user of standings update");
@@ -275,40 +275,40 @@ public class GCMIntentService extends GCMBaseIntentService {
 
     private class GcmGaeListener implements GaeListener {
         @Override
-        public void onGet(Context context, String json) {
+        public void onGet(final Context context, final String json) {
             mGaeSuccess = true;
             sem.release();
         }
 
         @Override
-        public void onFailedConnect(Context context) {
+        public void onFailedConnect(final Context context) {
             Util.log("GcmGaeListener: onFailedConnect");
             mGaeSuccess = false;
             sem.release();
         }
 
         @Override
-        public void onLaunchIntent(Intent launch) {
+        public void onLaunchIntent(final Intent launch) {
             // Should never happen, but release semaphore to prevent stuck wakelock
             mGaeSuccess = false;
             sem.release();
         }
 
         @Override
-        public void onConnectSuccess(Context context, String json) {
+        public void onConnectSuccess(final Context context, final String json) {
             // Should never happen, but release semaphore to prevent stuck wakelock
             mGaeSuccess = false;
             sem.release();
         }
     }
 
-    private void showResultsNotification(Context context, String race) {
+    private void showResultsNotification(final Context context, final String race) {
         // Only show notification if user wants results notifications
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         if (prefs.getBoolean(EditPreferences.KEY_NOTIFY_RESULTS, true)) {
-            Intent notificationIntent = new Intent(context, MainActivity.class);
+            final Intent notificationIntent = new Intent(context, MainActivity.class);
             notificationIntent.putExtra(MainActivity.INTENT_TAB, 2);
-            PendingIntent pi = PendingIntent.getActivity(context, 0, notificationIntent,
+            final PendingIntent pi = PendingIntent.getActivity(context, 0, notificationIntent,
                     PendingIntent.FLAG_CANCEL_CURRENT);
 
             int defaults = 0;
@@ -317,7 +317,7 @@ public class GCMIntentService extends GCMBaseIntentService {
             if (prefs.getBoolean(EditPreferences.KEY_NOTIFY_LED, true))
                 defaults |= Notification.DEFAULT_LIGHTS;
 
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+            final NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
             .setSmallIcon(R.drawable.ic_stat_steering_wheel)
             .setTicker(context.getString(R.string.remind_results_notify, race))
             .setContentTitle(context.getString(R.string.app_name))
@@ -328,8 +328,8 @@ public class GCMIntentService extends GCMBaseIntentService {
             .setSound(Uri.parse(prefs.getString(EditPreferences.KEY_NOTIFY_RINGTONE,
                     "content://settings/system/notification_sound")));
 
-            String ns = Context.NOTIFICATION_SERVICE;
-            NotificationManager nm = (NotificationManager) context.getSystemService(ns);
+            final String ns = Context.NOTIFICATION_SERVICE;
+            final NotificationManager nm = (NotificationManager) context.getSystemService(ns);
             nm.notify(R.string.remind_results_notify, builder.getNotification());
         }
     }

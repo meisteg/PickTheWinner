@@ -38,14 +38,14 @@ public class PrivacyDialog extends AlertDialog implements View.OnClickListener, 
     private Button mOk;
     private String mCurrentName;
 
-    protected PrivacyDialog(Context context, DialogInterface.OnClickListener listener) {
+    protected PrivacyDialog(final Context context, final DialogInterface.OnClickListener listener) {
         super(context);
         mListener = listener;
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        View v = getLayoutInflater().inflate(R.layout.privacy, null);
+    protected void onCreate(final Bundle savedInstanceState) {
+        final View v = getLayoutInflater().inflate(R.layout.privacy, null);
         setView(v);
         setTitle(R.string.privacy);
 
@@ -64,7 +64,7 @@ public class PrivacyDialog extends AlertDialog implements View.OnClickListener, 
         mOk = getButton(DialogInterface.BUTTON_POSITIVE);
     }
 
-    public void show(String name) {
+    public void show(final String name) {
         show();
 
         mCurrentName = name;
@@ -83,7 +83,7 @@ public class PrivacyDialog extends AlertDialog implements View.OnClickListener, 
     }
 
     @Override
-    public void onClick(View view) {
+    public void onClick(final View view) {
         if (mCb.isChecked()) {
             mTv.setVisibility(View.GONE);
             mEt.setVisibility(View.GONE);
@@ -99,7 +99,7 @@ public class PrivacyDialog extends AlertDialog implements View.OnClickListener, 
     }
 
     @Override
-    public void afterTextChanged(Editable editable) {
+    public void afterTextChanged(final Editable editable) {
         if (editable.length() >= 5)
             mOk.setEnabled(true);
         else
@@ -107,14 +107,14 @@ public class PrivacyDialog extends AlertDialog implements View.OnClickListener, 
     }
 
     @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+    public void beforeTextChanged(final CharSequence s, final int start, final int count, final int after) {}
 
     @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {}
+    public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {}
 
     @Override
-    public CharSequence filter(CharSequence source, int start, int end,
-            Spanned dest, int dstart, int dend) {
+    public CharSequence filter(final CharSequence source, final int start, final int end,
+            final Spanned dest, final int dstart, final int dend) {
         for (int i = start; i < end; i++) {
             if (!Character.isLetterOrDigit(source.charAt(i))) {
                 return "";

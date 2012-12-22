@@ -54,7 +54,7 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
 
     /** Called when the activity is first created. */
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (BuildConfig.DEBUG) {
@@ -119,7 +119,7 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(final Menu menu) {
         getSupportMenuInflater().inflate(R.menu.menu, menu);
 
         if (!mIsAdFree && mIabReady) {
@@ -131,7 +131,7 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
         case R.id.settings:
             startActivity(new Intent(this, EditPreferences.class));
@@ -150,7 +150,7 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
         case R.string.ads_remove:
             try {
                 mHelper.launchPurchaseFlow(this, SKU_AD_FREE, IAB_REQUEST, mPurchaseFinishedListener);
-            } catch (NullPointerException e) {
+            } catch (final NullPointerException e) {
                 // If the billing service disconnects (for example, when the
                 // Play Store auto-updates itself), then the helper class
                 // will attempt to dereference a null pointer (mService).
@@ -165,7 +165,7 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         if (!mHelper.handleActivityResult(requestCode, resultCode, data)) {
             // Not handled by in-app billing
             super.onActivityResult(requestCode, resultCode, data);
@@ -187,11 +187,11 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
         mHelper.startSetup(mIabSetupListener);
     }
 
-    private int getTab(Intent intent) {
+    private int getTab(final Intent intent) {
         // Recent applications caches intent with extras. Only want to listen
         // to INTENT_TAB extra if launched from notification.
         if ((intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) == 0) {
-            int intent_tab = intent.getIntExtra(INTENT_TAB, -1);
+            final int intent_tab = intent.getIntExtra(INTENT_TAB, -1);
             if (intent_tab >= 0) {
                 return intent_tab;
             }
@@ -201,7 +201,7 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
     }
 
     private void loadAd() {
-        AdRequest adRequest = new AdRequest();
+        final AdRequest adRequest = new AdRequest();
         adRequest.addKeyword("NASCAR");
         adRequest.addKeyword("racing");
 
@@ -216,30 +216,31 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
         mAdView.loadAd(adRequest);
     }
 
-    private AdListener mAdListener = new AdListener() {
+    private final AdListener mAdListener = new AdListener() {
         @Override
-        public void onReceiveAd(Ad ad) {
+        public void onReceiveAd(final Ad ad) {
             Util.log("onReceiveAd");
         }
 
         @Override
-        public void onFailedToReceiveAd(Ad ad, ErrorCode err) {
+        public void onFailedToReceiveAd(final Ad ad, final ErrorCode err) {
             Util.log("onFailedToReceiveAd: " + err);
         }
 
         @Override
-        public void onLeaveApplication(Ad ad) {}
+        public void onLeaveApplication(final Ad ad) {}
 
         @Override
-        public void onPresentScreen(Ad ad) {}
+        public void onPresentScreen(final Ad ad) {}
 
         @Override
-        public void onDismissScreen(Ad ad) {}
+        public void onDismissScreen(final Ad ad) {}
     };
 
-    private IabHelper.OnIabSetupFinishedListener mIabSetupListener = new IabHelper.OnIabSetupFinishedListener() {
+    private final IabHelper.OnIabSetupFinishedListener mIabSetupListener =
+            new IabHelper.OnIabSetupFinishedListener() {
         @Override
-        public void onIabSetupFinished(IabResult result) {
+        public void onIabSetupFinished(final IabResult result) {
             if (result.isSuccess()) {
                 mHelper.queryInventoryAsync(false, mGotInventoryListener);
             } else {
@@ -249,9 +250,10 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
         }
     };
 
-    private IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
+    private final IabHelper.QueryInventoryFinishedListener mGotInventoryListener =
+            new IabHelper.QueryInventoryFinishedListener() {
         @Override
-        public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
+        public void onQueryInventoryFinished(final IabResult result, final Inventory inventory) {
             if (result.isFailure()) {
                 loadAd();
                 return;
@@ -264,11 +266,12 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
         }
     };
 
-    private IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
+    private final IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener =
+            new IabHelper.OnIabPurchaseFinishedListener() {
         @Override
-        public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
+        public void onIabPurchaseFinished(final IabResult result, final Purchase purchase) {
             if (result.isFailure()) {
-                String msg = MainActivity.this.getString(R.string.ads_error,
+                final String msg = MainActivity.this.getString(R.string.ads_error,
                         IabHelper.getResponseDesc(result.getResponse()));
                 Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
                 return;

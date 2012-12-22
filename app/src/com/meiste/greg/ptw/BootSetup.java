@@ -22,7 +22,7 @@ import android.content.Intent;
 public final class BootSetup extends BroadcastReceiver {
 
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public void onReceive(final Context context, final Intent intent) {
         if (Eula.hasAccepted(context)) {
             Util.log("Running boot setup");
             RaceAlarm.set(context);

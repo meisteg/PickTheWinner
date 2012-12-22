@@ -18,6 +18,7 @@ package com.meiste.greg.ptw;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.format.DateUtils;
 
@@ -36,11 +37,11 @@ public final class Race {
     private long mQuestion;
     private String mLayout;
 
-    public static Race getInstance(Context context, int id) {
+    public static Race getInstance(final Context context, final int id) {
         return Races.get(context)[id];
     }
 
-    public static Race getNext(Context context, boolean allowExhibition, boolean allowInProgress) {
+    public static Race getNext(final Context context, final boolean allowExhibition, final boolean allowInProgress) {
         for (Race race : Races.get(context)) {
             if (race.isFuture()) {
                 if (!allowExhibition && race.isExhibition())
@@ -80,7 +81,7 @@ public final class Race {
         return isExhibition() ? "-" : Integer.toString(mRaceNum);
     }
 
-    public String getTrack(int length) {
+    public String getTrack(final int length) {
         return (length == NAME_SHORT) ? mTrackShort : mTrackLong;
     }
 
@@ -92,17 +93,17 @@ public final class Race {
         return mTv;
     }
 
-    public String getStartDate(Context context) {
-        int flags = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_YEAR;
+    public String getStartDate(final Context context) {
+        final int flags = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_YEAR;
         return DateUtils.formatDateTime(context, mStart, flags);
     }
 
-    public String getStartTime(Context context) {
-        int flags = DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_NO_NOON_MIDNIGHT;
+    public String getStartTime(final Context context) {
+        final int flags = DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_NO_NOON_MIDNIGHT;
         return DateUtils.formatDateTime(context, mStart, flags);
     }
 
-    public String getStartDateTime(Context context) {
+    public String getStartDateTime(final Context context) {
         int flags = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_YEAR;
         flags |= DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_NO_NOON_MIDNIGHT;
         flags |= DateUtils.FORMAT_SHOW_WEEKDAY;
@@ -113,12 +114,13 @@ public final class Race {
         return mStart;
     }
 
+    @SuppressLint("SimpleDateFormat")
     public String getStartYear() {
-        SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
+        final SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
         return yearFormat.format(new Timestamp(mStart));
     }
 
-    public String getQuestionDateTime(Context context) {
+    public String getQuestionDateTime(final Context context) {
         int flags = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_YEAR;
         flags |= DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_NO_NOON_MIDNIGHT;
         return DateUtils.formatDateTime(context, mQuestion, flags);
@@ -132,7 +134,7 @@ public final class Race {
         return mLayout;
     }
 
-    public String getTrackSize(Context context) {
+    public String getTrackSize(final Context context) {
         return context.getString(R.string.details_size, mSize);
     }
 }

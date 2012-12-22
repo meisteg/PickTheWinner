@@ -86,15 +86,15 @@ public final class Questions extends TabFragment implements View.OnClickListener
     private Spinner mRaceSpinner = null;
     private QuestionsRaceAdapter mRaceAdapter;
 
-    public static Questions newInstance(Context context) {
-        Questions fragment = new Questions();
+    public static Questions newInstance(final Context context) {
+        final Questions fragment = new Questions();
         fragment.setTitle(context.getString(R.string.tab_questions));
 
         return fragment;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         View v;
         mRaceNext = Race.getNext(getActivity(), false, true);
         mSetupNeeded = GAE.isAccountSetupNeeded(getActivity());
@@ -123,9 +123,9 @@ public final class Questions extends TabFragment implements View.OnClickListener
                 mFailedConnect = false;
                 v = inflater.inflate(R.layout.no_connection, container, false);
 
-                Button retry = (Button) v.findViewById(R.id.retry);
+                final Button retry = (Button) v.findViewById(R.id.retry);
                 retry.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
+                    public void onClick(final View v) {
                         notifyChanged();
                     }
                 });
@@ -140,7 +140,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
                 return inflater.inflate(R.layout.connecting, container, false);
             }
 
-            RaceQuestions rq = RaceQuestions.fromJson(json);
+            final RaceQuestions rq = RaceQuestions.fromJson(json);
 
             cache = getActivity().getSharedPreferences(ACACHE, Activity.MODE_PRIVATE);
             json = cache.getString(CACHE_PREFIX + mRaceSelected.getId(), null);
@@ -149,57 +149,57 @@ public final class Questions extends TabFragment implements View.OnClickListener
 
                 v = inflater.inflate(R.layout.questions, container, false);
 
-                Spinner winner = (Spinner) v.findViewById(R.id.winner);
+                final Spinner winner = (Spinner) v.findViewById(R.id.winner);
                 winner.setAdapter(new DriverAdapter(getActivity()));
                 winner.setOnItemSelectedListener(new WinnerSelectedListener());
 
-                Spinner a2 = (Spinner) v.findViewById(R.id.question2a);
-                ArrayAdapter<CharSequence> a2_adapter = new ArrayAdapter<CharSequence>(
+                final Spinner a2 = (Spinner) v.findViewById(R.id.question2a);
+                final ArrayAdapter<CharSequence> a2_adapter = new ArrayAdapter<CharSequence>(
                         getActivity(), android.R.layout.simple_spinner_item, rq.a2);
                 a2_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 a2.setAdapter(a2_adapter);
                 a2.setOnItemSelectedListener(new A2SelectedListener());
 
-                Spinner a3 = (Spinner) v.findViewById(R.id.question3a);
-                ArrayAdapter<CharSequence> a3_adapter = new ArrayAdapter<CharSequence>(
+                final Spinner a3 = (Spinner) v.findViewById(R.id.question3a);
+                final ArrayAdapter<CharSequence> a3_adapter = new ArrayAdapter<CharSequence>(
                         getActivity(), android.R.layout.simple_spinner_item, rq.a3);
                 a3_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 a3.setAdapter(a3_adapter);
                 a3.setOnItemSelectedListener(new A3SelectedListener());
 
-                Spinner mostlaps = (Spinner) v.findViewById(R.id.mostlaps);
+                final Spinner mostlaps = (Spinner) v.findViewById(R.id.mostlaps);
                 mostlaps.setAdapter(new DriverAdapter(getActivity()));
                 mostlaps.setOnItemSelectedListener(new MostLapsSelectedListener());
 
-                Spinner numleaders = (Spinner) v.findViewById(R.id.numleaders);
-                ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                final Spinner numleaders = (Spinner) v.findViewById(R.id.numleaders);
+                final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                         getActivity(), R.array.num_leaders, android.R.layout.simple_spinner_item);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 numleaders.setAdapter(adapter);
                 numleaders.setOnItemSelectedListener(new NumLeadersSelectedListener());
 
-                Button send = (Button) v.findViewById(R.id.send);
+                final Button send = (Button) v.findViewById(R.id.send);
                 send.setOnClickListener(this);
             } else {
                 Util.log("Questions: Showing submitted answers");
 
                 v = inflater.inflate(R.layout.questions_answered, container, false);
-                Resources res = getActivity().getResources();
-                RaceAnswers ra = RaceAnswers.fromJson(json);
+                final Resources res = getActivity().getResources();
+                final RaceAnswers ra = RaceAnswers.fromJson(json);
 
-                TextView a1 = (TextView) v.findViewById(R.id.answer1);
+                final TextView a1 = (TextView) v.findViewById(R.id.answer1);
                 a1.setText(Driver.newInstance(res, ra.a1).getName());
 
-                TextView a2 = (TextView) v.findViewById(R.id.answer2);
+                final TextView a2 = (TextView) v.findViewById(R.id.answer2);
                 a2.setText(rq.a2[ra.a2]);
 
-                TextView a3 = (TextView) v.findViewById(R.id.answer3);
+                final TextView a3 = (TextView) v.findViewById(R.id.answer3);
                 a3.setText(rq.a3[ra.a3]);
 
-                TextView a4 = (TextView) v.findViewById(R.id.answer4);
+                final TextView a4 = (TextView) v.findViewById(R.id.answer4);
                 a4.setText(Driver.newInstance(res, ra.a4).getName());
 
-                TextView a5 = (TextView) v.findViewById(R.id.answer5);
+                final TextView a5 = (TextView) v.findViewById(R.id.answer5);
                 a5.setText(res.getStringArray(R.array.num_leaders)[ra.a5]);
 
                 if (!mRaceSelected.isFuture()) {
@@ -215,7 +215,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
                     } else {
                         Util.log("Questions: Correct answers available");
 
-                        RaceAnswers rca = RaceAnswers.fromJson(json);
+                        final RaceAnswers rca = RaceAnswers.fromJson(json);
 
                         // Have to check for null in case there is no correct answer
                         if ((rca.a1 != null) && (rca.a1 >= 0)) {
@@ -224,7 +224,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
                             } else {
                                 a1.setPaintFlags(a1.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                                 a1.setTextColor(res.getColor(R.color.answer_wrong));
-                                TextView c1 = (TextView) v.findViewById(R.id.correct1);
+                                final TextView c1 = (TextView) v.findViewById(R.id.correct1);
                                 c1.setText(Driver.newInstance(res, rca.a1).getName());
                                 c1.setVisibility(View.VISIBLE);
                             }
@@ -235,7 +235,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
                             } else {
                                 a2.setPaintFlags(a2.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                                 a2.setTextColor(res.getColor(R.color.answer_wrong));
-                                TextView c2 = (TextView) v.findViewById(R.id.correct2);
+                                final TextView c2 = (TextView) v.findViewById(R.id.correct2);
                                 c2.setText(rq.a2[rca.a2]);
                                 c2.setVisibility(View.VISIBLE);
                             }
@@ -246,7 +246,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
                             } else {
                                 a3.setPaintFlags(a3.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                                 a3.setTextColor(res.getColor(R.color.answer_wrong));
-                                TextView c3 = (TextView) v.findViewById(R.id.correct3);
+                                final TextView c3 = (TextView) v.findViewById(R.id.correct3);
                                 c3.setText(rq.a3[rca.a3]);
                                 c3.setVisibility(View.VISIBLE);
                             }
@@ -257,7 +257,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
                             } else {
                                 a4.setPaintFlags(a4.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                                 a4.setTextColor(res.getColor(R.color.answer_wrong));
-                                TextView c4 = (TextView) v.findViewById(R.id.correct4);
+                                final TextView c4 = (TextView) v.findViewById(R.id.correct4);
                                 c4.setText(Driver.newInstance(res, rca.a4).getName());
                                 c4.setVisibility(View.VISIBLE);
                             }
@@ -268,7 +268,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
                             } else {
                                 a5.setPaintFlags(a5.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                                 a5.setTextColor(res.getColor(R.color.answer_wrong));
-                                TextView c5 = (TextView) v.findViewById(R.id.correct5);
+                                final TextView c5 = (TextView) v.findViewById(R.id.correct5);
                                 c5.setText(res.getStringArray(R.array.num_leaders)[rca.a5]);
                                 c5.setVisibility(View.VISIBLE);
                             }
@@ -277,19 +277,19 @@ public final class Questions extends TabFragment implements View.OnClickListener
                 } // !mRaceSelected.isFuture()
             }
 
-            TextView q2 = (TextView) v.findViewById(R.id.question2);
+            final TextView q2 = (TextView) v.findViewById(R.id.question2);
             q2.setText(getActivity().getString(R.string.questions_2, rq.q2));
 
-            TextView q3 = (TextView) v.findViewById(R.id.question3);
+            final TextView q3 = (TextView) v.findViewById(R.id.question3);
             q3.setText(getActivity().getString(R.string.questions_3, rq.q3));
 
-            ObservableScrollView sv = (ObservableScrollView) v.findViewById(R.id.scroll_questions);
+            final ObservableScrollView sv = (ObservableScrollView) v.findViewById(R.id.scroll_questions);
             sv.postScrollTo(0, mScroll);
             sv.setScrollViewListener(this);
         } else {
             v = inflater.inflate(R.layout.questions_not_yet, container, false);
 
-            TextView time = (TextView) v.findViewById(R.id.questiontime);
+            final TextView time = (TextView) v.findViewById(R.id.questiontime);
             time.setText(mRaceSelected.getQuestionDateTime(getActivity()));
         }
 
@@ -344,13 +344,13 @@ public final class Questions extends TabFragment implements View.OnClickListener
     }
 
     @Subscribe
-    public void onScheduleUpdate(ScheduleUpdateEvent event) {
+    public void onScheduleUpdate(final ScheduleUpdateEvent event) {
         Util.log("Questions: onScheduleUpdate");
         resetRaceSelected();
     }
 
     @Subscribe
-    public void onRaceAlarm(RaceAlarmEvent event) {
+    public void onRaceAlarm(final RaceAlarmEvent event) {
         Util.log("Questions: onRaceAlarm");
         resetRaceSelected();
     }
@@ -367,8 +367,8 @@ public final class Questions extends TabFragment implements View.OnClickListener
     }
 
     private class RaceSelectedListener implements OnItemSelectedListener {
-        public void onItemSelected(AdapterView<?> parent, View v, int pos, long id) {
-            Race race = (Race) parent.getItemAtPosition(pos);
+        public void onItemSelected(final AdapterView<?> parent, final View v, final int pos, final long id) {
+            final Race race = (Race) parent.getItemAtPosition(pos);
             if (mRaceSelected.getId() != race.getId()) {
                 mRaceSelected = race;
                 Util.log("Questions: Selected race = " + mRaceSelected.getId());
@@ -376,60 +376,60 @@ public final class Questions extends TabFragment implements View.OnClickListener
             }
         }
 
-        public void onNothingSelected(AdapterView<?> parent) {}
+        public void onNothingSelected(final AdapterView<?> parent) {}
     }
 
     private class WinnerSelectedListener implements OnItemSelectedListener {
-        public void onItemSelected(AdapterView<?> parent, View v, int pos, long id) {
-            Driver driver = (Driver) parent.getItemAtPosition(pos);
+        public void onItemSelected(final AdapterView<?> parent, final View v, final int pos, final long id) {
+            final Driver driver = (Driver) parent.getItemAtPosition(pos);
             mWinner = driver.getNumber();
         }
 
-        public void onNothingSelected(AdapterView<?> parent) {}
+        public void onNothingSelected(final AdapterView<?> parent) {}
     }
 
     private class A2SelectedListener implements OnItemSelectedListener {
-        public void onItemSelected(AdapterView<?> parent, View v, int pos, long id) {
+        public void onItemSelected(final AdapterView<?> parent, final View v, final int pos, final long id) {
             mA2 = pos;
         }
 
-        public void onNothingSelected(AdapterView<?> parent) {}
+        public void onNothingSelected(final AdapterView<?> parent) {}
     }
 
     private class A3SelectedListener implements OnItemSelectedListener {
-        public void onItemSelected(AdapterView<?> parent, View v, int pos, long id) {
+        public void onItemSelected(final AdapterView<?> parent, final View v, final int pos, final long id) {
             mA3 = pos;
         }
 
-        public void onNothingSelected(AdapterView<?> parent) {}
+        public void onNothingSelected(final AdapterView<?> parent) {}
     }
 
     private class MostLapsSelectedListener implements OnItemSelectedListener {
-        public void onItemSelected(AdapterView<?> parent, View v, int pos, long id) {
-            Driver driver = (Driver) parent.getItemAtPosition(pos);
+        public void onItemSelected(final AdapterView<?> parent, final View v, final int pos, final long id) {
+            final Driver driver = (Driver) parent.getItemAtPosition(pos);
             mMostLaps = driver.getNumber();
         }
 
-        public void onNothingSelected(AdapterView<?> parent) {}
+        public void onNothingSelected(final AdapterView<?> parent) {}
     }
 
     private class NumLeadersSelectedListener implements OnItemSelectedListener {
-        public void onItemSelected(AdapterView<?> parent, View v, int pos, long id) {
+        public void onItemSelected(final AdapterView<?> parent, final View v, final int pos, final long id) {
             mNumLeaders = pos;
         }
 
-        public void onNothingSelected(AdapterView<?> parent) {}
+        public void onNothingSelected(final AdapterView<?> parent) {}
     }
 
     private class CorrectAnswersListener implements GaeListener {
-        private int raceId;
+        private final int raceId;
 
-        public CorrectAnswersListener(int id) {
+        public CorrectAnswersListener(final int id) {
             raceId = id;
         }
 
         @Override
-        public void onFailedConnect(Context context) {
+        public void onFailedConnect(final Context context) {
             Util.log("CorrectAnswersListener: onFailedConnect");
 
             // Check for null in case race alarm has fired, changing the view
@@ -444,10 +444,10 @@ public final class Questions extends TabFragment implements View.OnClickListener
         }
 
         @Override
-        public void onGet(Context context, String json) {
+        public void onGet(final Context context, final String json) {
             Util.log("CorrectAnswersListener: onGet: " + json);
 
-            SharedPreferences cache = context.getSharedPreferences(CACACHE, Activity.MODE_PRIVATE);
+            final SharedPreferences cache = context.getSharedPreferences(CACACHE, Activity.MODE_PRIVATE);
             cache.edit().putString(CACHE_PREFIX + raceId, json).commit();
 
             // Check for null in case race alarm has fired, changing the view
@@ -463,29 +463,29 @@ public final class Questions extends TabFragment implements View.OnClickListener
         }
 
         @Override
-        public void onConnectSuccess(Context context, String json) {}
+        public void onConnectSuccess(final Context context, final String json) {}
 
         @Override
-        public void onLaunchIntent(Intent launch) {}
+        public void onLaunchIntent(final Intent launch) {}
     }
 
     @Override
-    public void onClick(View v) {
+    public void onClick(final View v) {
         mScroll = 0;
         mSending = true;
         notifyChanged();
 
-        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        final Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         GAE.getInstance(getActivity()).postPage(this, "questions", gson.toJson(this));
     }
 
     @Override
-    public void onScrollChanged(ObservableScrollView sv, int x, int y, int oldx, int oldy) {
+    public void onScrollChanged(final ObservableScrollView sv, final int x, final int y, final int oldx, final int oldy) {
         mScroll = y;
     }
 
     @Override
-    public void onFailedConnect(Context context) {
+    public void onFailedConnect(final Context context) {
         Util.log("Questions: onFailedConnect");
 
         // Verify application wasn't closed before callback returned
@@ -497,10 +497,10 @@ public final class Questions extends TabFragment implements View.OnClickListener
     }
 
     @Override
-    public void onGet(Context context, String json) {
+    public void onGet(final Context context, final String json) {
         Util.log("Questions: onGet: " + json);
 
-        SharedPreferences cache = context.getSharedPreferences(QCACHE, Activity.MODE_PRIVATE);
+        final SharedPreferences cache = context.getSharedPreferences(QCACHE, Activity.MODE_PRIVATE);
         cache.edit().putString(CACHE_PREFIX + mRaceNext.getId(), json).commit();
 
         // Verify application wasn't closed before callback returned
@@ -510,11 +510,11 @@ public final class Questions extends TabFragment implements View.OnClickListener
     }
 
     @Override
-    public void onConnectSuccess(Context context, String json) {
+    public void onConnectSuccess(final Context context, final String json) {
         Util.log("Questions: onConnectSuccess: " + json);
         Toast.makeText(context, R.string.questions_success, Toast.LENGTH_SHORT).show();
 
-        SharedPreferences cache = context.getSharedPreferences(ACACHE, Activity.MODE_PRIVATE);
+        final SharedPreferences cache = context.getSharedPreferences(ACACHE, Activity.MODE_PRIVATE);
         cache.edit().putString(CACHE_PREFIX + mRaceNext.getId(), json).commit();
 
         // Verify application wasn't closed before callback returned
@@ -525,5 +525,5 @@ public final class Questions extends TabFragment implements View.OnClickListener
     }
 
     @Override
-    public void onLaunchIntent(Intent launch) {}
+    public void onLaunchIntent(final Intent launch) {}
 }

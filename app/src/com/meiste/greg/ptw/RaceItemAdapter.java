@@ -25,7 +25,7 @@ import android.widget.TextView;
 
 public final class RaceItemAdapter extends ArrayAdapter<Race> {
     private Race[] mRaces;
-    private Context mContext;
+    private final Context mContext;
 
     private class ViewHolder {
         public LinearLayout row;
@@ -38,7 +38,7 @@ public final class RaceItemAdapter extends ArrayAdapter<Race> {
         public TextView tv;
     }
 
-    public RaceItemAdapter(Context context, int textViewResourceId) {
+    public RaceItemAdapter(final Context context, final int textViewResourceId) {
         super(context, textViewResourceId);
         mContext = context;
         mRaces = Races.get(context);
@@ -56,12 +56,12 @@ public final class RaceItemAdapter extends ArrayAdapter<Race> {
     }
 
     @Override
-    public View getView(int pos, View convertView, ViewGroup parent) {
-        ViewHolder holder;
+    public View getView(final int pos, final View convertView, final ViewGroup parent) {
+        final ViewHolder holder;
         View v = convertView;
 
         if (v == null) {
-            LayoutInflater vi = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            final LayoutInflater vi = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             v = vi.inflate(R.layout.schedule_row, null);
 
             holder = new ViewHolder();

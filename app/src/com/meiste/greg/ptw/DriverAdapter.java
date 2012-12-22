@@ -19,9 +19,9 @@ import android.content.Context;
 import android.widget.ArrayAdapter;
 
 public final class DriverAdapter extends ArrayAdapter<Driver> {
-    private Context mContext;
+    private final Context mContext;
 
-    public DriverAdapter(Context context) {
+    public DriverAdapter(final Context context) {
         super(context, android.R.layout.simple_spinner_item);
         mContext = context;
 
@@ -34,7 +34,7 @@ public final class DriverAdapter extends ArrayAdapter<Driver> {
     }
 
     @Override
-    public Driver getItem(int position) {
+    public Driver getItem(final int position) {
         return Driver.newInstance(mContext, position);
     }
 }

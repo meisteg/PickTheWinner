@@ -32,16 +32,16 @@ public final class RaceAlarm extends BroadcastReceiver {
     private static final String RACE_ID = "race_id";
     private static boolean alarm_set = false;
 
-    public static void set(Context context) {
-        Race race = Race.getNext(context, true, true);
+    public static void set(final Context context) {
+        final Race race = Race.getNext(context, true, true);
 
         if (!alarm_set && (race != null)) {
             Util.log("Setting race alarm for race " + race.getId());
 
-            AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-            Intent intent = new Intent(context, RaceAlarm.class);
+            final AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+            final Intent intent = new Intent(context, RaceAlarm.class);
             intent.putExtra(RACE_ID, race.getId());
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent,
+            final PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
             am.set(AlarmManager.RTC_WAKEUP, race.getStartTimestamp(), pendingIntent);
 
@@ -51,24 +51,24 @@ public final class RaceAlarm extends BroadcastReceiver {
         }
     }
 
-    public static void reset(Context context) {
+    public static void reset(final Context context) {
         alarm_set = false;
         set(context);
     }
 
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public void onReceive(final Context context, final Intent intent) {
         alarm_set = false;
-        Race race = Race.getInstance(context, intent.getIntExtra(RACE_ID, 0));
+        final Race race = Race.getInstance(context, intent.getIntExtra(RACE_ID, 0));
         Util.log("Received race alarm for race " + race.getId());
 
         // Only show notification if user wants race reminders
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         if (prefs.getBoolean(EditPreferences.KEY_NOTIFY_RACE, true)) {
-            Intent notificationIntent = new Intent(context, RaceActivity.class);
+            final Intent notificationIntent = new Intent(context, RaceActivity.class);
             notificationIntent.putExtra(RaceActivity.INTENT_ID, race.getId());
             notificationIntent.putExtra(RaceActivity.INTENT_ALARM, true);
-            PendingIntent pi = PendingIntent.getActivity(context, 0, notificationIntent,
+            final PendingIntent pi = PendingIntent.getActivity(context, 0, notificationIntent,
                     PendingIntent.FLAG_CANCEL_CURRENT);
 
             int defaults = 0;
@@ -77,7 +77,7 @@ public final class RaceAlarm extends BroadcastReceiver {
             if (prefs.getBoolean(EditPreferences.KEY_NOTIFY_LED, true))
                 defaults |= Notification.DEFAULT_LIGHTS;
 
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+            final NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
             .setSmallIcon(R.drawable.ic_stat_steering_wheel)
             .setTicker(context.getString(R.string.remind_race_ticker, race.getName()))
             .setContentTitle(context.getString(R.string.remind_race_notify))
@@ -88,8 +88,8 @@ public final class RaceAlarm extends BroadcastReceiver {
             .setSound(Uri.parse(prefs.getString(EditPreferences.KEY_NOTIFY_RINGTONE,
                     "content://settings/system/notification_sound")));
 
-            String ns = Context.NOTIFICATION_SERVICE;
-            NotificationManager nm = (NotificationManager) context.getSystemService(ns);
+            final String ns = Context.NOTIFICATION_SERVICE;
+            final NotificationManager nm = (NotificationManager) context.getSystemService(ns);
             nm.notify(R.string.remind_race_ticker, builder.getNotification());
         } else {
             Util.log("Ignoring race alarm since option is disabled");

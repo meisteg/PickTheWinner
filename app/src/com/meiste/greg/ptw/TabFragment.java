@@ -26,7 +26,7 @@ public class TabFragment extends SherlockFragment {
     private String mTitle = "???";
     private FragmentListener mFragmentListener;
 
-    public void setTitle(String title) {
+    public void setTitle(final String title) {
         mTitle = title;
     }
 
@@ -34,7 +34,7 @@ public class TabFragment extends SherlockFragment {
         return mTitle;
     }
 
-    public void setFragmentListener(FragmentListener fl) {
+    public void setFragmentListener(final FragmentListener fl) {
         mFragmentListener = fl;
     }
 
@@ -42,7 +42,7 @@ public class TabFragment extends SherlockFragment {
         try {
             if (mFragmentListener != null)
                 mFragmentListener.onChangedFragment();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             Util.log("Failed to notifyChanged! - " + e);
             new Handler().postDelayed(new Runnable() {
                 public void run() {
@@ -58,7 +58,7 @@ public class TabFragment extends SherlockFragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if ((savedInstanceState != null) && savedInstanceState.containsKey(KEY_TITLE)) {
@@ -67,7 +67,7 @@ public class TabFragment extends SherlockFragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(KEY_TITLE, getTitle());
     }

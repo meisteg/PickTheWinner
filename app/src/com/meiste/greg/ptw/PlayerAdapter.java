@@ -46,9 +46,9 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
     }
 
     private _Standings mStandings;
-    private Context mContext;
+    private final Context mContext;
 
-    public PlayerAdapter(Context context) {
+    public PlayerAdapter(final Context context) {
         super(context, R.layout.schedule_row);
         mContext = context;
         init();
@@ -56,15 +56,16 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
 
     private void init() {
         try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(mContext.openFileInput(Standings.FILENAME)));
+            final BufferedReader in =
+                    new BufferedReader(new InputStreamReader(mContext.openFileInput(Standings.FILENAME)));
             String line;
-            StringBuilder buffer = new StringBuilder();
+            final StringBuilder buffer = new StringBuilder();
             while ((line = in.readLine()) != null)
                 buffer.append(line).append('\n');
             in.close();
             mStandings = new Gson().fromJson(buffer.toString(), _Standings.class);
             findWildCards();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             Util.log("Standings file not found");
         }
     }
@@ -100,7 +101,7 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
         }
     }
 
-    private boolean isWildCard(Player p) {
+    private boolean isWildCard(final Player p) {
         if (p.equals(mStandings.wildcards[0]) || p.equals(mStandings.wildcards[1]))
             return true;
         return false;
@@ -108,7 +109,7 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
 
     @Override
     public int getCount() {
-        Integer rank = mStandings.self.rank;
+        final Integer rank = mStandings.self.rank;
         if ((rank == null) || (rank > mStandings.standings.length))
             return mStandings.standings.length + 1;
         return mStandings.standings.length;
@@ -125,13 +126,13 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
     }
 
     @Override
-    public View getView(int pos, View convertView, ViewGroup parent) {
-        _ViewHolder holder;
-        Player p;
+    public View getView(final int pos, final View convertView, final ViewGroup parent) {
+        final _ViewHolder holder;
+        final Player p;
         View v = convertView;
 
         if (v == null) {
-            LayoutInflater vi = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            final LayoutInflater vi = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             v = vi.inflate(R.layout.standings_row, null);
 
             holder = new _ViewHolder();
@@ -176,7 +177,7 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
     }
 
     @Override
-    public boolean isEnabled(int position) {
+    public boolean isEnabled(final int position) {
         if (position < mStandings.standings.length) {
             if (mStandings.self.rank == mStandings.standings[position].rank)
                 return true;

@@ -33,7 +33,7 @@ public final class QuestionAlarm extends BroadcastReceiver {
     private static final String RACE_ID = "question_race_id";
     private static boolean alarm_set = false;
 
-    public static void set(Context context) {
+    public static void set(final Context context) {
         // Get next points race: allow in progress
         Race race = Race.getNext(context, false, true);
         if (race == null)
@@ -50,10 +50,10 @@ public final class QuestionAlarm extends BroadcastReceiver {
         if (!alarm_set) {
             Util.log("Setting question alarm for race " + race.getId());
 
-            AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-            Intent intent = new Intent(context, QuestionAlarm.class);
+            final AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+            final Intent intent = new Intent(context, QuestionAlarm.class);
             intent.putExtra(RACE_ID, race.getId());
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent,
+            final PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
             am.set(AlarmManager.RTC_WAKEUP, race.getQuestionTimestamp(), pendingIntent);
 
@@ -64,17 +64,17 @@ public final class QuestionAlarm extends BroadcastReceiver {
     }
 
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public void onReceive(final Context context, final Intent intent) {
         alarm_set = false;
-        Race race = Race.getInstance(context, intent.getIntExtra(RACE_ID, 0));
+        final Race race = Race.getInstance(context, intent.getIntExtra(RACE_ID, 0));
         Util.log("Received question alarm for race " + race.getId());
 
         // Only show notification if user wants question reminders
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         if (prefs.getBoolean(EditPreferences.KEY_NOTIFY_QUESTIONS, true)) {
-            Intent notificationIntent = new Intent(context, MainActivity.class);
+            final Intent notificationIntent = new Intent(context, MainActivity.class);
             notificationIntent.putExtra(MainActivity.INTENT_TAB, 1);
-            PendingIntent pi = PendingIntent.getActivity(context, 0, notificationIntent,
+            final PendingIntent pi = PendingIntent.getActivity(context, 0, notificationIntent,
                     PendingIntent.FLAG_CANCEL_CURRENT);
 
             int defaults = 0;
@@ -83,7 +83,7 @@ public final class QuestionAlarm extends BroadcastReceiver {
             if (prefs.getBoolean(EditPreferences.KEY_NOTIFY_LED, true))
                 defaults |= Notification.DEFAULT_LIGHTS;
 
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+            final NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
             .setSmallIcon(R.drawable.ic_stat_steering_wheel)
             .setTicker(context.getString(R.string.remind_questions_ticker, race.getName()))
             .setContentTitle(context.getString(R.string.app_name))
@@ -94,8 +94,8 @@ public final class QuestionAlarm extends BroadcastReceiver {
             .setSound(Uri.parse(prefs.getString(EditPreferences.KEY_NOTIFY_RINGTONE,
                     "content://settings/system/notification_sound")));
 
-            String ns = Context.NOTIFICATION_SERVICE;
-            NotificationManager nm = (NotificationManager) context.getSystemService(ns);
+            final String ns = Context.NOTIFICATION_SERVICE;
+            final NotificationManager nm = (NotificationManager) context.getSystemService(ns);
             nm.notify(R.string.remind_questions_ticker, builder.getNotification());
         } else {
             Util.log("Ignoring question alarm since option is disabled");

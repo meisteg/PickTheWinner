@@ -33,29 +33,30 @@ public final class Util {
 
     public static boolean LOGGING_ENABLED = BuildConfig.DEBUG;
 
-    public static void log(String msg) {
+    public static void log(final String msg) {
         if (LOGGING_ENABLED) Log.d(PTW.TAG, msg);
     }
 
-    public static SharedPreferences getState(Context context) {
+    public static SharedPreferences getState(final Context context) {
         return context.getSharedPreferences(PREFS_STATE, Activity.MODE_PRIVATE);
     }
 
-    public static long getAccountSetupTime(Context context) {
+    public static long getAccountSetupTime(final Context context) {
         return getState(context).getLong(PREFS_SETUP, 0);
     }
 
-    public static void setAccountSetupTime(Context context) {
+    public static void setAccountSetupTime(final Context context) {
         getState(context).edit().putLong(PREFS_SETUP, System.currentTimeMillis()).commit();
     }
 
-    public static View getAccountSetupView(final Context context, LayoutInflater inflater, ViewGroup container) {
+    public static View getAccountSetupView(final Context context,
+            final LayoutInflater inflater, final ViewGroup container) {
         final View v = inflater.inflate(R.layout.no_account, container, false);
-        TextView textView = (TextView) v.findViewById(R.id.setup_text);
+        final TextView textView = (TextView) v.findViewById(R.id.setup_text);
         textView.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, AccountsActivity.class);
+            public void onClick(final View v) {
+                final Intent intent = new Intent(context, AccountsActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
                 context.startActivity(intent);
             }

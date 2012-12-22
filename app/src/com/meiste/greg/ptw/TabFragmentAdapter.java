@@ -22,22 +22,22 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.view.ViewGroup;
 
 class TabFragmentAdapter extends FragmentPagerAdapter {
-    private TabFragment[] mFragments = new TabFragment[5];
-    private FragmentListener mFragmentListener = new MyFragmentListener();
-    private Context mContext;
+    private final TabFragment[] mFragments = new TabFragment[5];
+    private final FragmentListener mFragmentListener = new _FragmentListener();
+    private final Context mContext;
 
     public interface FragmentListener {
         void onChangedFragment();
     }
 
-    public TabFragmentAdapter(FragmentManager fm, Context context) {
+    public TabFragmentAdapter(final FragmentManager fm, final Context context) {
         super(fm);
         mContext = context;
     }
 
     @Override
-    public Object instantiateItem(ViewGroup container, int position) {
-        Object o = super.instantiateItem(container, position);
+    public Object instantiateItem(final ViewGroup container, final int position) {
+        final Object o = super.instantiateItem(container, position);
         mFragments[position] = (TabFragment)o;
 
         // HACK: On an orientation change, even though we created new
@@ -51,7 +51,7 @@ class TabFragmentAdapter extends FragmentPagerAdapter {
     }
 
     @Override
-    public Fragment getItem(int position) {
+    public Fragment getItem(final int position) {
         switch (position) {
         case 0:
             return RuleBook.newInstance(mContext);
@@ -74,19 +74,19 @@ class TabFragmentAdapter extends FragmentPagerAdapter {
     }
 
     @Override
-    public int getItemPosition(Object object) {
+    public int getItemPosition(final Object object) {
         return ((TabFragment)object).isChanged() ? POSITION_NONE : POSITION_UNCHANGED;
     }
 
     @Override
-    public CharSequence getPageTitle(int position) {
+    public CharSequence getPageTitle(final int position) {
         if (mFragments[position] == null)
             return Integer.toString(position);
 
         return mFragments[position].getTitle();
     }
 
-    private class MyFragmentListener implements FragmentListener {
+    private class _FragmentListener implements FragmentListener {
         public void onChangedFragment() {
             notifyDataSetChanged();
         }

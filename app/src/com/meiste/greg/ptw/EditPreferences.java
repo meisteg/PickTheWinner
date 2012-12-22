@@ -54,24 +54,24 @@ public class EditPreferences extends SherlockPreferenceActivity implements OnSha
     @TargetApi(11)
     @SuppressWarnings("deprecation")
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mVibrate = findPreference(KEY_NOTIFY_VIBRATE);
-        boolean methodAvailable = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
-        Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        final boolean methodAvailable = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
+        final Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         if (methodAvailable && (vibrator == null || !vibrator.hasVibrator())) {
             Util.log("Remove vibrator option since vibrator not present");
-            PreferenceCategory pc = (PreferenceCategory)findPreference(KEY_REMINDER_SETTINGS);
+            final PreferenceCategory pc = (PreferenceCategory)findPreference(KEY_REMINDER_SETTINGS);
             pc.removePreference(mVibrate);
             mVibrate = null;
         }
 
         if (BuildConfig.DEBUG) {
-            Preference build = findPreference(KEY_BUILD);
+            final Preference build = findPreference(KEY_BUILD);
             build.setSummary(build.getSummary() + " " + getString(R.string.debug_build));
         }
     }
@@ -82,11 +82,11 @@ public class EditPreferences extends SherlockPreferenceActivity implements OnSha
         super.onResume();
         Util.log("EditPreferences.onResume");
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.registerOnSharedPreferenceChangeListener(this);
         reminderCheck(prefs);
 
-        Preference account = findPreference(KEY_ACCOUNT_SCREEN);
+        final Preference account = findPreference(KEY_ACCOUNT_SCREEN);
         account.setSummary(prefs.getString(KEY_ACCOUNT_EMAIL, getString(R.string.account_needed)));
 
         mLogHitCountdown = TAPS_TO_ENABLE_LOGGING;
@@ -100,12 +100,12 @@ public class EditPreferences extends SherlockPreferenceActivity implements OnSha
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+    public void onSharedPreferenceChanged(final SharedPreferences prefs, final String key) {
         reminderCheck(prefs);
     }
 
     @SuppressWarnings("deprecation")
-    private void reminderCheck(SharedPreferences prefs) {
+    private void reminderCheck(final SharedPreferences prefs) {
         if (prefs.getBoolean(KEY_NOTIFY_QUESTIONS, true) ||
                 prefs.getBoolean(KEY_NOTIFY_RACE, true) ||
                 prefs.getBoolean(KEY_NOTIFY_RESULTS, true)) {
@@ -122,9 +122,9 @@ public class EditPreferences extends SherlockPreferenceActivity implements OnSha
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(final MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            Intent homeIntent = new Intent(this, MainActivity.class);
+            final Intent homeIntent = new Intent(this, MainActivity.class);
             homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(homeIntent);
             return true;
@@ -134,7 +134,7 @@ public class EditPreferences extends SherlockPreferenceActivity implements OnSha
 
     @SuppressWarnings("deprecation")
     @Override
-    public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
+    public boolean onPreferenceTreeClick(final PreferenceScreen preferenceScreen, final Preference preference) {
         if (preference.getKey().equals(KEY_BUILD) && (mLogHitCountdown > 0)) {
             mLogHitCountdown--;
             if ((mLogHitCountdown == 0) && !Util.LOGGING_ENABLED) {

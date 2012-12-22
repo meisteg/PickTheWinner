@@ -42,7 +42,7 @@ public class RaceActivity extends SherlockFragmentActivity implements ScrollView
     private GoogleMap mMap;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.race_details);
 
@@ -50,13 +50,13 @@ public class RaceActivity extends SherlockFragmentActivity implements ScrollView
 
         mRace = Race.getInstance(this, getIntent().getIntExtra(INTENT_ID, 0));
 
-        TextView raceNum = (TextView) findViewById(R.id.race_num);
-        TextView inTheChase = (TextView) findViewById(R.id.race_in_chase);
-        TextView trackSize = (TextView) findViewById(R.id.race_track_size);
-        TextView startTime = (TextView) findViewById(R.id.race_time);
-        TextView name = (TextView) findViewById(R.id.race_name);
-        TextView trackLong = (TextView) findViewById(R.id.race_track);
-        TextView tv = (TextView) findViewById(R.id.race_tv);
+        final TextView raceNum = (TextView) findViewById(R.id.race_num);
+        final TextView inTheChase = (TextView) findViewById(R.id.race_in_chase);
+        final TextView trackSize = (TextView) findViewById(R.id.race_track_size);
+        final TextView startTime = (TextView) findViewById(R.id.race_time);
+        final TextView name = (TextView) findViewById(R.id.race_name);
+        final TextView trackLong = (TextView) findViewById(R.id.race_track);
+        final TextView tv = (TextView) findViewById(R.id.race_tv);
 
         if (mRace.isExhibition()) {
             raceNum.setVisibility(View.GONE);
@@ -72,14 +72,14 @@ public class RaceActivity extends SherlockFragmentActivity implements ScrollView
         trackLong.setText(mRace.getTrack(Race.NAME_LONG));
         tv.setText(getString(R.string.details_tv, mRace.getTv()));
 
-        ObservableScrollView sv = (ObservableScrollView) findViewById(R.id.scroll);
+        final ObservableScrollView sv = (ObservableScrollView) findViewById(R.id.scroll);
         sv.setScrollViewListener(this);
 
         setUpMapIfNeeded();
     }
 
     @Override
-    public void onScrollChanged(ObservableScrollView sv, int x, int y, int oldx, int oldy) {
+    public void onScrollChanged(final ObservableScrollView sv, final int x, final int y, final int oldx, final int oldy) {
         /* WORKAROUND: Toggle view visibility to force re-layout, preventing map
          * from blacking out part of layout.
          * See http://stackoverflow.com/q/13793483/1620158 for more details. */
@@ -120,7 +120,7 @@ public class RaceActivity extends SherlockFragmentActivity implements ScrollView
                     } else {
                         mapView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     }
-                    LatLngBounds bounds = mBounds.get(mRace.getAbbr());
+                    final LatLngBounds bounds = mBounds.get(mRace.getAbbr());
                     if (bounds != null)
                         mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
                 }
@@ -129,9 +129,9 @@ public class RaceActivity extends SherlockFragmentActivity implements ScrollView
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(final MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            Intent homeIntent = new Intent(this, MainActivity.class);
+            final Intent homeIntent = new Intent(this, MainActivity.class);
             homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(homeIntent);
 

@@ -24,25 +24,25 @@ public final class Driver {
     private int mNumber;
     private String mName;
 
-    public static Driver newInstance(Context context, int id) {
-        String json = context.getResources().getStringArray(R.array.drivers)[id];
+    public static Driver newInstance(final Context context, final int id) {
+        final String json = context.getResources().getStringArray(R.array.drivers)[id];
         return new Gson().fromJson(json, Driver.class);
     }
 
-    public static Driver newInstance(Resources res, int num) {
+    public static Driver newInstance(final Resources res, final int num) {
         String[] drivers = res.getStringArray(R.array.drivers);
-        Gson gson = new Gson();
+        final Gson gson = new Gson();
 
-        for (String json : drivers) {
-            Driver driver = gson.fromJson(json, Driver.class);
+        for (final String json : drivers) {
+            final Driver driver = gson.fromJson(json, Driver.class);
             if (driver.getNumber() == num)
                 return driver;
         }
 
         // Now check the inactive drivers array
         drivers = res.getStringArray(R.array.drivers_inactive);
-        for (String json : drivers) {
-            Driver driver = gson.fromJson(json, Driver.class);
+        for (final String json : drivers) {
+            final Driver driver = gson.fromJson(json, Driver.class);
             if (driver.getNumber() == num)
                 return driver;
         }
@@ -50,7 +50,7 @@ public final class Driver {
         return null;
     }
 
-    public static int getNumDrivers(Context context) {
+    public static int getNumDrivers(final Context context) {
         return context.getResources().getStringArray(R.array.drivers).length;
     }
 

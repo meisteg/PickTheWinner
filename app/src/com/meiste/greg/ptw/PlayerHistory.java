@@ -29,11 +29,11 @@ public final class PlayerHistory {
     private List<RaceQuestions> questions;
     private List<RaceAnswers> answers;
 
-    public static PlayerHistory fromJson(String json) {
+    public static PlayerHistory fromJson(final String json) {
         return new Gson().fromJson(json, PlayerHistory.class);
     }
 
-    public void commit(Context context) {
+    public void commit(final Context context) {
         if ((ids == null) || (questions == null) || (answers == null))
             return;
         if ((ids.size() != questions.size()) && (ids.size() != answers.size()))
@@ -43,11 +43,11 @@ public final class PlayerHistory {
 
         Util.log("PlayerHistory: Restoring " + ids.size() + " races for player.");
 
-        SharedPreferences qcache = context.getSharedPreferences(Questions.QCACHE, Activity.MODE_PRIVATE);
-        SharedPreferences acache = context.getSharedPreferences(Questions.ACACHE, Activity.MODE_PRIVATE);
+        final SharedPreferences qcache = context.getSharedPreferences(Questions.QCACHE, Activity.MODE_PRIVATE);
+        final SharedPreferences acache = context.getSharedPreferences(Questions.ACACHE, Activity.MODE_PRIVATE);
 
-        Editor qeditor = qcache.edit();
-        Editor aeditor = acache.edit();
+        final Editor qeditor = qcache.edit();
+        final Editor aeditor = acache.edit();
 
         for (int i = 0; i < ids.size(); i++) {
             qeditor.putString(Questions.CACHE_PREFIX + ids.get(i), questions.get(i).toJson());

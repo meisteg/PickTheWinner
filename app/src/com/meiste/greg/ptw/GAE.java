@@ -68,8 +68,8 @@ public final class GAE {
     private static final Object sInstanceSync = new Object();
     private static GAE sInstance;
 
-    private Context mContext;
-    private Handler mHandler;
+    private final Context mContext;
+    private final Handler mHandler;
     private final Object mListenerSync = new Object();
     private GaeListener mListener;
     private String mAccountName;
@@ -85,12 +85,12 @@ public final class GAE {
         void onGet(Context context, String json);
     }
 
-    public static boolean isAccountSetupNeeded(Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+    public static boolean isAccountSetupNeeded(final Context context) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getString(EditPreferences.KEY_ACCOUNT_EMAIL, "").length() == 0;
     }
 
-    public static GAE getInstance(Context context) {
+    public static GAE getInstance(final Context context) {
         synchronized (sInstanceSync) {
             if (sInstance == null) {
                 Util.log("Instantiate GAE object");
@@ -100,15 +100,15 @@ public final class GAE {
         return sInstance;
     }
 
-    private GAE(Context context) {
+    private GAE(final Context context) {
         mContext = context;
         mHandler = new Handler();
     }
 
     public List<String> getGoogleAccounts() {
-        ArrayList<String> result = new ArrayList<String>();
-        Account[] accounts = AccountManager.get(mContext).getAccountsByType("com.google");
-        for (Account account : accounts) {
+        final ArrayList<String> result = new ArrayList<String>();
+        final Account[] accounts = AccountManager.get(mContext).getAccountsByType("com.google");
+        for (final Account account : accounts) {
             result.add(account.name);
         }
 
@@ -184,16 +184,16 @@ public final class GAE {
     }
 
     private boolean isOnline() {
-        ConnectivityManager cm =
+        final ConnectivityManager cm =
                 (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        final NetworkInfo netInfo = cm.getActiveNetworkInfo();
 
         return (netInfo != null) && (netInfo.isConnected());
     }
 
     private void doConnect() {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-        SharedPreferences.Editor editor = prefs.edit();
+        final SharedPreferences.Editor editor = prefs.edit();
         editor.putString(EditPreferences.KEY_ACCOUNT_EMAIL, null);
         editor.putString(EditPreferences.KEY_ACCOUNT_COOKIE, null);
         editor.commit();
@@ -210,9 +210,9 @@ public final class GAE {
 
     @SuppressWarnings("deprecation")
     private void reconnect() {
-        AccountManager mgr = AccountManager.get(mContext);
-        Account[] accts = mgr.getAccountsByType("com.google");
-        for (Account acct : accts) {
+        final AccountManager mgr = AccountManager.get(mContext);
+        final Account[] accts = mgr.getAccountsByType("com.google");
+        for (final Account acct : accts) {
             if (acct.name.equals(mAccountName)) {
                 mgr.getAuthToken(acct, "ah", false, new AuthTokenCallback(), null);
                 break;
@@ -221,11 +221,11 @@ public final class GAE {
     }
 
     private class AuthTokenCallback implements AccountManagerCallback<Bundle> {
-        public void run(AccountManagerFuture<Bundle> future) {
+        public void run(final AccountManagerFuture<Bundle> future) {
             try {
-                Bundle result = future.getResult();
+                final Bundle result = future.getResult();
 
-                Intent launch = (Intent) result.get(AccountManager.KEY_INTENT);
+                final Intent launch = (Intent) result.get(AccountManager.KEY_INTENT);
                 if (launch != null) {
                     Util.log("Need to launch activity before getting authToken");
                     // How can we get the result of the activity if it is a new task!?
@@ -234,12 +234,12 @@ public final class GAE {
                     return;
                 }
 
-                String authToken = result.getString(AccountManager.KEY_AUTHTOKEN);
+                final String authToken = result.getString(AccountManager.KEY_AUTHTOKEN);
                 if (mNeedInvalidate) {
                     Util.log("Invalidating token and starting over");
                     mNeedInvalidate = false;
 
-                    AccountManager mgr = AccountManager.get(mContext);
+                    final AccountManager mgr = AccountManager.get(mContext);
                     mgr.invalidateAuthToken("com.google", authToken);
                     reconnect();
                 } else {
@@ -249,7 +249,7 @@ public final class GAE {
                     // Phase 2: get authCookie from PTW server
                     new GetCookieTask().execute(authToken);
                 }
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 Util.log("Get auth token failed with IOException: online=" + isOnline());
 
                 if (isOnline() && (mRemainingRetries > 0)) {
@@ -257,7 +257,7 @@ public final class GAE {
                     reconnect();
                 } else
                     cbFailedConnect();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Util.log("Get auth token failed with exception " + e);
                 cbFailedConnect();
             }
@@ -265,43 +265,42 @@ public final class GAE {
     }
 
     private class GetCookieTask extends AsyncTask<String, Integer, Boolean> {
-        protected Boolean doInBackground(String... tokens) {
+        protected Boolean doInBackground(final String... tokens) {
             String authCookie = null;
 
             try {
-                DefaultHttpClient client = new DefaultHttpClient();
-                String continueURL = PROD_URL;
-                URI uri = new URI(PROD_URL + "/_ah/login?continue="
-                        + URLEncoder.encode(continueURL, "UTF-8") + "&auth=" + tokens[0]);
-                HttpGet method = new HttpGet(uri);
+                final DefaultHttpClient client = new DefaultHttpClient();
+                final URI uri = new URI(PROD_URL + "/_ah/login?continue="
+                        + URLEncoder.encode(PROD_URL, "UTF-8") + "&auth=" + tokens[0]);
+                final HttpGet method = new HttpGet(uri);
                 final HttpParams getParams = new BasicHttpParams();
                 HttpClientParams.setRedirecting(getParams, false);
                 HttpConnectionParams.setConnectionTimeout(getParams, TIMEOUT_CONNECTION);
                 HttpConnectionParams.setSoTimeout(getParams, TIMEOUT_SOCKET);
                 method.setParams(getParams);
 
-                HttpResponse res = client.execute(method);
-                Header[] headers = res.getHeaders("Set-Cookie");
-                int statusCode = res.getStatusLine().getStatusCode();
+                final HttpResponse res = client.execute(method);
+                final Header[] headers = res.getHeaders("Set-Cookie");
+                final int statusCode = res.getStatusLine().getStatusCode();
                 if (statusCode != 302 || headers.length == 0) {
                     Util.log("Get auth cookie failed: statusCode=" + statusCode);
                     return false;
                 }
 
-                for (Cookie cookie : client.getCookieStore().getCookies()) {
+                for (final Cookie cookie : client.getCookieStore().getCookies()) {
                     if (AUTH_COOKIE_NAME.equals(cookie.getName())) {
                         authCookie = AUTH_COOKIE_NAME + "=" + cookie.getValue();
                         Util.log(authCookie);
                     }
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Util.log("Get auth cookie failed with exception " + e);
                 return false;
             }
 
             final SharedPreferences prefs =
                     PreferenceManager.getDefaultSharedPreferences(mContext);
-            SharedPreferences.Editor editor = prefs.edit();
+            final SharedPreferences.Editor editor = prefs.edit();
             editor.putString(EditPreferences.KEY_ACCOUNT_EMAIL, mAccountName);
             editor.putString(EditPreferences.KEY_ACCOUNT_COOKIE, authCookie);
             editor.commit();
@@ -309,7 +308,7 @@ public final class GAE {
             return true;
         }
 
-        protected void onPostExecute(Boolean success) {
+        protected void onPostExecute(final Boolean success) {
             if (success) {
                 if (mJson != null)
                     new PostPageTask().execute(mGetPage, mJson);
@@ -323,13 +322,13 @@ public final class GAE {
     }
 
     private class GetPageTask extends AsyncTask<String, Integer, Boolean> {
-        StringBuilder mBuilder = new StringBuilder();
+        final StringBuilder mBuilder = new StringBuilder();
 
-        protected Boolean doInBackground(String... pages) {
+        protected Boolean doInBackground(final String... pages) {
             mGetPage = null;
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-            DefaultHttpClient client = new DefaultHttpClient();
-            HttpGet method = new HttpGet(PROD_URL + "/" + pages[0]);
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+            final DefaultHttpClient client = new DefaultHttpClient();
+            final HttpGet method = new HttpGet(PROD_URL + "/" + pages[0]);
 
             final HttpParams getParams = new BasicHttpParams();
             HttpClientParams.setRedirecting(getParams, false);
@@ -339,11 +338,11 @@ public final class GAE {
             method.setHeader("Cookie", prefs.getString(EditPreferences.KEY_ACCOUNT_COOKIE, null));
 
             try {
-                HttpResponse resp = client.execute(method);
+                final HttpResponse resp = client.execute(method);
 
                 switch(resp.getStatusLine().getStatusCode()) {
                 case HttpStatus.SC_OK:
-                    BufferedReader reader = new BufferedReader(
+                    final BufferedReader reader = new BufferedReader(
                             new InputStreamReader(resp.getEntity().getContent()));
                     String line;
                     while ((line = reader.readLine()) != null) {
@@ -364,7 +363,7 @@ public final class GAE {
                     Util.log("Get page failed (invalid status code)");
                     return false;
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Util.log("Get page failed with exception " + e);
                 return false;
             }
@@ -372,7 +371,7 @@ public final class GAE {
             return true;
         }
 
-        protected void onPostExecute(Boolean success) {
+        protected void onPostExecute(final Boolean success) {
             if (success) {
                 if (mGetPage == null)
                     cbGet(mBuilder.toString());
@@ -384,11 +383,11 @@ public final class GAE {
     private class PostPageTask extends AsyncTask<String, Integer, Boolean> {
         String mJsonReturned;
 
-        protected Boolean doInBackground(String... args) {
+        protected Boolean doInBackground(final String... args) {
             mJson = null;
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-            DefaultHttpClient client = new DefaultHttpClient();
-            HttpPost method = new HttpPost(PROD_URL + "/" + args[0]);
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+            final DefaultHttpClient client = new DefaultHttpClient();
+            final HttpPost method = new HttpPost(PROD_URL + "/" + args[0]);
 
             final HttpParams postParams = new BasicHttpParams();
             HttpClientParams.setRedirecting(postParams, false);
@@ -398,15 +397,15 @@ public final class GAE {
             method.setHeader("Cookie", prefs.getString(EditPreferences.KEY_ACCOUNT_COOKIE, null));
 
             try {
-                StringEntity se = new StringEntity(args[1]);
+                final StringEntity se = new StringEntity(args[1]);
                 se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
                 method.setEntity(se);
 
-                HttpResponse resp = client.execute(method);
+                final HttpResponse resp = client.execute(method);
 
                 switch(resp.getStatusLine().getStatusCode()) {
                 case HttpStatus.SC_OK:
-                    BufferedReader reader = new BufferedReader(
+                    final BufferedReader reader = new BufferedReader(
                             new InputStreamReader(resp.getEntity().getContent()));
                     mJsonReturned = reader.readLine();
                     break;
@@ -425,7 +424,7 @@ public final class GAE {
                     Util.log("Post page failed (invalid status code)");
                     return false;
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Util.log("Post page failed with exception " + e);
                 return false;
             }
@@ -433,7 +432,7 @@ public final class GAE {
             return true;
         }
 
-        protected void onPostExecute(Boolean success) {
+        protected void onPostExecute(final Boolean success) {
             if (success) {
                 if (mJson == null)
                     cbConnectSuccess(mJsonReturned);
@@ -450,7 +449,7 @@ public final class GAE {
         }
     }
 
-    private void cbLaunchIntent(Intent launch) {
+    private void cbLaunchIntent(final Intent launch) {
         mListener.onLaunchIntent(launch);
         synchronized (mListenerSync) {
             mGetPage = mJson = mAccountName = null;
@@ -458,7 +457,7 @@ public final class GAE {
         }
     }
 
-    private void cbConnectSuccess(String json) {
+    private void cbConnectSuccess(final String json) {
         mListener.onConnectSuccess(mContext, json);
         synchronized (mListenerSync) {
             mGetPage = mJson = mAccountName = null;
@@ -466,7 +465,7 @@ public final class GAE {
         }
     }
 
-    private void cbGet(String json) {
+    private void cbGet(final String json) {
         mListener.onGet(mContext, json);
         synchronized (mListenerSync) {
             mGetPage = mJson = mAccountName = null;

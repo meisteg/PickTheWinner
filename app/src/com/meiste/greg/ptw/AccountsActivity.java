@@ -44,7 +44,7 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
     private GAE mGae;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.connect);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -63,25 +63,25 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
         final Button exitButton = (Button) findViewById(exitId);
         exitButton.setText(R.string.exit);
         exitButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
+            public void onClick(final View v) {
                 finish();
             }
         });
 
         mGae = GAE.getInstance(getApplicationContext());
-        List<String> accounts = mGae.getGoogleAccounts();
+        final List<String> accounts = mGae.getGoogleAccounts();
         if (accounts.size() == 0) {
             // Show a dialog and invoke the "Add Account" activity if requested
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage(R.string.needs_account);
             builder.setPositiveButton(R.string.add_account, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
+                public void onClick(final DialogInterface dialog, final int which) {
                     startActivity(new Intent(Settings.ACTION_ADD_ACCOUNT));
                     finish();
                 }
             });
             builder.setNegativeButton(R.string.skip, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
+                public void onClick(final DialogInterface dialog, final int which) {
                     finish();
                 }
             });
@@ -96,9 +96,9 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
             listView.setItemChecked(mAccountSelectedPosition, true);
 
             connectButton.setOnClickListener(new OnClickListener() {
-                public void onClick(View v) {
+                public void onClick(final View v) {
                     mAccountSelectedPosition = listView.getCheckedItemPosition();
-                    TextView account = (TextView) listView.getChildAt(mAccountSelectedPosition);
+                    final TextView account = (TextView) listView.getChildAt(mAccountSelectedPosition);
                     mAccountName = (String) account.getText();
                     setContentView(R.layout.connecting);
                     mGae.connect(AccountsActivity.this, mAccountName);
@@ -108,7 +108,7 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(final MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             finish();
             return true;
@@ -117,7 +117,7 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         if (requestCode == REQUEST_LAUNCH_INTENT) {
             Util.log("onActivityResult: resultCode=" + resultCode);
 
@@ -129,7 +129,7 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
     }
 
     @Override
-    public void onFailedConnect(Context context) {
+    public void onFailedConnect(final Context context) {
         // If the connect succeeds but the get history fails, don't show error toast
         if (GAE.isAccountSetupNeeded(context))
             Toast.makeText(this, R.string.failed_connect, Toast.LENGTH_SHORT).show();
@@ -137,18 +137,18 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
     }
 
     @Override
-    public void onLaunchIntent(Intent launch) {
+    public void onLaunchIntent(final Intent launch) {
         startActivityForResult(launch, REQUEST_LAUNCH_INTENT);
     }
 
     @Override
-    public void onConnectSuccess(Context context, String json) {
+    public void onConnectSuccess(final Context context, final String json) {
         Util.setAccountSetupTime(context);
         mGae.getPage(this, "history");
     }
 
     @Override
-    public void onGet(Context context, String json) {
+    public void onGet(final Context context, final String json) {
         PlayerHistory.fromJson(json).commit(context);
         finish();
     }

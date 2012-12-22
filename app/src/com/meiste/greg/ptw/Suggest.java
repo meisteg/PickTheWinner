@@ -36,24 +36,25 @@ public final class Suggest extends TabFragment implements View.OnClickListener, 
     private EditText mQuestion;
     private int mScroll = 0;
 
-    public static Suggest newInstance(Context context) {
-        Suggest fragment = new Suggest();
+    public static Suggest newInstance(final Context context) {
+        final Suggest fragment = new Suggest();
         fragment.setTitle(context.getString(R.string.tab_suggest));
 
         return fragment;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Race race = Race.getNext(getActivity(), false, false);
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
+            final Bundle savedInstanceState) {
+        final Race race = Race.getNext(getActivity(), false, false);
 
         if (race == null) {
             return inflater.inflate(R.layout.suggest_no_race, container, false);
         }
 
-        View v = inflater.inflate(R.layout.suggest, container, false);
+        final View v = inflater.inflate(R.layout.suggest, container, false);
 
-        TextView track = (TextView) v.findViewById(R.id.racetrack);
+        final TextView track = (TextView) v.findViewById(R.id.racetrack);
         track.setText(race.getTrack(Race.NAME_LONG));
 
         final Button send = (Button) v.findViewById(R.id.send);
@@ -63,7 +64,7 @@ public final class Suggest extends TabFragment implements View.OnClickListener, 
         mQuestion = (EditText) v.findViewById(R.id.question);
         mQuestion.addTextChangedListener(new TextWatcher() {
             @Override
-            public void afterTextChanged(Editable s) {
+            public void afterTextChanged(final Editable s) {
                 if (s.toString().trim().length() >= 20)
                     send.setEnabled(true);
                 else
@@ -71,13 +72,13 @@ public final class Suggest extends TabFragment implements View.OnClickListener, 
             }
 
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(final CharSequence s, final int start, final int count, final int after) {}
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {}
         });
 
-        ObservableScrollView sv = (ObservableScrollView) v.findViewById(R.id.scroll_suggest);
+        final ObservableScrollView sv = (ObservableScrollView) v.findViewById(R.id.scroll_suggest);
         sv.postScrollTo(0, mScroll);
         sv.setScrollViewListener(this);
 
@@ -85,8 +86,8 @@ public final class Suggest extends TabFragment implements View.OnClickListener, 
     }
 
     @Override
-    public void onClick(View v) {
-        String json = new Gson().toJson(mQuestion.getText().toString().trim());
+    public void onClick(final View v) {
+        final String json = new Gson().toJson(mQuestion.getText().toString().trim());
         GAE.getInstance(getActivity()).postPage(this, "suggest", json);
 
         Toast.makeText(getActivity(), R.string.suggest_success, Toast.LENGTH_SHORT).show();
@@ -94,23 +95,24 @@ public final class Suggest extends TabFragment implements View.OnClickListener, 
     }
 
     @Override
-    public void onScrollChanged(ObservableScrollView sv, int x, int y, int oldx, int oldy) {
+    public void onScrollChanged(final ObservableScrollView sv, final int x, final int y,
+            final int oldx, final int oldy) {
         mScroll = y;
     }
 
     @Override
-    public void onFailedConnect(Context context) {
+    public void onFailedConnect(final Context context) {
         Util.log("Suggest: onFailedConnect");
     }
 
     @Override
-    public void onConnectSuccess(Context context, String json) {
+    public void onConnectSuccess(final Context context, final String json) {
         Util.log("Suggest: onConnectSuccess");
     }
 
     @Override
-    public void onLaunchIntent(Intent launch) {}
+    public void onLaunchIntent(final Intent launch) {}
 
     @Override
-    public void onGet(Context context, String json) {}
+    public void onGet(final Context context, final String json) {}
 }

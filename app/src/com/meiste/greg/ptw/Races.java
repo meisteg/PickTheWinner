@@ -30,16 +30,13 @@ public final class Races {
     private static final Object sRacesSync = new Object();
     private static Race[] sRaces;
 
-    public static Race[] get(Context context) {
-        Race[] lRaces;
-        Race[] iRaces;
-
+    public static Race[] get(final Context context) {
         synchronized (sRacesSync) {
             if (sRaces == null) {
                 Util.log("Populating race array");
 
-                lRaces = getLatest(context);
-                iRaces = getIncluded(context);
+                final Race[] lRaces = getLatest(context);
+                final Race[] iRaces = getIncluded(context);
                 if ((lRaces == null) || (lRaces.length <= 0)) {
                     // User doesn't have updated schedule, so use included schedule
                     sRaces = iRaces;
@@ -56,45 +53,45 @@ public final class Races {
         return sRaces;
     }
 
-    public static void update(Context context, String json) {
+    public static void update(final Context context, final String json) {
         synchronized (sRacesSync) {
             try {
-                FileOutputStream fos = context.openFileOutput(FILENAME, Context.MODE_PRIVATE);
+                final FileOutputStream fos = context.openFileOutput(FILENAME, Context.MODE_PRIVATE);
                 fos.write(json.getBytes());
                 fos.close();
                 sRaces = null;
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Util.log("Failed to save update to schedule");
             }
         }
     }
 
-    private static Race[] getIncluded(Context context) {
+    private static Race[] getIncluded(final Context context) {
         try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(context.getAssets().open(FILENAME)));
+            final BufferedReader in = new BufferedReader(new InputStreamReader(context.getAssets().open(FILENAME)));
             String line;
-            StringBuilder buffer = new StringBuilder();
+            final StringBuilder buffer = new StringBuilder();
             while ((line = in.readLine()) != null)
                 buffer.append(line).append('\n');
             in.close();
             return new Gson().fromJson(buffer.toString(), Race[].class);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             Util.log("Unable to open included schedule: " + e);
         }
 
         return null;
     }
 
-    private static Race[] getLatest(Context context) {
+    private static Race[] getLatest(final Context context) {
         try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(context.openFileInput(FILENAME)));
+            final BufferedReader in = new BufferedReader(new InputStreamReader(context.openFileInput(FILENAME)));
             String line;
-            StringBuilder buffer = new StringBuilder();
+            final StringBuilder buffer = new StringBuilder();
             while ((line = in.readLine()) != null)
                 buffer.append(line).append('\n');
             in.close();
             return new Gson().fromJson(buffer.toString(), Race[].class);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             Util.log("No updated schedule found");
         }
         return null;

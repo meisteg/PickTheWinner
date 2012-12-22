@@ -26,18 +26,19 @@ import com.meiste.greg.ptw.ObservableScrollView.ScrollViewListener;
 public final class RuleBook extends TabFragment implements ScrollViewListener {
     private int mScroll = 0;
 
-    public static RuleBook newInstance(Context context) {
-        RuleBook fragment = new RuleBook();
+    public static RuleBook newInstance(final Context context) {
+        final RuleBook fragment = new RuleBook();
         fragment.setTitle(context.getString(R.string.tab_rule_book));
 
         return fragment;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
+            final Bundle savedInstanceState) {
         setRetainInstance(true);
-        View v = inflater.inflate(R.layout.rules, container, false);
-        ObservableScrollView sv = (ObservableScrollView) v.findViewById(R.id.scroll_rules);
+        final View v = inflater.inflate(R.layout.rules, container, false);
+        final ObservableScrollView sv = (ObservableScrollView) v.findViewById(R.id.scroll_rules);
         sv.postScrollTo(0, mScroll);
         sv.setScrollViewListener(this);
 
@@ -45,7 +46,8 @@ public final class RuleBook extends TabFragment implements ScrollViewListener {
     }
 
     @Override
-    public void onScrollChanged(ObservableScrollView sv, int x, int y, int oldx, int oldy) {
+    public void onScrollChanged(final ObservableScrollView sv, final int x, final int y,
+            final int oldx, final int oldy) {
         mScroll = y;
     }
 }

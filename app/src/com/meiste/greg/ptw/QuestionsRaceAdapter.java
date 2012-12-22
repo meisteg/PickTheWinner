@@ -29,24 +29,24 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 public final class QuestionsRaceAdapter extends ArrayAdapter<Race> {
-    private List<Race> mRaces = new ArrayList<Race>();
-    private Context mContext;
-    private int widthPx;
+    private final List<Race> mRaces = new ArrayList<Race>();
+    private final Context mContext;
+    private final int widthPx;
 
     private class ViewHolder {
         public TextView raceName;
         public TextView raceTrack;
     }
 
-    public QuestionsRaceAdapter(Context context) {
+    public QuestionsRaceAdapter(final Context context) {
         super(context, R.layout.questions_race_spinner);
 
         mContext = context;
-        Race[] allRaces = Races.get(context);
-        SharedPreferences qcache = context.getSharedPreferences(Questions.QCACHE, Activity.MODE_PRIVATE);
-        SharedPreferences acache = context.getSharedPreferences(Questions.ACACHE, Activity.MODE_PRIVATE);
+        final Race[] allRaces = Races.get(context);
+        final SharedPreferences qcache = context.getSharedPreferences(Questions.QCACHE, Activity.MODE_PRIVATE);
+        final SharedPreferences acache = context.getSharedPreferences(Questions.ACACHE, Activity.MODE_PRIVATE);
 
-        for (Race race : allRaces) {
+        for (final Race race : allRaces) {
             if (qcache.contains(Questions.CACHE_PREFIX + race.getId()) &&
                     acache.contains(Questions.CACHE_PREFIX + race.getId())) {
                 mRaces.add(race);
@@ -54,14 +54,14 @@ public final class QuestionsRaceAdapter extends ArrayAdapter<Race> {
         }
 
         // Always make sure next race is in list
-        Race next = Race.getNext(context, false, true);
+        final Race next = Race.getNext(context, false, true);
         if (next != null) {
             if ((getCount() <= 0) || mRaces.get(getCount()-1).getId() != next.getId()) {
                 mRaces.add(next);
             }
         }
 
-        DisplayMetrics dm = mContext.getResources().getDisplayMetrics();
+        final DisplayMetrics dm = mContext.getResources().getDisplayMetrics();
         widthPx = (int) (dm.widthPixels - (50 * dm.density));
     }
 
@@ -71,12 +71,12 @@ public final class QuestionsRaceAdapter extends ArrayAdapter<Race> {
     }
 
     @Override
-    public Race getItem(int position) {
+    public Race getItem(final int position) {
         return mRaces.get(position);
     }
 
     @Override
-    public int getPosition(Race race) {
+    public int getPosition(final Race race) {
         for (int i = 0; i < mRaces.size(); ++i) {
             if (mRaces.get(i).getId() == race.getId()) {
                 return i;
@@ -87,21 +87,21 @@ public final class QuestionsRaceAdapter extends ArrayAdapter<Race> {
     }
 
     @Override
-    public View getView(int pos, View convertView, ViewGroup parent) {
+    public View getView(final int pos, final View convertView, final ViewGroup parent) {
         return commonView(pos, convertView, R.layout.questions_race_spinner);
     }
 
     @Override
-    public View getDropDownView(int pos, View convertView, ViewGroup parent) {
+    public View getDropDownView(final int pos, final View convertView, final ViewGroup parent) {
         return commonView(pos, convertView, R.layout.questions_race_spinner_dropdown);
     }
 
-    private View commonView(int pos, View convertView, int layout) {
-        ViewHolder holder;
+    private View commonView(final int pos, final View convertView, final int layout) {
+        final ViewHolder holder;
         View v = convertView;
 
         if (v == null) {
-            LayoutInflater vi = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            final LayoutInflater vi = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             v = vi.inflate(layout, null);
 
             holder = new ViewHolder();

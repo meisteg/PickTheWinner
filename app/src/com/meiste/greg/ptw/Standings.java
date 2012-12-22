@@ -56,15 +56,15 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
     private PrivacyDialog mDialog;
     private boolean mDialogResume = false;
 
-    public static Standings newInstance(Context context) {
-        Standings fragment = new Standings();
+    public static Standings newInstance(final Context context) {
+        final Standings fragment = new Standings();
         fragment.setTitle(context.getString(R.string.tab_standings));
 
         return fragment;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         mSetupNeeded = GAE.isAccountSetupNeeded(getActivity());
         mChanged = false;
         mOnCreateViewTime = System.currentTimeMillis();
@@ -75,11 +75,11 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
             return Util.getAccountSetupView(getActivity(), inflater, container);
         else if (mFailedConnect) {
             mFailedConnect = false;
-            View v = inflater.inflate(R.layout.no_connection, container, false);
+            final View v = inflater.inflate(R.layout.no_connection, container, false);
 
-            Button retry = (Button) v.findViewById(R.id.retry);
+            final Button retry = (Button) v.findViewById(R.id.retry);
             retry.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
+                public void onClick(final View v) {
                     mChanged = true;
                     notifyChanged();
                 }
@@ -94,11 +94,11 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
             return inflater.inflate(R.layout.connecting, container, false);
         }
 
-        View v = inflater.inflate(R.layout.standings, container, false);
+        final View v = inflater.inflate(R.layout.standings, container, false);
         mPullToRefresh = (PullToRefreshListView) v.findViewById(R.id.standings);
         mPullToRefresh.setOnRefreshListener(this);
 
-        ListView lv = mPullToRefresh.getRefreshableView();
+        final ListView lv = mPullToRefresh.getRefreshableView();
         final View header = inflater.inflate(R.layout.standings_header, lv, false);
         mAdapter = new PlayerAdapter(getActivity());
         mAfterRace = (TextView) header.findViewById(R.id.after);
@@ -111,7 +111,7 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
         lv.setAdapter(mAdapter);
 
         lv.setOnItemClickListener(new OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v, int pos, long id) {
+            public void onItemClick(final AdapterView<?> parent, final View v, final int pos, final long id) {
                 Util.log("Starting privacy dialog: id=" + id);
                 if (mDialog == null) {
                     mDialog = new PrivacyDialog(getActivity(), Standings.this);
@@ -170,29 +170,28 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
     }
 
     private boolean isStandingsPresent() {
-        File file = new File(getActivity().getFilesDir(), FILENAME);
-        return file.exists();
+        return new File(getActivity().getFilesDir(), FILENAME).exists();
     }
 
-    private String getRaceAfterText(Context context) {
+    private String getRaceAfterText(final Context context) {
         if (mAdapter.getRaceAfterNum() > 0)
             return context.getString(R.string.standings_after, mAdapter.getRaceAfterName());
 
         return context.getString(R.string.standings_preseason);
     }
 
-    private String getFooterText(Context context) {
-        int topX = Math.max(mAdapter.getCountWithoutPlayer(), 25);
+    private String getFooterText(final Context context) {
+        final int topX = Math.max(mAdapter.getCountWithoutPlayer(), 25);
         return context.getString(R.string.standings_footer, topX);
     }
 
     @Override
-    public void onRefresh(PullToRefreshBase<ListView> refreshView) {
+    public void onRefresh(final PullToRefreshBase<ListView> refreshView) {
         GAE.getInstance(getActivity()).getPage(this, "standings");
     }
 
     @Subscribe
-    public void onStandingsUpdate(StandingsUpdateEvent event) {
+    public void onStandingsUpdate(final StandingsUpdateEvent event) {
         Util.log("Standings: onStandingsUpdate");
         if (mAdapter != null) {
             mAdapter.notifyDataSetChanged();
@@ -202,7 +201,7 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
     }
 
     @Override
-    public void onFailedConnect(Context context) {
+    public void onFailedConnect(final Context context) {
         Util.log("Standings: onFailedConnect");
 
         // mConnecting not set for pull to refresh case
@@ -219,7 +218,7 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
     }
 
     @Override
-    public void onGet(Context context, String json) {
+    public void onGet(final Context context, final String json) {
         Util.log("Standings: onGet");
         update(context, json);
 
@@ -237,10 +236,10 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
     }
 
     @Override
-    public void onLaunchIntent(Intent launch) {}
+    public void onLaunchIntent(final Intent launch) {}
 
     @Override
-    public void onConnectSuccess(Context context, String json) {
+    public void onConnectSuccess(final Context context, final String json) {
         Util.log("Standings: onConnectSuccess");
 
         mCheckName = true;
@@ -248,21 +247,21 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
     }
 
     @Override
-    public void onClick(DialogInterface dialog, int which) {
+    public void onClick(final DialogInterface dialog, final int which) {
         if (which == DialogInterface.BUTTON_POSITIVE) {
-            String json = new Gson().toJson(mDialog.getNewName());
+            final String json = new Gson().toJson(mDialog.getNewName());
             mConnecting = mChanged = true;
             notifyChanged();
             GAE.getInstance(getActivity()).postPage(this, "standings", json);
         }
     }
 
-    public static void update(Context context, String json) {
+    public static void update(final Context context, final String json) {
         try {
-            FileOutputStream fos = context.openFileOutput(FILENAME, Context.MODE_PRIVATE);
+            final FileOutputStream fos = context.openFileOutput(FILENAME, Context.MODE_PRIVATE);
             fos.write(json.getBytes());
             fos.close();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             Util.log("Failed to save new standings");
         }
     }
