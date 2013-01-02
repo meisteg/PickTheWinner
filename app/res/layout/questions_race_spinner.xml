@@ -21,15 +21,23 @@
     android:orientation="vertical">
     
     <TextView android:id="@+id/race_name"
+        style="?android:attr/spinnerItemStyle"
+        android:singleLine="true"
+        android:ellipsize="marquee"
         android:layout_width="match_parent"
     	android:layout_height="wrap_content"
         android:textSize="18sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:paddingLeft="0px" />
     
     <TextView android:id="@+id/race_track"
+        style="?android:attr/spinnerItemStyle"
+        android:singleLine="true"
+        android:ellipsize="marquee"
         android:layout_width="match_parent"
     	android:layout_height="wrap_content"
         android:textSize="18sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:paddingLeft="0px" />
 
 </LinearLayout>

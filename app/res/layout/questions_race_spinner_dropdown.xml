@@ -19,14 +19,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="6dp" >
+    android:paddingTop="6dp"
+    android:paddingBottom="6dp" >
     
     <TextView android:id="@+id/race_name"
+        style="?android:attr/spinnerDropDownItemStyle"
+        android:singleLine="true"
+        android:ellipsize="marquee"
         android:layout_width="match_parent"
     	android:layout_height="wrap_content"
         android:textSize="18sp" />
     
     <TextView android:id="@+id/race_track"
+        style="?android:attr/spinnerDropDownItemStyle"
+        android:singleLine="true"
+        android:ellipsize="marquee"
         android:layout_width="match_parent"
     	android:layout_height="wrap_content"
         android:textSize="18sp" />
