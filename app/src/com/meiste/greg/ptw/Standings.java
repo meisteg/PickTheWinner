@@ -51,7 +51,7 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
     private PlayerAdapter mAdapter;
     private TextView mAfterRace;
     private TextView mFooter;
-    private long mOnCreateViewTime = 0;
+    private long mAccountSetupTime = 0;
 
     private PrivacyDialog mDialog;
     private boolean mDialogResume = false;
@@ -67,7 +67,7 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         mSetupNeeded = GAE.isAccountSetupNeeded(getActivity());
         mChanged = false;
-        mOnCreateViewTime = System.currentTimeMillis();
+        mAccountSetupTime = Util.getAccountSetupTime(getActivity());
         setRetainInstance(true);
         BusProvider.getInstance().register(this);
 
@@ -136,7 +136,7 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
         super.onResume();
 
         if ((mSetupNeeded != GAE.isAccountSetupNeeded(getActivity())) ||
-                (mOnCreateViewTime < Util.getAccountSetupTime(getActivity()))) {
+                (mAccountSetupTime != Util.getAccountSetupTime(getActivity()))) {
             Util.log("Standings: onResume: notifyChanged");
             notifyChanged();
         } else if ((mDialog != null) && mDialogResume) {
@@ -166,7 +166,7 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
         // Must check for account status change or account setup separately in
         // case another tab noticed the change and already called notifyChanged().
         return mChanged || (mSetupNeeded != GAE.isAccountSetupNeeded(getActivity())) ||
-                (mOnCreateViewTime < Util.getAccountSetupTime(getActivity()));
+                (mAccountSetupTime != Util.getAccountSetupTime(getActivity()));
     }
 
     private boolean isStandingsPresent() {

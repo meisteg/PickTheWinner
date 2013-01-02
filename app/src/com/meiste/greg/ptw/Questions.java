@@ -83,6 +83,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
     private boolean mFailedConnect = false;
     private boolean mSending = false;
     private long mOnCreateViewTime = 0;
+    private long mAccountSetupTime = 0;
     private Spinner mRaceSpinner = null;
     private QuestionsRaceAdapter mRaceAdapter;
 
@@ -101,6 +102,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
         mChanged = false;
         mRaceAdapter = new QuestionsRaceAdapter(getActivity());
         mOnCreateViewTime = System.currentTimeMillis();
+        mAccountSetupTime = Util.getAccountSetupTime(getActivity());
         setRetainInstance(true);
         boolean spinnerEnable = true;
 
@@ -312,7 +314,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
         // Check if user changed their account status
         mChanged = mSetupNeeded != GAE.isAccountSetupNeeded(getActivity());
         // Check if user has switched accounts
-        mChanged |= mOnCreateViewTime < Util.getAccountSetupTime(getActivity());
+        mChanged |= mAccountSetupTime != Util.getAccountSetupTime(getActivity());
         if (mRaceNext != null) {
             // See if race questions are now available but weren't previously
             mChanged |= (mOnCreateViewTime < mRaceNext.getQuestionTimestamp()) && mRaceNext.inProgress();
