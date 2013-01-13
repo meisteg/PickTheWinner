@@ -79,7 +79,7 @@
     <string name="tab_standings">STANDINGS</string>
     <string name="tab_suggest">SUGGEST</string>
     <string name="track_layout">Track layout</string>
-    <string name="version">2.0.0-SNAPSHOT</string>
+    <string name="version">2.0.0</string>
     <string name="vibrate">Vibrate</string>
     <string name="vibrate_summary">Vibrate for notifications</string>
     
