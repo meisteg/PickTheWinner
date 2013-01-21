@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     Copyright (C) 2012 Gregory S. Meiste <http://gregmeiste.com>
+     Copyright (C) 2012-2013 Gregory S. Meiste <http://gregmeiste.com>
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
      limitations under the License.
 -->
 
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="TabTitles">
         <item name="android:padding">10dip</item>
@@ -23,6 +23,7 @@
         <item name="android:layout_width">fill_parent</item>
         <item name="android:background">@color/tab_bg</item>
         <item name="android:textColor">@color/tab_text</item>
+        <item name="android:layerType">software</item>
         <item name="footerColor">@color/tab_footer</item>
         <item name="footerLineHeight">1dp</item>
         <item name="footerIndicatorHeight">3dp</item>
