@@ -142,6 +142,12 @@ public class WidgetProvider extends AppWidgetProvider {
                 break;
             case RESULT_NO_RACE:
                 rViews = new RemoteViews(mContext.getPackageName(), R.layout.widget_no_race);
+
+                intent = new Intent(mContext, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                pi = PendingIntent.getActivity(mContext, 0,
+                        intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                rViews.setOnClickPendingIntent(R.id.widget_full_layout, pi);
                 break;
             case RESULT_FAILURE:
             default:
