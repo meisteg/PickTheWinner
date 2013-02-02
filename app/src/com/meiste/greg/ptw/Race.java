@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ public final class Race {
     }
 
     public static Race getNext(final Context context, final boolean allowExhibition, final boolean allowInProgress) {
-        for (Race race : Races.get(context)) {
+        for (final Race race : Races.get(context)) {
             if (race.isFuture()) {
                 if (!allowExhibition && race.isExhibition())
                     continue;
@@ -118,6 +118,10 @@ public final class Race {
     public String getStartYear() {
         final SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
         return yearFormat.format(new Timestamp(mStart));
+    }
+
+    public CharSequence getStartRelative() {
+        return DateUtils.getRelativeTimeSpanString(mStart,System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS);
     }
 
     public String getQuestionDateTime(final Context context) {

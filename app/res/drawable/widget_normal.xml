@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     Copyright (C) 2012-2013 Gregory S. Meiste <http://gregmeiste.com>
+     Copyright (C) 2013 Gregory S. Meiste <http://gregmeiste.com>
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -15,10 +15,14 @@
      limitations under the License.
 -->
 
-<resources>
-    <dimen name="DetailsTop">14dp</dimen>
-    <dimen name="DetailsText">18dp</dimen>
-    <dimen name="DetailsName">22dp</dimen>
-    
-    <dimen name="widget_margin">8dp</dimen>
-</resources>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle" >
+    <gradient
+        android:startColor="@color/widget_bg_normal_start"
+        android:endColor="@color/widget_bg_normal_end"
+        android:centerColor="@color/widget_bg_normal_end"
+        android:useLevel="false"
+        android:type="linear"
+        android:angle="0" />
+    <corners android:radius="6dp" />
+</shape>

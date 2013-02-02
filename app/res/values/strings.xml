@@ -161,4 +161,15 @@
     <string name="ads_success">Ads are now removed.</string>
     <string name="ads_error">Error purchasing: %s</string>
     
+    <!-- Widget Strings: Must be very short! -->
+    <string name="widget_error_network">Problem with the network.</string>
+    <string name="widget_error_retry">Touch to retry.</string>
+    <string name="widget_exhibition">Exhibition event</string>
+    <string name="widget_next_race">Next race is %s.</string>
+    <string name="widget_no_answers">Answers not submitted!</string>
+    <string name="widget_no_questions">Questions not yet available.</string>
+    <string name="widget_no_race1">End of the season.</string>
+    <string name="widget_no_race2">Thanks for playing!</string>
+    <string name="widget_race_logo">Race Logo</string>
+    
 </resources>

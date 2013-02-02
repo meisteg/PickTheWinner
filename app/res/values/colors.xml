@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     Copyright (C) 2012 Gregory S. Meiste <http://gregmeiste.com>
+     Copyright (C) 2012-2013 Gregory S. Meiste <http://gregmeiste.com>
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -35,4 +35,11 @@
     <color name="schedule_chase">#88FFFF00</color>
     
     <color name="ad_background">#FF222222</color>
+    
+    <color name="widget_bg_normal_start">#00000000</color>
+    <color name="widget_bg_normal_end">#BB000000</color>
+    <color name="widget_bg_good_start">#0000AA00</color>
+    <color name="widget_bg_good_end">#BB00AA00</color>
+    <color name="widget_bg_warning_start">#00AA0000</color>
+    <color name="widget_bg_warning_end">#BBAA0000</color>
 </resources>
