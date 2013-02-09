@@ -26,14 +26,18 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.os.SystemClock;
+import android.text.format.DateUtils;
 import android.widget.RemoteViews;
 
 public class WidgetProvider extends AppWidgetProvider {
@@ -42,32 +46,84 @@ public class WidgetProvider extends AppWidgetProvider {
     private static final int RESULT_FAILURE = -1;
     private static final int RESULT_NO_RACE = 1;
 
+    private static final long UPDATE_INTERVAL = DateUtils.MINUTE_IN_MILLIS;
+    private static final long UPDATE_FUDGE = 50; /* milliseconds */
+
     private static final String URL_PREFIX = "http://www.nascar.com/content/dam/nascar/logos/race/2013/SprintCup/";
-    private int[] allWidgetIds;
+
+    private static Race sRace;
+    private static Bitmap sBitmap;
+
+    @Override
+    public void onReceive (final Context context, final Intent intent) {
+        /* TODO: Handle schedule update intent */
+        if (intent.hasExtra(Intent.EXTRA_ALARM_COUNT)) {
+            Util.log("WidgetProvider.onReceive: Widget alarm");
+            new UpdateWidgetTask().execute(context);
+        } else if (intent.getAction().equals(Intent.ACTION_TIME_CHANGED)) {
+            Util.log("WidgetProvider.onReceive: Resetting alarm due to time change");
+            setAlarm(context);
+        } else
+            super.onReceive(context, intent);
+    }
 
     @Override
     public void onUpdate(final Context context, final AppWidgetManager appWidgetManager, final int[] appWidgetIds) {
-        Util.log("WidgetProvider.onUpdate");
+        Util.log("WidgetProvider.onUpdate: num=" + appWidgetIds.length);
 
         final RemoteViews rViews = new RemoteViews(context.getPackageName(), R.layout.widget_loading);
         appWidgetManager.updateAppWidget(appWidgetIds, rViews);
 
-        allWidgetIds = appWidgetIds;
-        new GetLogoTask().execute(context);
+        new UpdateWidgetTask().execute(context);
+
+        /* Set alarm to update widget when device is awake. This should really
+         * be done in onEnabled, but Android doesn't always call onEnabled. */
+        setAlarm(context);
     }
 
-    private class GetLogoTask extends AsyncTask<Context, Integer, Integer> {
+    @Override
+    public void onDisabled(final Context context) {
+        Util.log("WidgetProvider.onDisabled");
+
+        final AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        am.cancel(getAlarmIntent(context));
+    }
+
+    private void setAlarm(final Context context) {
+        /* Android relative time rounds down, so update needs to be early if anything */
+        final long trigger = UPDATE_INTERVAL - (System.currentTimeMillis() % UPDATE_INTERVAL) - UPDATE_FUDGE;
+
+        final AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        am.setRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + trigger,
+                UPDATE_INTERVAL, getAlarmIntent(context));
+        Util.log("Initial trigger is " + trigger + " milliseconds from now");
+    }
+
+    private PendingIntent getAlarmIntent(final Context context) {
+        final Intent intent = new Intent(context, WidgetProvider.class);
+        return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    private int[] getInstalledWidgets(final Context context) {
+        final ComponentName thisWidget = new ComponentName(context, WidgetProvider.class);
+        final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        return appWidgetManager.getAppWidgetIds(thisWidget);
+    }
+
+    private class UpdateWidgetTask extends AsyncTask<Context, Integer, Integer> {
         private Context mContext;
-        private Race mRace;
-        private Bitmap mBitmap;
 
         @Override
         protected Integer doInBackground(final Context... context) {
             mContext = context[0];
-            mRace = Race.getNext(mContext, true, true);
+            final Race race = Race.getNext(mContext, true, true);
 
-            if (mRace == null)
+            if (race == null)
                 return RESULT_NO_RACE;
+
+            if ((sRace != null) && (sBitmap != null) && (sRace.getId() == race.getId()))
+                return RESULT_SUCCESS;
+            sRace = race;
 
             try {
                 // FIXME: Use correct URL
@@ -85,7 +141,7 @@ public class WidgetProvider extends AppWidgetProvider {
                     final BufferedHttpEntity b_entity = new BufferedHttpEntity(entity);
                     final InputStream input = b_entity.getContent();
 
-                    mBitmap = BitmapFactory.decodeStream(input);
+                    sBitmap = BitmapFactory.decodeStream(input);
                     break;
                 default:
                     Util.log("Get logo failed (statusCode = " + statusCode + ")");
@@ -101,20 +157,20 @@ public class WidgetProvider extends AppWidgetProvider {
 
         @Override
         protected void onPostExecute(final Integer result) {
-            Util.log("GetLogoTask.onPostExecute: result=" + result);
+            Util.log("UpdateWidgetTask.onPostExecute: result=" + result);
             RemoteViews rViews;
 
             switch (result) {
             case RESULT_SUCCESS:
-                final String nextRace = mContext.getString(R.string.widget_next_race, mRace.getStartRelative());
+                final String nextRace = mContext.getString(R.string.widget_next_race, sRace.getStartRelative());
                 rViews = new RemoteViews(mContext.getPackageName(), R.layout.widget);
                 rViews.setTextViewText(R.id.when, nextRace);
-                rViews.setImageViewBitmap(R.id.race_logo, mBitmap);
+                rViews.setImageViewBitmap(R.id.race_logo, sBitmap);
 
-                if (mRace.isExhibition()) {
+                if (sRace.isExhibition()) {
                     rViews.setInt(R.id.status, "setText", R.string.widget_exhibition);
                     rViews.setInt(R.id.widget_text_layout, "setBackgroundResource", R.drawable.widget_normal);
-                } else if (!mRace.inProgress()) {
+                } else if (!sRace.inProgress()) {
                     rViews.setInt(R.id.status, "setText", R.string.widget_no_questions);
                     rViews.setInt(R.id.widget_text_layout, "setBackgroundResource", R.drawable.widget_normal);
                 } else {
@@ -133,7 +189,7 @@ public class WidgetProvider extends AppWidgetProvider {
                 rViews.setOnClickPendingIntent(R.id.widget_text_layout, pi);
 
                 intent = new Intent(mContext, RaceActivity.class);
-                intent.putExtra(RaceActivity.INTENT_ID, mRace.getId());
+                intent.putExtra(RaceActivity.INTENT_ID, sRace.getId());
                 intent.putExtra(RaceActivity.INTENT_ALARM, true);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 pi = PendingIntent.getActivity(mContext, 0,
@@ -155,7 +211,7 @@ public class WidgetProvider extends AppWidgetProvider {
 
                 intent = new Intent(mContext, WidgetProvider.class);
                 intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-                intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, allWidgetIds);
+                intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, getInstalledWidgets(mContext));
                 pi = PendingIntent.getBroadcast(mContext, 0,
                         intent, PendingIntent.FLAG_UPDATE_CURRENT);
                 rViews.setOnClickPendingIntent(R.id.widget_error_layout, pi);
@@ -163,7 +219,7 @@ public class WidgetProvider extends AppWidgetProvider {
             }
 
             final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(mContext);
-            appWidgetManager.updateAppWidget(allWidgetIds, rViews);
+            appWidgetManager.updateAppWidget(getInstalledWidgets(mContext), rViews);
         }
     }
 }
