@@ -26,6 +26,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -33,6 +34,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -48,6 +50,7 @@ public class WidgetProvider extends AppWidgetProvider {
 
     private static final long UPDATE_INTERVAL = DateUtils.MINUTE_IN_MILLIS;
     private static final long UPDATE_FUDGE = 50; /* milliseconds */
+    private static final long UPDATE_WARNING = (DateUtils.HOUR_IN_MILLIS * 2) + UPDATE_FUDGE;
 
     private static final String URL_PREFIX = "http://www.nascar.com/content/dam/nascar/logos/race/2013/SprintCup/";
 
@@ -174,11 +177,18 @@ public class WidgetProvider extends AppWidgetProvider {
                     rViews.setInt(R.id.status, "setText", R.string.widget_no_questions);
                     rViews.setInt(R.id.widget_text_layout, "setBackgroundResource", R.drawable.widget_normal);
                 } else {
-                    // TODO: Actually check if answers submitted.
-                    rViews.setInt(R.id.status, "setText", R.string.widget_no_answers);
-                    //rViews.setInt(R.id.widget_text_layout, "setBackgroundResource", R.drawable.widget_good);
-                    //rViews.setInt(R.id.widget_text_layout, "setBackgroundResource", R.drawable.widget_warning);
-                    rViews.setInt(R.id.widget_text_layout, "setBackgroundResource", R.drawable.widget_normal);
+                    final SharedPreferences acache =
+                            mContext.getSharedPreferences(Questions.ACACHE, Activity.MODE_PRIVATE);
+                    if (acache.contains(Questions.CACHE_PREFIX + sRace.getId())) {
+                        rViews.setInt(R.id.status, "setText", R.string.widget_submitted);
+                        rViews.setInt(R.id.widget_text_layout, "setBackgroundResource", R.drawable.widget_good);
+                    } else if ((sRace.getStartTimestamp() - System.currentTimeMillis()) <= UPDATE_WARNING) {
+                        rViews.setInt(R.id.status, "setText", R.string.widget_no_answers);
+                        rViews.setInt(R.id.widget_text_layout, "setBackgroundResource", R.drawable.widget_warning);
+                    } else {
+                        rViews.setInt(R.id.status, "setText", R.string.widget_please_submit);
+                        rViews.setInt(R.id.widget_text_layout, "setBackgroundResource", R.drawable.widget_normal);
+                    }
                 }
 
                 Intent intent = new Intent(mContext, MainActivity.class);

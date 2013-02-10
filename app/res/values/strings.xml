@@ -170,6 +170,8 @@
     <string name="widget_no_questions">Questions not yet available.</string>
     <string name="widget_no_race1">End of the season.</string>
     <string name="widget_no_race2">Thanks for playing!</string>
+    <string name="widget_please_submit">Please submit your answers.</string>
     <string name="widget_race_logo">Race Logo</string>
+    <string name="widget_submitted">Answers submitted.</string>
     
 </resources>
