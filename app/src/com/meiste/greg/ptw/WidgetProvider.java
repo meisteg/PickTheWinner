@@ -93,6 +93,10 @@ public class WidgetProvider extends AppWidgetProvider {
     }
 
     private void setAlarm(final Context context) {
+        /* No point setting alarm if no widgets */
+        if (getInstalledWidgets(context).length == 0)
+            return;
+
         /* Android relative time rounds down, so update needs to be early if anything */
         final long trigger = UPDATE_INTERVAL - (System.currentTimeMillis() % UPDATE_INTERVAL) - UPDATE_FUDGE;
 
