@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,10 @@ package com.meiste.greg.ptw;
 import java.util.Calendar;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Paint;
@@ -41,7 +43,6 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.meiste.greg.ptw.GAE.GaeListener;
 import com.meiste.greg.ptw.ObservableScrollView.ScrollViewListener;
-import com.squareup.otto.Subscribe;
 
 public final class Questions extends TabFragment implements View.OnClickListener, ScrollViewListener, GaeListener {
 
@@ -50,27 +51,22 @@ public final class Questions extends TabFragment implements View.OnClickListener
     public final static String CACACHE = "correct_answer_cache";
     public final static String CACHE_PREFIX = Calendar.getInstance().get(Calendar.YEAR) + "_race";
 
-    @SuppressWarnings("unused")
     @Expose
     @SerializedName("a1")
     private int mWinner;
 
-    @SuppressWarnings("unused")
     @Expose
     @SerializedName("a2")
     private int mA2;
 
-    @SuppressWarnings("unused")
     @Expose
     @SerializedName("a3")
     private int mA3;
 
-    @SuppressWarnings("unused")
     @Expose
     @SerializedName("a4")
     private int mMostLaps;
 
-    @SuppressWarnings("unused")
     @Expose
     @SerializedName("a5")
     private int mNumLeaders;
@@ -127,6 +123,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
 
                 final Button retry = (Button) v.findViewById(R.id.retry);
                 retry.setOnClickListener(new View.OnClickListener() {
+                    @Override
                     public void onClick(final View v) {
                         notifyChanged();
                     }
@@ -309,7 +306,10 @@ public final class Questions extends TabFragment implements View.OnClickListener
     @Override
     public void onResume() {
         super.onResume();
-        BusProvider.getInstance().register(this);
+
+        final IntentFilter filter = new IntentFilter(PTW.INTENT_ACTION_SCHEDULE);
+        filter.addAction(PTW.INTENT_ACTION_RACE_ALARM);
+        getActivity().registerReceiver(mBroadcastReceiver, filter);
 
         // Check if user changed their account status
         mChanged = mSetupNeeded != GAE.isAccountSetupNeeded(getActivity());
@@ -331,7 +331,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
     @Override
     public void onPause() {
         super.onPause();
-        BusProvider.getInstance().unregister(this);
+        getActivity().unregisterReceiver(mBroadcastReceiver);
     }
 
     @Override
@@ -345,17 +345,16 @@ public final class Questions extends TabFragment implements View.OnClickListener
         super.notifyChanged();
     }
 
-    @Subscribe
-    public void onScheduleUpdate(final ScheduleUpdateEvent event) {
-        Util.log("Questions: onScheduleUpdate");
-        resetRaceSelected();
-    }
-
-    @Subscribe
-    public void onRaceAlarm(final RaceAlarmEvent event) {
-        Util.log("Questions: onRaceAlarm");
-        resetRaceSelected();
-    }
+    private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            if (intent.getAction().equals(PTW.INTENT_ACTION_SCHEDULE) ||
+                    intent.getAction().equals(PTW.INTENT_ACTION_RACE_ALARM)) {
+                Util.log("Questions.onReceive: " + intent.getAction());
+                resetRaceSelected();
+            }
+        }
+    };
 
     private void resetRaceSelected() {
         // Workaround to ensure the spinner is set back to next race
@@ -369,6 +368,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
     }
 
     private class RaceSelectedListener implements OnItemSelectedListener {
+        @Override
         public void onItemSelected(final AdapterView<?> parent, final View v, final int pos, final long id) {
             final Race race = (Race) parent.getItemAtPosition(pos);
             if (mRaceSelected.getId() != race.getId()) {
@@ -378,48 +378,59 @@ public final class Questions extends TabFragment implements View.OnClickListener
             }
         }
 
+        @Override
         public void onNothingSelected(final AdapterView<?> parent) {}
     }
 
     private class WinnerSelectedListener implements OnItemSelectedListener {
+        @Override
         public void onItemSelected(final AdapterView<?> parent, final View v, final int pos, final long id) {
             final Driver driver = (Driver) parent.getItemAtPosition(pos);
             mWinner = driver.getNumber();
         }
 
+        @Override
         public void onNothingSelected(final AdapterView<?> parent) {}
     }
 
     private class A2SelectedListener implements OnItemSelectedListener {
+        @Override
         public void onItemSelected(final AdapterView<?> parent, final View v, final int pos, final long id) {
             mA2 = pos;
         }
 
+        @Override
         public void onNothingSelected(final AdapterView<?> parent) {}
     }
 
     private class A3SelectedListener implements OnItemSelectedListener {
+        @Override
         public void onItemSelected(final AdapterView<?> parent, final View v, final int pos, final long id) {
             mA3 = pos;
         }
 
+        @Override
         public void onNothingSelected(final AdapterView<?> parent) {}
     }
 
     private class MostLapsSelectedListener implements OnItemSelectedListener {
+        @Override
         public void onItemSelected(final AdapterView<?> parent, final View v, final int pos, final long id) {
             final Driver driver = (Driver) parent.getItemAtPosition(pos);
             mMostLaps = driver.getNumber();
         }
 
+        @Override
         public void onNothingSelected(final AdapterView<?> parent) {}
     }
 
     private class NumLeadersSelectedListener implements OnItemSelectedListener {
+        @Override
         public void onItemSelected(final AdapterView<?> parent, final View v, final int pos, final long id) {
             mNumLeaders = pos;
         }
 
+        @Override
         public void onNothingSelected(final AdapterView<?> parent) {}
     }
 

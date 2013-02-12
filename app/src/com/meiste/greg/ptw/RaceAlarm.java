@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -97,6 +97,6 @@ public final class RaceAlarm extends BroadcastReceiver {
 
         // Reset alarm for the next race
         set(context);
-        BusProvider.getInstance().post(new RaceAlarmEvent());
+        context.sendBroadcast(new Intent(PTW.INTENT_ACTION_RACE_ALARM));
     }
 }

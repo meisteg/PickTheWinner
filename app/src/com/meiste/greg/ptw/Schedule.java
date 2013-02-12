@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,22 +15,23 @@
  */
 package com.meiste.greg.ptw;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.meiste.greg.ptw.GAE.GaeListener;
-import com.squareup.otto.Subscribe;
 
 public final class Schedule extends TabFragment implements OnRefreshListener<ListView>, GaeListener  {
 
@@ -57,6 +58,7 @@ public final class Schedule extends TabFragment implements OnRefreshListener<Lis
         lv.setAdapter(mAdapter);
 
         lv.setOnItemClickListener(new OnItemClickListener() {
+            @Override
             public void onItemClick(final AdapterView<?> parent, final View v, final int pos, final long id) {
                 Util.log("Starting activity for race " + id);
 
@@ -67,25 +69,20 @@ public final class Schedule extends TabFragment implements OnRefreshListener<Lis
             }
         });
 
-        BusProvider.getInstance().register(this);
+        final IntentFilter filter = new IntentFilter(PTW.INTENT_ACTION_SCHEDULE);
+        getActivity().registerReceiver(mScheduleUpdateReceiver, filter);
         return v;
     }
 
     @Override
     public void onDestroyView() {
-        BusProvider.getInstance().unregister(this);
+        getActivity().unregisterReceiver(mScheduleUpdateReceiver);
         super.onDestroyView();
     }
 
     @Override
     public void onRefresh(final PullToRefreshBase<ListView> refreshView) {
         GAE.getInstance(getActivity()).getPage(this, "schedule");
-    }
-
-    @Subscribe
-    public void onScheduleUpdate(final ScheduleUpdateEvent event) {
-        Util.log("Schedule: onScheduleUpdate");
-        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -99,7 +96,7 @@ public final class Schedule extends TabFragment implements OnRefreshListener<Lis
         Races.update(context, json);
         RaceAlarm.reset(context);
         mPullToRefresh.onRefreshComplete();
-        BusProvider.getInstance().post(new ScheduleUpdateEvent());
+        context.sendBroadcast(new Intent(PTW.INTENT_ACTION_SCHEDULE));
     }
 
     @Override
@@ -107,4 +104,14 @@ public final class Schedule extends TabFragment implements OnRefreshListener<Lis
 
     @Override
     public void onConnectSuccess(final Context context, final String json) {}
+
+    private final BroadcastReceiver mScheduleUpdateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            if (intent.getAction().equals(PTW.INTENT_ACTION_SCHEDULE)) {
+                Util.log("Schedule.onReceive: Schedule Updated");
+                mAdapter.notifyDataSetChanged();
+            }
+        }
+    };
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -244,7 +244,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 
             Races.update(context, json);
             RaceAlarm.reset(context);
-            BusProvider.getInstance().post(new ScheduleUpdateEvent());
+            sendBroadcast(new Intent(PTW.INTENT_ACTION_SCHEDULE));
 
             super.onGet(context, json);
         }
@@ -259,7 +259,7 @@ public class GCMIntentService extends GCMBaseIntentService {
             final int beforeUpdate = pAdapter.getRaceAfterNum();
 
             Standings.update(context, json);
-            BusProvider.getInstance().post(new StandingsUpdateEvent());
+            sendBroadcast(new Intent(PTW.INTENT_ACTION_STANDINGS));
 
             pAdapter.notifyDataSetChanged();
             final int afterUpdate = pAdapter.getRaceAfterNum();

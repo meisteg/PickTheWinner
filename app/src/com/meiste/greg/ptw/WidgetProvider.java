@@ -59,13 +59,22 @@ public class WidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onReceive (final Context context, final Intent intent) {
-        /* TODO: Handle schedule update intent */
         if (intent.hasExtra(Intent.EXTRA_ALARM_COUNT)) {
             Util.log("WidgetProvider.onReceive: Widget alarm");
             new UpdateWidgetTask().execute(context);
         } else if (intent.getAction().equals(Intent.ACTION_TIME_CHANGED)) {
-            Util.log("WidgetProvider.onReceive: Resetting alarm due to time change");
+            Util.log("WidgetProvider.onReceive: Time change");
             setAlarm(context);
+        } else if (intent.getAction().equals(PTW.INTENT_ACTION_SCHEDULE)) {
+            Util.log("WidgetProvider.onReceive: Schedule Updated");
+
+            final int[] appWidgetIds = getInstalledWidgets(context);
+            if (appWidgetIds.length > 0) {
+                /* Force full widget update */
+                sRace = null;
+                sBitmap = null;
+                onUpdate(context, AppWidgetManager.getInstance(context), appWidgetIds);
+            }
         } else
             super.onReceive(context, intent);
     }

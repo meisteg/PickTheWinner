@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,11 @@ package com.meiste.greg.ptw;
 import java.io.File;
 import java.io.FileOutputStream;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,11 +35,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.meiste.greg.ptw.GAE.GaeListener;
-import com.squareup.otto.Subscribe;
 
 public final class Standings extends TabFragment implements OnRefreshListener<ListView>, GaeListener, DialogInterface.OnClickListener {
     public static final String FILENAME = "standings";
@@ -69,7 +70,9 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
         mChanged = false;
         mAccountSetupTime = Util.getAccountSetupTime(getActivity());
         setRetainInstance(true);
-        BusProvider.getInstance().register(this);
+
+        final IntentFilter filter = new IntentFilter(PTW.INTENT_ACTION_STANDINGS);
+        getActivity().registerReceiver(mBroadcastReceiver, filter);
 
         if (mSetupNeeded)
             return Util.getAccountSetupView(getActivity(), inflater, container);
@@ -79,6 +82,7 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
 
             final Button retry = (Button) v.findViewById(R.id.retry);
             retry.setOnClickListener(new View.OnClickListener() {
+                @Override
                 public void onClick(final View v) {
                     mChanged = true;
                     notifyChanged();
@@ -111,6 +115,7 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
         lv.setAdapter(mAdapter);
 
         lv.setOnItemClickListener(new OnItemClickListener() {
+            @Override
             public void onItemClick(final AdapterView<?> parent, final View v, final int pos, final long id) {
                 Util.log("Starting privacy dialog: id=" + id);
                 if (mDialog == null) {
@@ -157,7 +162,7 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
 
     @Override
     public void onDestroyView() {
-        BusProvider.getInstance().unregister(this);
+        getActivity().unregisterReceiver(mBroadcastReceiver);
         super.onDestroyView();
     }
 
@@ -190,15 +195,19 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
         GAE.getInstance(getActivity()).getPage(this, "standings");
     }
 
-    @Subscribe
-    public void onStandingsUpdate(final StandingsUpdateEvent event) {
-        Util.log("Standings: onStandingsUpdate");
-        if (mAdapter != null) {
-            mAdapter.notifyDataSetChanged();
-            mAfterRace.setText(getRaceAfterText(getActivity()));
-            mFooter.setText(getFooterText(getActivity()));
+    private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            if (intent.getAction().equals(PTW.INTENT_ACTION_STANDINGS)) {
+                Util.log("Standings.onReceive: Standings Updated");
+                if (mAdapter != null) {
+                    mAdapter.notifyDataSetChanged();
+                    mAfterRace.setText(getRaceAfterText(context));
+                    mFooter.setText(getFooterText(context));
+                }
+            }
         }
-    }
+    };
 
     @Override
     public void onFailedConnect(final Context context) {
@@ -225,7 +234,7 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
         // mConnecting not set for pull to refresh case
         if (!mConnecting) {
             mPullToRefresh.onRefreshComplete();
-            BusProvider.getInstance().post(new StandingsUpdateEvent());
+            context.sendBroadcast(new Intent(PTW.INTENT_ACTION_STANDINGS));
         }
         // Verify application wasn't closed before callback returned
         else if (getActivity() != null) {
