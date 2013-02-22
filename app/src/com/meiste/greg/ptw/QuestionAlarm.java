@@ -31,6 +31,7 @@ public final class QuestionAlarm extends BroadcastReceiver {
 
     private static final String LAST_REMIND = "question_last_remind";
     private static final String RACE_ID = "question_race_id";
+    private static final int PI_REQ_CODE = 146066;
     private static boolean alarm_set = false;
 
     public static void set(final Context context) {
@@ -74,8 +75,8 @@ public final class QuestionAlarm extends BroadcastReceiver {
         if (prefs.getBoolean(EditPreferences.KEY_NOTIFY_QUESTIONS, true)) {
             final Intent notificationIntent = new Intent(context, MainActivity.class);
             notificationIntent.putExtra(MainActivity.INTENT_TAB, 1);
-            final PendingIntent pi = PendingIntent.getActivity(context, 0, notificationIntent,
-                    PendingIntent.FLAG_CANCEL_CURRENT);
+            final PendingIntent pi = PendingIntent.getActivity(context, PI_REQ_CODE,
+                    notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
             int defaults = 0;
             if (prefs.getBoolean(EditPreferences.KEY_NOTIFY_VIBRATE, true))

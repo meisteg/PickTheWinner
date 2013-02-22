@@ -52,6 +52,8 @@ public class WidgetProvider extends AppWidgetProvider {
     private static final long UPDATE_FUDGE = 50; /* milliseconds */
     private static final long UPDATE_WARNING = (DateUtils.HOUR_IN_MILLIS * 2) + UPDATE_FUDGE;
 
+    private static final int PI_REQ_CODE = 810647;
+
     private static final String URL_PREFIX = "http://www.nascar.com/content/dam/nascar/logos/race/2013/SprintCup/";
 
     private static Race sRace;
@@ -207,7 +209,7 @@ public class WidgetProvider extends AppWidgetProvider {
                 Intent intent = new Intent(mContext, MainActivity.class);
                 intent.putExtra(MainActivity.INTENT_TAB, 1);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                PendingIntent pi = PendingIntent.getActivity(mContext, 0,
+                PendingIntent pi = PendingIntent.getActivity(mContext, PI_REQ_CODE,
                         intent, PendingIntent.FLAG_UPDATE_CURRENT);
                 rViews.setOnClickPendingIntent(R.id.widget_text_layout, pi);
 
@@ -215,7 +217,7 @@ public class WidgetProvider extends AppWidgetProvider {
                 intent.putExtra(RaceActivity.INTENT_ID, sRace.getId());
                 intent.putExtra(RaceActivity.INTENT_ALARM, true);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                pi = PendingIntent.getActivity(mContext, 0,
+                pi = PendingIntent.getActivity(mContext, PI_REQ_CODE,
                         intent, PendingIntent.FLAG_UPDATE_CURRENT);
                 rViews.setOnClickPendingIntent(R.id.race_logo, pi);
                 break;
@@ -224,7 +226,7 @@ public class WidgetProvider extends AppWidgetProvider {
 
                 intent = new Intent(mContext, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                pi = PendingIntent.getActivity(mContext, 0,
+                pi = PendingIntent.getActivity(mContext, PI_REQ_CODE,
                         intent, PendingIntent.FLAG_UPDATE_CURRENT);
                 rViews.setOnClickPendingIntent(R.id.widget_full_layout, pi);
                 break;

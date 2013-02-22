@@ -30,6 +30,7 @@ import android.support.v4.app.NotificationCompat;
 public final class RaceAlarm extends BroadcastReceiver {
 
     private static final String RACE_ID = "race_id";
+    private static final int PI_REQ_CODE = 693033;
     private static boolean alarm_set = false;
 
     public static void set(final Context context) {
@@ -68,8 +69,8 @@ public final class RaceAlarm extends BroadcastReceiver {
             final Intent notificationIntent = new Intent(context, RaceActivity.class);
             notificationIntent.putExtra(RaceActivity.INTENT_ID, race.getId());
             notificationIntent.putExtra(RaceActivity.INTENT_ALARM, true);
-            final PendingIntent pi = PendingIntent.getActivity(context, 0, notificationIntent,
-                    PendingIntent.FLAG_CANCEL_CURRENT);
+            final PendingIntent pi = PendingIntent.getActivity(context, PI_REQ_CODE,
+                    notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
             int defaults = 0;
             if (prefs.getBoolean(EditPreferences.KEY_NOTIFY_VIBRATE, true))

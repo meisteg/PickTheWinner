@@ -48,6 +48,7 @@ public class RaceActivity extends SherlockFragmentActivity implements ScrollView
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        Util.log("RaceActivity: " + INTENT_ID + "=" + getIntent().getIntExtra(INTENT_ID, 0));
         mRace = Race.getInstance(this, getIntent().getIntExtra(INTENT_ID, 0));
 
         final TextView raceNum = (TextView) findViewById(R.id.race_num);
