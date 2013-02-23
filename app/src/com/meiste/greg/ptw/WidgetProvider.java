@@ -54,7 +54,7 @@ public class WidgetProvider extends AppWidgetProvider {
 
     private static final int PI_REQ_CODE = 810647;
 
-    private static final String URL_PREFIX = "http://www.nascar.com/content/dam/nascar/logos/race/2013/SprintCup/";
+    private static final String URL_PREFIX = GAE.PROD_URL + "/img/race/";
 
     private static Race sRace;
     private static Bitmap sBitmap;
@@ -144,9 +144,7 @@ public class WidgetProvider extends AppWidgetProvider {
             sRace = race;
 
             try {
-                // FIXME: Use correct URL
-                final URL url = new URL(URL_PREFIX +
-                        "Sprint_Unlimited_logo_fold.png/jcr:content/renditions/Sprint_Unlimited_logo_fold.png.main.png");
+                final URL url = new URL(URL_PREFIX + sRace.getId() + ".png");
                 final HttpGet httpRequest = new HttpGet(url.toURI());
 
                 final HttpClient httpclient = new DefaultHttpClient();
