@@ -181,7 +181,7 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
             Util.log("Registering with GCM");
             GCMRegistrar.register(getApplicationContext(), PTW.GCM_SENDER_ID);
         } else {
-            Util.log("Already registered with GCM");
+            Util.log("Already registered with GCM: " + GCMRegistrar.getRegistrationId(getApplicationContext()));
         }
 
         mHelper.startSetup(mIabSetupListener);
