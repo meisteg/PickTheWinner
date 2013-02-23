@@ -98,7 +98,7 @@
   {
     "mTv": "FOX",
     "mLayout": "mar",
-    "mName": "Virginia 500",
+    "mName": "STP Gas Booster 500",
     "mTrackShort": "Martinsville",
     "mTrackLong": "Martinsville Speedway",
     "mSize": "0.526",
@@ -206,7 +206,7 @@
   {
     "mTv": "FOX",
     "mLayout": "dov",
-    "mName": "FedEx 400 benefiting Autism Speaks",
+    "mName": "Dover 400",
     "mTrackShort": "Dover",
     "mTrackLong": "Dover International Speedway",
     "mSize": "1.0",
@@ -218,7 +218,7 @@
   {
     "mTv": "TNT",
     "mLayout": "poc",
-    "mName": "Pocono 400",
+    "mName": "Fan Driven 400",
     "mTrackShort": "Pocono",
     "mTrackLong": "Pocono Raceway",
     "mSize": "2.5",
@@ -278,7 +278,7 @@
   {
     "mTv": "TNT",
     "mLayout": "nhi",
-    "mName": "Lenox Industrial Tools 301",
+    "mName": "New Hampshire 300",
     "mTrackShort": "Loudon",
     "mTrackLong": "New Hampshire Motor Speedway",
     "mSize": "1.058",
@@ -290,7 +290,7 @@
   {
     "mTv": "ESPN",
     "mLayout": "ims",
-    "mName": "Brickyard 400",
+    "mName": "Crown Royal Presents The Your Hero\u0027s Name Here at The Brickyard 400",
     "mTrackShort": "Indianapolis",
     "mTrackLong": "Indianapolis Motor Speedway",
     "mSize": "2.5",
@@ -314,7 +314,7 @@
   {
     "mTv": "ESPN",
     "mLayout": "wgi",
-    "mName": "Finger Lakes 355 at the Glen",
+    "mName": "Cheez-it 355 at The Glen",
     "mTrackShort": "Watkins Glen",
     "mTrackLong": "Watkins Glen International",
     "mSize": "2.45",
@@ -482,7 +482,7 @@
   {
     "mTv": "ESPN",
     "mLayout": "hms",
-    "mName": "Ford 400",
+    "mName": "Ford EcoBoost 400",
     "mTrackShort": "Homestead",
     "mTrackLong": "Homestead-Miami Speedway",
     "mSize": "1.5",
