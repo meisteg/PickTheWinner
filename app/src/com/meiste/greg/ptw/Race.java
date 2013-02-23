@@ -65,6 +65,10 @@ public final class Race {
         return (mQuestion < System.currentTimeMillis()) && isFuture();
     }
 
+    public boolean isRecent() {
+        return !isFuture() && ((System.currentTimeMillis() - mStart) < DateUtils.HOUR_IN_MILLIS);
+    }
+
     public boolean isExhibition() {
         return mRaceNum <= 0;
     }

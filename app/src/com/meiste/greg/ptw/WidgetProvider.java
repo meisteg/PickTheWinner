@@ -139,8 +139,17 @@ public class WidgetProvider extends AppWidgetProvider {
             if (race == null)
                 return RESULT_NO_RACE;
 
-            if ((sRace != null) && (sBitmap != null) && (sRace.getId() == race.getId()))
-                return RESULT_SUCCESS;
+            if ((sRace != null) && (sBitmap != null)) {
+                if (sRace.isRecent()) {
+                    try {
+                        /* Need to fudge the time the other way */
+                        Thread.sleep(UPDATE_FUDGE * 2);
+                    } catch (final InterruptedException e) {}
+                }
+
+                if ((sRace.getId() == race.getId()) || (sRace.isRecent()))
+                    return RESULT_SUCCESS;
+            }
             sRace = race;
 
             try {
@@ -178,13 +187,17 @@ public class WidgetProvider extends AppWidgetProvider {
 
             switch (result) {
             case RESULT_SUCCESS:
-                final String nextRace = mContext.getString(R.string.widget_next_race, sRace.getStartRelative());
+                final int str_id = sRace.isRecent() ? R.string.widget_current_race : R.string.widget_next_race;
+                final String nextRace = mContext.getString(str_id, sRace.getStartRelative());
                 rViews = new RemoteViews(mContext.getPackageName(), R.layout.widget);
                 rViews.setTextViewText(R.id.when, nextRace);
                 rViews.setImageViewBitmap(R.id.race_logo, sBitmap);
 
                 if (sRace.isExhibition()) {
                     rViews.setInt(R.id.status, "setText", R.string.widget_exhibition);
+                    rViews.setInt(R.id.widget_text_layout, "setBackgroundResource", R.drawable.widget_normal);
+                } else if (sRace.isRecent()) {
+                    rViews.setInt(R.id.status, "setText", R.string.widget_no_results);
                     rViews.setInt(R.id.widget_text_layout, "setBackgroundResource", R.drawable.widget_normal);
                 } else if (!sRace.inProgress()) {
                     rViews.setInt(R.id.status, "setText", R.string.widget_no_questions);
