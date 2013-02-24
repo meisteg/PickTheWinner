@@ -26,6 +26,9 @@ public final class Race {
     public static final int NAME_SHORT = 0;
     public static final int NAME_LONG = 1;
 
+    private static final long RECENT_TIME_POINTS = DateUtils.HOUR_IN_MILLIS * 4;
+    private static final long RECENT_TIME_EXHIBITION = DateUtils.HOUR_IN_MILLIS;
+
     private int mId;
     private int mRaceNum;
     private String mTrackLong;
@@ -66,7 +69,8 @@ public final class Race {
     }
 
     public boolean isRecent() {
-        return !isFuture() && ((System.currentTimeMillis() - mStart) < DateUtils.HOUR_IN_MILLIS);
+        final long recent = isExhibition() ? RECENT_TIME_EXHIBITION : RECENT_TIME_POINTS;
+        return !isFuture() && ((System.currentTimeMillis() - mStart) < recent);
     }
 
     public boolean isExhibition() {
