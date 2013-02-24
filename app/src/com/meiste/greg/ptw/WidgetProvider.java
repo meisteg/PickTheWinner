@@ -77,6 +77,12 @@ public class WidgetProvider extends AppWidgetProvider {
                 sBitmap = null;
                 onUpdate(context, AppWidgetManager.getInstance(context), appWidgetIds);
             }
+        } else if (intent.getAction().equals(PTW.INTENT_ACTION_ANSWERS)) {
+            Util.log("WidgetProvider.onReceive: Answers submitted");
+            final int[] appWidgetIds = getInstalledWidgets(context);
+            if (appWidgetIds.length > 0) {
+                new UpdateWidgetTask().execute(context);
+            }
         } else
             super.onReceive(context, intent);
     }

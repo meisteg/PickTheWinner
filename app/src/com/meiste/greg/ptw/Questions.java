@@ -530,6 +530,8 @@ public final class Questions extends TabFragment implements View.OnClickListener
         final SharedPreferences cache = context.getSharedPreferences(ACACHE, Activity.MODE_PRIVATE);
         cache.edit().putString(CACHE_PREFIX + mRaceNext.getId(), json).commit();
 
+        context.sendBroadcast(new Intent(PTW.INTENT_ACTION_ANSWERS));
+
         // Verify application wasn't closed before callback returned
         if (getActivity() != null) {
             mSending = false;

@@ -103,6 +103,7 @@
                 <action android:name="android.appwidget.action.APPWIDGET_DISABLED" />
                 <action android:name="android.intent.action.TIME_SET" />
                 <action android:name="com.meiste.greg.ptw.action.SCHEDULE" />
+                <action android:name="com.meiste.greg.ptw.action.ANSWERS" />
             </intent-filter>
             <meta-data android:name="android.appwidget.provider"
                        android:resource="@xml/widget_info" />

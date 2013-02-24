@@ -25,6 +25,7 @@ public class PTW extends Application {
     public final static String GCM_SENDER_ID = "540948604089";
     public final static String TAG = "PickTheWinner";
 
+    public final static String INTENT_ACTION_ANSWERS = "com.meiste.greg.ptw.action.ANSWERS";
     public final static String INTENT_ACTION_RACE_ALARM = "com.meiste.greg.ptw.action.RACE_ALARM";
     public final static String INTENT_ACTION_SCHEDULE = "com.meiste.greg.ptw.action.SCHEDULE";
     public final static String INTENT_ACTION_STANDINGS = "com.meiste.greg.ptw.action.STANDINGS";
