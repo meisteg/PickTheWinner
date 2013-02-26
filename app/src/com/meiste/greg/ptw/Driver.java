@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,10 @@ public final class Driver {
                 return driver;
         }
 
-        return null;
+        final Driver driver = new Driver();
+        driver.mNumber = num;
+        driver.mName = res.getString(R.string.not_available);
+        return driver;
     }
 
     public static int getNumDrivers(final Context context) {
