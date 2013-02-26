@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     Copyright (C) 2012 Gregory S. Meiste <http://gregmeiste.com>
+     Copyright (C) 2012-2013 Gregory S. Meiste <http://gregmeiste.com>
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 <resources>
     <!-- Each driver number MUST be unique! Should NOT change a number during season. -->
     <string-array name="drivers" translatable="false">
+        <item>{\"mName\":\"A.J. Allmendinger\",\"mNumber\":22}</item>
         <item>{\"mName\":\"Aric Almirola\",\"mNumber\":43}</item>
         <item>{\"mName\":\"Marcos Ambrose\",\"mNumber\":9}</item>
         <item>{\"mName\":\"Trevor Bayne\",\"mNumber\":21}</item>
@@ -61,6 +62,7 @@
         <item>{\"mName\":\"Ken Schrader\",\"mNumber\":321}</item>
         <item>{\"mName\":\"Regan Smith\",\"mNumber\":78}</item>
         <item>{\"mName\":\"Scott Speed\",\"mNumber\":195}</item>
+        <item>{\"mName\":\"Ricky Stenhouse Jr.\",\"mNumber\":6}</item>
         <item>{\"mName\":\"Tony Stewart\",\"mNumber\":14}</item>
         <item>{\"mName\":\"Martin Truex Jr.\",\"mNumber\":56}</item>
         <item>{\"mName\":\"Brian Vickers\",\"mNumber\":550}</item>
@@ -70,7 +72,6 @@
     </string-array>
     
     <string-array name="drivers_inactive" translatable="false">
-        <item>{\"mName\":\"A.J. Allmendinger\",\"mNumber\":22}</item>
         <item>{\"mName\":\"Stacy Compton\",\"mNumber\":74}</item>
         <item>{\"mName\":\"Bill Elliott\",\"mNumber\":97}</item>
         <item>{\"mName\":\"Timmy Hill\",\"mNumber\":37}</item>
@@ -78,7 +79,6 @@
         <item>{\"mName\":\"Robert Richardson Jr.\",\"mNumber\":23}</item>
         <item>{\"mName\":\"Scott Riggs\",\"mNumber\":230}</item>
         <item>{\"mName\":\"Reed Sorenson\",\"mNumber\":740}</item>
-        <item>{\"mName\":\"Ricky Stenhouse Jr.\",\"mNumber\":6}</item>
         <item>{\"mName\":\"David Stremme\",\"mNumber\":30}</item>
         <item>{\"mName\":\"Kenny Wallace\",\"mNumber\":109}</item>
         <item>{\"mName\":\"Mike Wallace\",\"mNumber\":370}</item>
