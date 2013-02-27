@@ -15,11 +15,18 @@
      limitations under the License.
 -->
 
+<!--
+     Note: Must specify margin directly in this file without using
+     @dimen/widget_margin. On some phones, on power up, they would
+     show "Problem loading widget" until the widget onUpdate() was
+     called because it couldn't access the dimension file. Perhaps
+     the app isn't unpacked yet?
+-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="@dimen/widget_margin"
+    android:layout_margin="8dp"
     android:gravity="center" >
 
     <ProgressBar
