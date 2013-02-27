@@ -15,6 +15,7 @@
  */
 package com.meiste.greg.ptw;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -130,6 +131,7 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
         return true;
     }
 
+    @SuppressLint("NewApi")
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
@@ -252,6 +254,7 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
 
     private final IabHelper.QueryInventoryFinishedListener mGotInventoryListener =
             new IabHelper.QueryInventoryFinishedListener() {
+        @SuppressLint("NewApi")
         @Override
         public void onQueryInventoryFinished(final IabResult result, final Inventory inventory) {
             if (result.isFailure()) {
@@ -268,6 +271,7 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
 
     private final IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener =
             new IabHelper.OnIabPurchaseFinishedListener() {
+        @SuppressLint("NewApi")
         @Override
         public void onIabPurchaseFinished(final IabResult result, final Purchase purchase) {
             if (result.isFailure()) {
