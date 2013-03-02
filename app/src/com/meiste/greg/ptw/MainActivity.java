@@ -244,7 +244,8 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
         @Override
         public void onIabSetupFinished(final IabResult result) {
             if (result.isSuccess()) {
-                mHelper.queryInventoryAsync(false, mGotInventoryListener);
+                if (mHelper != null)
+                    mHelper.queryInventoryAsync(false, mGotInventoryListener);
             } else {
                 Util.log("Problem setting up in-app billing: " + result);
                 loadAd();
