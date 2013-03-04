@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,12 +42,26 @@ public class RaceActivity extends SherlockFragmentActivity implements ScrollView
     private GoogleMap mMap;
 
     @Override
-    public void onCreate(final Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.race_details);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        doSetContent();
+    }
 
+    @Override
+    protected void onNewIntent(final Intent intent) {
+        setIntent(intent);
+
+        final boolean needMoveMap = (mMap != null);
+        doSetContent();
+        if (needMoveMap) {
+            moveMap();
+        }
+    }
+
+    private void doSetContent() {
         Util.log("RaceActivity: " + INTENT_ID + "=" + getIntent().getIntExtra(INTENT_ID, 0));
         mRace = Race.getInstance(this, getIntent().getIntExtra(INTENT_ID, 0));
 
@@ -121,12 +135,16 @@ public class RaceActivity extends SherlockFragmentActivity implements ScrollView
                     } else {
                         mapView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     }
-                    final LatLngBounds bounds = mBounds.get(mRace.getAbbr());
-                    if (bounds != null)
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
+                    moveMap();
                 }
             });
         }
+    }
+
+    private void moveMap() {
+        final LatLngBounds bounds = mBounds.get(mRace.getAbbr());
+        if (bounds != null)
+            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
     }
 
     @Override

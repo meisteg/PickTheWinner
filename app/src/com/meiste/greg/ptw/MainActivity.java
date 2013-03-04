@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,6 +85,14 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
         mIndicator = (TitlePageIndicator)findViewById(R.id.indicator);
         mIndicator.setViewPager(mPager);
         mIndicator.setCurrentItem(getTab(getIntent()));
+    }
+
+    @Override
+    protected void onNewIntent(final Intent intent) {
+        Util.log("MainActivity.onNewIntent: " + intent);
+
+        setIntent(intent);
+        mIndicator.setCurrentItem(getTab(intent));
     }
 
     @Override
