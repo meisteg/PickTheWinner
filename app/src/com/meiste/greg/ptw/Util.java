@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.text.format.DateUtils;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,4 +65,57 @@ public final class Util {
         });
         return v;
     }
+
+    /* Android's DateUtils.getRelativeTimeSpanString implementation is broken
+     * prior to Android 4.0. To support older Android versions, copy the
+     * correct implementation here. However, to minimize the number of internal
+     * string resources that would also need to be copied, this function was
+     * modified to only support this app's intended usage.
+     */
+    public static CharSequence getRelativeTimeSpanString(final Context context, final long time) {
+        final long now = System.currentTimeMillis();
+        final boolean past = (now >= time);
+        final long duration = Math.abs(now - time);
+
+        int resId;
+        long count;
+        if (duration < DateUtils.HOUR_IN_MILLIS) {
+            count = duration / DateUtils.MINUTE_IN_MILLIS;
+            if (past) {
+                resId = R.plurals.num_minutes_ago;
+            } else {
+                resId = R.plurals.in_num_minutes;
+            }
+        } else if (duration < DateUtils.DAY_IN_MILLIS) {
+            count = duration / DateUtils.HOUR_IN_MILLIS;
+            if (past) {
+                resId = R.plurals.num_hours_ago;
+            } else {
+                resId = R.plurals.in_num_hours;
+            }
+        } else {
+            count = getNumberOfDaysPassed(time, now);
+            if (past) {
+                resId = R.plurals.num_days_ago;
+            } else {
+                resId = R.plurals.in_num_days;
+            }
+        }
+
+        final String format = context.getResources().getQuantityString(resId, (int) count);
+        return String.format(format, count);
+    }
+
+    private synchronized static long getNumberOfDaysPassed(final long date1, final long date2) {
+        if (sThenTime == null) {
+            sThenTime = new Time();
+        }
+        sThenTime.set(date1);
+        final int day1 = Time.getJulianDay(date1, sThenTime.gmtoff);
+        sThenTime.set(date2);
+        final int day2 = Time.getJulianDay(date2, sThenTime.gmtoff);
+        return Math.abs(day2 - day1);
+    }
+
+    private static Time sThenTime;
 }

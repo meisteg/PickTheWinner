@@ -194,7 +194,7 @@ public class WidgetProvider extends AppWidgetProvider {
             switch (result) {
             case RESULT_SUCCESS:
                 final int str_id = sRace.isRecent() ? R.string.widget_current_race : R.string.widget_next_race;
-                final String nextRace = mContext.getString(str_id, sRace.getStartRelative());
+                final String nextRace = mContext.getString(str_id, sRace.getStartRelative(mContext));
                 rViews = new RemoteViews(mContext.getPackageName(), R.layout.widget);
                 rViews.setTextViewText(R.id.when, nextRace);
                 rViews.setImageViewBitmap(R.id.race_logo, sBitmap);
