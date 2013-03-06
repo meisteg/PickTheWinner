@@ -120,7 +120,16 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
         GCMRegistrar.onDestroy(getApplicationContext());
 
         if (mHelper != null) {
-            mHelper.dispose();
+            try {
+                mHelper.dispose();
+            } catch (final IllegalArgumentException e) {
+                // If IabHelper never managed to connect to billing service
+                // (likely because the Play Store version is too old), then
+                // calling dispose will cause an exception when it tries to
+                // unbind from the service it never connected to. Working
+                // around issue here instead of fixing Google code.
+                Util.log("Error when disposing IabHelper: " + e);
+            }
             mHelper = null;
         }
 
