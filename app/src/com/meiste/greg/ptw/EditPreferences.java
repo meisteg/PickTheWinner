@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -70,10 +72,15 @@ public class EditPreferences extends SherlockPreferenceActivity implements OnSha
             mVibrate = null;
         }
 
-        if (BuildConfig.DEBUG) {
+        try {
+            final PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
             final Preference build = findPreference(KEY_BUILD);
-            build.setSummary(build.getSummary() + " " + getString(R.string.debug_build));
-        }
+            if (BuildConfig.DEBUG) {
+                build.setSummary(pInfo.versionName + " " + getString(R.string.debug_build));
+            } else {
+                build.setSummary(pInfo.versionName);
+            }
+        } catch (final NameNotFoundException e) {}
     }
 
     @SuppressWarnings("deprecation")
