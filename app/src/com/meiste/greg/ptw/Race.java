@@ -107,14 +107,14 @@ public final class Race {
     }
 
     public String getStartTime(final Context context) {
-        final int flags = DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_NO_NOON_MIDNIGHT;
+        final int flags = DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_NO_NOON | DateUtils.FORMAT_NO_MIDNIGHT;
         return DateUtils.formatDateTime(context, mStart, flags);
     }
 
     public String getStartDateTime(final Context context) {
         int flags = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_YEAR;
-        flags |= DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_NO_NOON_MIDNIGHT;
-        flags |= DateUtils.FORMAT_SHOW_WEEKDAY;
+        flags |= DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_NO_NOON;
+        flags |= DateUtils.FORMAT_NO_MIDNIGHT | DateUtils.FORMAT_SHOW_WEEKDAY;
         return DateUtils.formatDateTime(context, mStart, flags);
     }
 
@@ -134,7 +134,7 @@ public final class Race {
 
     public String getQuestionDateTime(final Context context) {
         int flags = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_YEAR;
-        flags |= DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_NO_NOON_MIDNIGHT;
+        flags |= DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_NO_NOON | DateUtils.FORMAT_NO_MIDNIGHT;
         return DateUtils.formatDateTime(context, mQuestion, flags);
     }
 
