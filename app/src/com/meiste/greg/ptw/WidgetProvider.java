@@ -26,6 +26,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import com.google.analytics.tracking.android.EasyTracker;
+
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -53,6 +55,8 @@ public class WidgetProvider extends AppWidgetProvider {
     private static final long UPDATE_WARNING = (DateUtils.HOUR_IN_MILLIS * 2) + UPDATE_FUDGE;
 
     private static final int PI_REQ_CODE = 810647;
+
+    private static final String WIDGET_STATE = "widget.enabled";
 
     private static final String URL_PREFIX = GAE.PROD_URL + "/img/race/";
 
@@ -88,6 +92,19 @@ public class WidgetProvider extends AppWidgetProvider {
     }
 
     @Override
+    public void onEnabled(final Context context) {
+        final boolean prevEnabled = Util.getState(context).getBoolean(WIDGET_STATE, false);
+        Util.log("WidgetProvider.onEnabled: prevEnabled=" + prevEnabled);
+
+        /* onEnabled gets called on device power up, so prevent extra enables
+         * from being tracked. */
+        if (!prevEnabled) {
+            Util.getState(context).edit().putBoolean(WIDGET_STATE, true).commit();
+            EasyTracker.getTracker().sendEvent("Widget", "state", "enabled", (long) 0);
+        }
+    }
+
+    @Override
     public void onUpdate(final Context context, final AppWidgetManager appWidgetManager, final int[] appWidgetIds) {
         Util.log("WidgetProvider.onUpdate: num=" + appWidgetIds.length);
 
@@ -107,6 +124,9 @@ public class WidgetProvider extends AppWidgetProvider {
 
         final AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         am.cancel(getAlarmIntent(context));
+
+        Util.getState(context).edit().putBoolean(WIDGET_STATE, false).commit();
+        EasyTracker.getTracker().sendEvent("Widget", "state", "disabled", (long) 0);
     }
 
     private void setAlarm(final Context context) {

@@ -15,7 +15,12 @@
  */
 package com.meiste.greg.ptw;
 
+import java.lang.Thread.UncaughtExceptionHandler;
+
 import android.app.Application;
+
+import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.ExceptionReporter;
 
 public class PTW extends Application {
 
@@ -34,6 +39,15 @@ public class PTW extends Application {
     public void onCreate() {
         super.onCreate();
         Util.log("Application onCreate");
+
+        EasyTracker.getInstance().setContext(this);
+
+        // Change uncaught exception parser...
+        final UncaughtExceptionHandler uncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
+        if (uncaughtExceptionHandler instanceof ExceptionReporter) {
+            final ExceptionReporter exceptionReporter = (ExceptionReporter) uncaughtExceptionHandler;
+            exceptionReporter.setExceptionParser(new AnalyticsExceptionParser());
+        }
 
         /* HACK: Instantiate GAE class here so it can be used by activities and
          * services. For some reason, passing getApplicationContext() to GAE

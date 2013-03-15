@@ -37,6 +37,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
@@ -490,6 +491,8 @@ public final class Questions extends TabFragment implements View.OnClickListener
 
         final Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         GAE.getInstance(getActivity()).postPage(this, "questions", gson.toJson(this));
+
+        EasyTracker.getTracker().sendEvent("Questions", "button", "send", (long) 0);
     }
 
     @Override

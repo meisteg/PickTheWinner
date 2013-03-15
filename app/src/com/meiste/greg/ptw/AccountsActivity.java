@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.MenuItem;
+import com.google.analytics.tracking.android.EasyTracker;
 import com.meiste.greg.ptw.GAE.GaeListener;
 
 public class AccountsActivity extends SherlockActivity implements GaeListener {
@@ -63,6 +64,7 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
         final Button exitButton = (Button) findViewById(exitId);
         exitButton.setText(R.string.exit);
         exitButton.setOnClickListener(new OnClickListener() {
+            @Override
             public void onClick(final View v) {
                 finish();
             }
@@ -75,12 +77,14 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage(R.string.needs_account);
             builder.setPositiveButton(R.string.add_account, new DialogInterface.OnClickListener() {
+                @Override
                 public void onClick(final DialogInterface dialog, final int which) {
                     startActivity(new Intent(Settings.ACTION_ADD_ACCOUNT));
                     finish();
                 }
             });
             builder.setNegativeButton(R.string.skip, new DialogInterface.OnClickListener() {
+                @Override
                 public void onClick(final DialogInterface dialog, final int which) {
                     finish();
                 }
@@ -96,6 +100,7 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
             listView.setItemChecked(mAccountSelectedPosition, true);
 
             connectButton.setOnClickListener(new OnClickListener() {
+                @Override
                 public void onClick(final View v) {
                     mAccountSelectedPosition = listView.getCheckedItemPosition();
                     final TextView account = (TextView) listView.getChildAt(mAccountSelectedPosition);
@@ -105,6 +110,18 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
                 }
             });
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EasyTracker.getInstance().activityStart(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EasyTracker.getInstance().activityStop(this);
     }
 
     @Override

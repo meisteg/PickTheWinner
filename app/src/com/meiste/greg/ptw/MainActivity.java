@@ -31,6 +31,7 @@ import com.google.ads.AdListener;
 import com.google.ads.AdRequest;
 import com.google.ads.AdRequest.ErrorCode;
 import com.google.ads.AdView;
+import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gcm.GCMRegistrar;
 import com.meiste.greg.ptw.iab.IabHelper;
 import com.meiste.greg.ptw.iab.IabResult;
@@ -96,6 +97,18 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        EasyTracker.getInstance().activityStart(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EasyTracker.getInstance().activityStop(this);
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
 
@@ -128,7 +141,9 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
                 // calling dispose will cause an exception when it tries to
                 // unbind from the service it never connected to. Working
                 // around issue here instead of fixing Google code.
-                Util.log("Error when disposing IabHelper: " + e);
+                final String err = "Error when disposing IabHelper: " + e;
+                Util.log(err);
+                EasyTracker.getTracker().sendException(err, false);
             }
             mHelper = null;
         }
@@ -157,6 +172,7 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
             return true;
 
         case R.id.legal:
+            trackEvent("onOptionsItemSelected", "legal");
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.legal);
             builder.setCancelable(true);
@@ -167,6 +183,7 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
             return true;
 
         case R.string.ads_remove:
+            trackEvent("onOptionsItemSelected", "ads_remove");
             try {
                 mHelper.launchPurchaseFlow(this, SKU_AD_FREE, IAB_REQUEST, mPurchaseFinishedListener);
             } catch (final NullPointerException e) {
@@ -174,7 +191,9 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
                 // Play Store auto-updates itself), then the helper class
                 // will attempt to dereference a null pointer (mService).
                 // Working around issue here instead of fixing Google code.
-                Util.log("Unable to launch purchase flow");
+                final String msg = "Unable to launch purchase flow: " + e;
+                Util.log(msg);
+                EasyTracker.getTracker().sendException(msg, false);
                 mIabReady = false;
                 invalidateOptionsMenu();
             }
@@ -235,6 +254,10 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
         mAdView.loadAd(adRequest);
     }
 
+    private void trackEvent(final String action, final String label) {
+        EasyTracker.getTracker().sendEvent("Main", action, label, (long) 0);
+    }
+
     private final AdListener mAdListener = new AdListener() {
         @Override
         public void onReceiveAd(final Ad ad) {
@@ -265,6 +288,7 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
                     mHelper.queryInventoryAsync(false, mGotInventoryListener);
             } else {
                 Util.log("Problem setting up in-app billing: " + result);
+                trackEvent("onIabSetupFinished", result.getMessage());
                 loadAd();
             }
         }
@@ -276,6 +300,7 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
         @Override
         public void onQueryInventoryFinished(final IabResult result, final Inventory inventory) {
             if (result.isFailure()) {
+                trackEvent("onQueryInventoryFinished", result.getMessage());
                 loadAd();
                 return;
             }
@@ -293,14 +318,16 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
         @Override
         public void onIabPurchaseFinished(final IabResult result, final Purchase purchase) {
             if (result.isFailure()) {
-                final String msg = MainActivity.this.getString(R.string.ads_error,
-                        IabHelper.getResponseDesc(result.getResponse()));
+                final String err = IabHelper.getResponseDesc(result.getResponse());
+                final String msg = MainActivity.this.getString(R.string.ads_error, err);
                 Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                trackEvent("onIabPurchaseFinished", err);
                 return;
             }
 
             if (purchase.getSku().equals(SKU_AD_FREE)) {
                 Toast.makeText(MainActivity.this, R.string.ads_success, Toast.LENGTH_LONG).show();
+                trackEvent("onIabPurchaseFinished", "success");
                 mIsAdFree = true;
                 invalidateOptionsMenu();
 
