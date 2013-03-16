@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -192,10 +192,17 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
     }
 
     public int getRaceAfterNum() {
+        if (mStandings == null) {
+            return -1;
+        }
         return mStandings.race_id;
     }
 
     public String getPlayerName() {
+        if (mStandings == null) {
+            // This is safe since null indicates player name is private
+            return null;
+        }
         return mStandings.self.getName();
     }
 }

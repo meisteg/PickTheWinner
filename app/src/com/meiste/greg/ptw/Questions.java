@@ -202,16 +202,21 @@ public final class Questions extends TabFragment implements View.OnClickListener
                 final TextView a5 = (TextView) v.findViewById(R.id.answer5);
                 a5.setText(res.getStringArray(R.array.num_leaders)[ra.a5]);
 
-                if (!mRaceSelected.isFuture()) {
+                if (!mRaceSelected.isFuture() && !mRaceSelected.isRecent()) {
                     cache = getActivity().getSharedPreferences(CACACHE, Activity.MODE_PRIVATE);
                     json = cache.getString(CACHE_PREFIX + mRaceSelected.getId(), null);
                     if (json == null) {
-                        getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
-                        spinnerEnable = false;
-                        GAE.getInstance(getActivity()).getPage(
-                                new CorrectAnswersListener(mRaceSelected.getId()),
-                                "answers?year=" + mRaceSelected.getStartYear() +
-                                "&race_id=" + mRaceSelected.getId());
+                        final PlayerAdapter pAdapter = new PlayerAdapter(getActivity());
+                        if (pAdapter.getRaceAfterNum() >= mRaceSelected.getId()) {
+                            // Standings are available for race, so correct answers
+                            // should be available for download.
+                            getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
+                            spinnerEnable = false;
+                            GAE.getInstance(getActivity()).getPage(
+                                    new CorrectAnswersListener(mRaceSelected.getId()),
+                                    "answers?year=" + mRaceSelected.getStartYear() +
+                                    "&race_id=" + mRaceSelected.getId());
+                        }
                     } else {
                         Util.log("Questions: Correct answers available");
 

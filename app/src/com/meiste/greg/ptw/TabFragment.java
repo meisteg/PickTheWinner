@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,14 +39,18 @@ public class TabFragment extends SherlockFragment {
     }
 
     protected void notifyChanged() {
+        final String tab = this.getClass().getSimpleName();
+        Util.log("notifyChanged() called by " + tab);
+
         try {
             if (mFragmentListener != null)
                 mFragmentListener.onChangedFragment();
         } catch (final Exception e) {
-            Util.log("Failed to notifyChanged! - " + e);
+            Util.log(tab + ": Failed to notifyChanged! - " + e);
             new Handler().postDelayed(new Runnable() {
+                @Override
                 public void run() {
-                    Util.log("Trying notifyChanged again...");
+                    Util.log(tab + ": Trying notifyChanged again...");
                     mFragmentListener.onChangedFragment();
                 }
             }, 1000);
