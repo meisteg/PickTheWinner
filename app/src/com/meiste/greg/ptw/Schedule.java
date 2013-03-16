@@ -29,6 +29,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.meiste.greg.ptw.GAE.GaeListener;
@@ -52,6 +53,7 @@ public final class Schedule extends TabFragment implements OnRefreshListener<Lis
 
         mPullToRefresh = (PullToRefreshListView) v.findViewById(R.id.schedule);
         mPullToRefresh.setOnRefreshListener(this);
+        mPullToRefresh.setMode(BuildConfig.DEBUG ? Mode.PULL_DOWN_TO_REFRESH : Mode.DISABLED);
 
         final ListView lv = mPullToRefresh.getRefreshableView();
         mAdapter = new RaceItemAdapter(getActivity(), R.layout.schedule_row);
