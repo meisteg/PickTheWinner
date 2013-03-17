@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -120,6 +120,7 @@ public final class GAE {
             throw new IllegalArgumentException("No null arguments allowed");
 
         final Runnable r = new Runnable() {
+            @Override
             public void run() {
                 synchronized (mListenerSync) {
                     if (mListener == null) {
@@ -141,10 +142,11 @@ public final class GAE {
 
         if (DEBUG_FORCE_COOKIE_EXPIRED) {
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-            prefs.edit().putString(EditPreferences.KEY_ACCOUNT_COOKIE, "ExpiredCookie").commit();
+            prefs.edit().putString(EditPreferences.KEY_ACCOUNT_COOKIE, "ExpiredCookie").apply();
         }
 
         final Runnable r = new Runnable() {
+            @Override
             public void run() {
                 synchronized (mListenerSync) {
                     if (mListener == null) {
@@ -165,10 +167,11 @@ public final class GAE {
 
         if (DEBUG_FORCE_COOKIE_EXPIRED) {
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-            prefs.edit().putString(EditPreferences.KEY_ACCOUNT_COOKIE, "ExpiredCookie").commit();
+            prefs.edit().putString(EditPreferences.KEY_ACCOUNT_COOKIE, "ExpiredCookie").apply();
         }
 
         final Runnable r = new Runnable() {
+            @Override
             public void run() {
                 synchronized (mListenerSync) {
                     if (mListener == null) {
@@ -196,13 +199,13 @@ public final class GAE {
         final SharedPreferences.Editor editor = prefs.edit();
         editor.putString(EditPreferences.KEY_ACCOUNT_EMAIL, null);
         editor.putString(EditPreferences.KEY_ACCOUNT_COOKIE, null);
-        editor.commit();
+        editor.apply();
 
         // HACK: The GAE class should not need to know what to clear on a user
         // change. Ideally, the components would register for this event and
         // handle this themselves. However, the fragments are not guaranteed to
         // be instantiated, and therefore not registered. Handle here for now.
-        mContext.getSharedPreferences(Questions.ACACHE, Activity.MODE_PRIVATE).edit().clear().commit();
+        mContext.getSharedPreferences(Questions.ACACHE, Activity.MODE_PRIVATE).edit().clear().apply();
         mContext.deleteFile(Standings.FILENAME);
 
         reconnect();
@@ -221,6 +224,7 @@ public final class GAE {
     }
 
     private class AuthTokenCallback implements AccountManagerCallback<Bundle> {
+        @Override
         public void run(final AccountManagerFuture<Bundle> future) {
             try {
                 final Bundle result = future.getResult();
@@ -265,6 +269,7 @@ public final class GAE {
     }
 
     private class GetCookieTask extends AsyncTask<String, Integer, Boolean> {
+        @Override
         protected Boolean doInBackground(final String... tokens) {
             String authCookie = null;
 
@@ -303,11 +308,12 @@ public final class GAE {
             final SharedPreferences.Editor editor = prefs.edit();
             editor.putString(EditPreferences.KEY_ACCOUNT_EMAIL, mAccountName);
             editor.putString(EditPreferences.KEY_ACCOUNT_COOKIE, authCookie);
-            editor.commit();
+            editor.apply();
 
             return true;
         }
 
+        @Override
         protected void onPostExecute(final Boolean success) {
             if (success) {
                 if (mJson != null)
@@ -324,6 +330,7 @@ public final class GAE {
     private class GetPageTask extends AsyncTask<String, Integer, Boolean> {
         final StringBuilder mBuilder = new StringBuilder();
 
+        @Override
         protected Boolean doInBackground(final String... pages) {
             mGetPage = null;
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
@@ -371,6 +378,7 @@ public final class GAE {
             return true;
         }
 
+        @Override
         protected void onPostExecute(final Boolean success) {
             if (success) {
                 if (mGetPage == null)
@@ -383,6 +391,7 @@ public final class GAE {
     private class PostPageTask extends AsyncTask<String, Integer, Boolean> {
         String mJsonReturned;
 
+        @Override
         protected Boolean doInBackground(final String... args) {
             mJson = null;
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
@@ -432,6 +441,7 @@ public final class GAE {
             return true;
         }
 
+        @Override
         protected void onPostExecute(final Boolean success) {
             if (success) {
                 if (mJson == null)

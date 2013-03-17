@@ -103,7 +103,7 @@ public final class QuestionAlarm extends BroadcastReceiver {
         }
 
         // Remember that user was reminded of this race
-        Util.getState(context).edit().putInt(LAST_REMIND, race.getId()).commit();
+        Util.getState(context).edit().putInt(LAST_REMIND, race.getId()).apply();
 
         // Reset alarm for the next race
         set(context);

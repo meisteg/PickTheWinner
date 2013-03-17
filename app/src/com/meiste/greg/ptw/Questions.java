@@ -467,7 +467,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
             Util.log("CorrectAnswersListener: onGet: " + json);
 
             final SharedPreferences cache = context.getSharedPreferences(CACACHE, Activity.MODE_PRIVATE);
-            cache.edit().putString(CACHE_PREFIX + raceId, json).commit();
+            cache.edit().putString(CACHE_PREFIX + raceId, json).apply();
 
             // Check for null in case race alarm has fired, changing the view
             if (mRaceSpinner != null) {
@@ -522,7 +522,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
         Util.log("Questions: onGet: " + json);
 
         final SharedPreferences cache = context.getSharedPreferences(QCACHE, Activity.MODE_PRIVATE);
-        cache.edit().putString(CACHE_PREFIX + mRaceNext.getId(), json).commit();
+        cache.edit().putString(CACHE_PREFIX + mRaceNext.getId(), json).apply();
 
         // Verify application wasn't closed before callback returned
         if (getActivity() != null) {
@@ -536,7 +536,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
         Toast.makeText(context, R.string.questions_success, Toast.LENGTH_SHORT).show();
 
         final SharedPreferences cache = context.getSharedPreferences(ACACHE, Activity.MODE_PRIVATE);
-        cache.edit().putString(CACHE_PREFIX + mRaceNext.getId(), json).commit();
+        cache.edit().putString(CACHE_PREFIX + mRaceNext.getId(), json).apply();
 
         context.sendBroadcast(new Intent(PTW.INTENT_ACTION_ANSWERS));
 

@@ -48,7 +48,7 @@ public final class Util {
     }
 
     public static void setAccountSetupTime(final Context context) {
-        getState(context).edit().putLong(PREFS_SETUP, System.currentTimeMillis()).commit();
+        getState(context).edit().putLong(PREFS_SETUP, System.currentTimeMillis()).apply();
     }
 
     public static View getAccountSetupView(final Context context,

@@ -99,7 +99,7 @@ public class WidgetProvider extends AppWidgetProvider {
         /* onEnabled gets called on device power up, so prevent extra enables
          * from being tracked. */
         if (!prevEnabled) {
-            Util.getState(context).edit().putBoolean(WIDGET_STATE, true).commit();
+            Util.getState(context).edit().putBoolean(WIDGET_STATE, true).apply();
             EasyTracker.getTracker().sendEvent("Widget", "state", "enabled", (long) 0);
         }
     }
@@ -125,7 +125,7 @@ public class WidgetProvider extends AppWidgetProvider {
         final AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         am.cancel(getAlarmIntent(context));
 
-        Util.getState(context).edit().putBoolean(WIDGET_STATE, false).commit();
+        Util.getState(context).edit().putBoolean(WIDGET_STATE, false).apply();
         EasyTracker.getTracker().sendEvent("Widget", "state", "disabled", (long) 0);
     }
 

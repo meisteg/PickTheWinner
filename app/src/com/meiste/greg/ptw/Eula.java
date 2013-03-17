@@ -52,11 +52,11 @@ class Eula {
         void onEulaAgreedTo();
     }
 
-    private static SharedPreferences getEulaPrefs(Context context) {
+    private static SharedPreferences getEulaPrefs(final Context context) {
         return context.getSharedPreferences(PREFERENCES_EULA, Activity.MODE_PRIVATE);
     }
 
-    static boolean hasAccepted(Context context) {
+    static boolean hasAccepted(final Context context) {
         return getEulaPrefs(context).getBoolean(PREFERENCE_EULA_ACCEPTED, false);
     }
 
@@ -73,7 +73,8 @@ class Eula {
             builder.setTitle(R.string.eula_title);
             builder.setCancelable(true);
             builder.setPositiveButton(R.string.eula_accept, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
+                @Override
+                public void onClick(final DialogInterface dialog, final int which) {
                     accept(getEulaPrefs(activity));
                     if (activity instanceof OnEulaAgreedTo) {
                         ((OnEulaAgreedTo) activity).onEulaAgreedTo();
@@ -81,12 +82,14 @@ class Eula {
                 }
             });
             builder.setNegativeButton(R.string.eula_refuse, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
+                @Override
+                public void onClick(final DialogInterface dialog, final int which) {
                     refuse(activity);
                 }
             });
             builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                public void onCancel(DialogInterface dialog) {
+                @Override
+                public void onCancel(final DialogInterface dialog) {
                     refuse(activity);
                 }
             });
@@ -112,23 +115,23 @@ class Eula {
         return false;
     }
 
-    private static void accept(SharedPreferences preferences) {
-        preferences.edit().putBoolean(PREFERENCE_EULA_ACCEPTED, true).commit();
+    private static void accept(final SharedPreferences preferences) {
+        preferences.edit().putBoolean(PREFERENCE_EULA_ACCEPTED, true).apply();
     }
 
-    private static void refuse(Activity activity) {
+    private static void refuse(final Activity activity) {
         activity.finish();
     }
 
-    private static CharSequence readEula(Activity activity) {
+    private static CharSequence readEula(final Activity activity) {
         BufferedReader in = null;
         try {
             in = new BufferedReader(new InputStreamReader(activity.getAssets().open(ASSET_EULA)));
             String line;
-            StringBuilder buffer = new StringBuilder();
+            final StringBuilder buffer = new StringBuilder();
             while ((line = in.readLine()) != null) buffer.append(line).append('\n');
             return buffer;
-        } catch (IOException e) {
+        } catch (final IOException e) {
             return "";
         } finally {
             closeStream(in);
@@ -140,11 +143,11 @@ class Eula {
      *
      * @param stream The stream to close.
      */
-    private static void closeStream(Closeable stream) {
+    private static void closeStream(final Closeable stream) {
         if (stream != null) {
             try {
                 stream.close();
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 // Ignore
             }
         }

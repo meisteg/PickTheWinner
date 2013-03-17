@@ -113,7 +113,7 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
         super.onPause();
 
         Util.log("Saving state: tab=" + mPager.getCurrentItem());
-        Util.getState(this).edit().putInt(LAST_TAB, mPager.getCurrentItem()).commit();
+        Util.getState(this).edit().putInt(LAST_TAB, mPager.getCurrentItem()).apply();
 
         // Hide dialogs to prevent window leaks on orientation changes
         Eula.hide();
