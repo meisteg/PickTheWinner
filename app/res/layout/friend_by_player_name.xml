@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     Copyright (C) 2012 Gregory S. Meiste <http://gregmeiste.com>
+     Copyright (C) 2013 Gregory S. Meiste <http://gregmeiste.com>
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -25,20 +25,14 @@
         android:padding="8dip"
         android:orientation="vertical" >
         
-        <CheckBox android:id="@+id/hide_name"
+        <TextView
             style="?android:attr/textAppearanceMedium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/hide_name" />
-        
-        <TextView android:id="@+id/player_name_label"
-            style="?android:attr/textAppearanceMedium"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dip"
-            android:text="@string/player_name" />
+            android:text="@string/friend_by_player_name" />
 
-        <EditText android:id="@+id/player_name"
+        <EditText
+            android:id="@+id/player_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:singleLine="true"

@@ -23,13 +23,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,6 +42,9 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.meiste.greg.ptw.GAE.GaeListener;
+import com.meiste.greg.ptw.dialog.FriendActionDialog;
+import com.meiste.greg.ptw.dialog.FriendPlayerDialog;
+import com.meiste.greg.ptw.dialog.PrivacyDialog;
 
 public final class Standings extends TabFragment implements OnRefreshListener<ListView>, GaeListener, DialogInterface.OnClickListener {
     public static final String FILENAME = "standings";
@@ -54,8 +60,9 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
     private TextView mFooter;
     private long mAccountSetupTime = 0;
 
-    private PrivacyDialog mDialog;
-    private boolean mDialogResume = false;
+    private PrivacyDialog mPrivacyDialog;
+    private FriendPlayerDialog mFriendPlayerDialog;
+    private FriendActionDialog mFriendActionDialog;
 
     public static Standings newInstance(final Context context) {
         final Standings fragment = new Standings();
@@ -117,17 +124,43 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
         lv.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(final AdapterView<?> parent, final View v, final int pos, final long id) {
-                Util.log("Starting privacy dialog: id=" + id);
-                if (mDialog == null) {
-                    mDialog = new PrivacyDialog(getActivity(), Standings.this);
+                final Player player = (Player) parent.getItemAtPosition(pos);
+                if (mAdapter.isSelf(player)) {
+                    Util.log("Opening privacy dialog");
+                    if (mPrivacyDialog == null) {
+                        mPrivacyDialog = new PrivacyDialog(getActivity(), Standings.this);
+                    }
+                    mPrivacyDialog.show(mAdapter.getPlayerName());
+                } else {
+                    Util.log("Opening friend action dialog");
+                    if (mFriendActionDialog == null) {
+                        mFriendActionDialog = new FriendActionDialog(getActivity(), null);
+                    }
+                    mFriendActionDialog.show(player.getName(), mAdapter.isFriend(player));
                 }
-                mDialog.show(mAdapter.getPlayerName());
+            }
+        });
+
+        final ImageView iv = (ImageView) v.findViewById(R.id.add_friend);
+        iv.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                if (NfcAdapter.getDefaultAdapter(getActivity()) != null) {
+                    Util.log("NFC available. Need to ask user add method.");
+                } else {
+                    Util.log("NFC not available. Adding friend via username.");
+                    if (mFriendPlayerDialog == null) {
+                        mFriendPlayerDialog = new FriendPlayerDialog(getActivity(), null);
+                    }
+                    mFriendPlayerDialog.reset();
+                    mFriendPlayerDialog.show();
+                }
             }
         });
 
         if (mCheckName) {
-            if ((mDialog.getNewName() != null) &&
-                    !mDialog.getNewName().equals(mAdapter.getPlayerName())) {
+            if ((mPrivacyDialog.getNewName() != null) &&
+                    !mPrivacyDialog.getNewName().equals(mAdapter.getPlayerName())) {
                 Toast.makeText(getActivity(), R.string.name_taken, Toast.LENGTH_SHORT).show();
             }
             mCheckName = false;
@@ -144,9 +177,15 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
                 (mAccountSetupTime != Util.getAccountSetupTime(getActivity()))) {
             Util.log("Standings: onResume: notifyChanged");
             notifyChanged();
-        } else if ((mDialog != null) && mDialogResume) {
-            mDialog.show();
-            mDialogResume = false;
+        }
+        if (mPrivacyDialog != null) {
+            mPrivacyDialog.onResume();
+        }
+        if (mFriendPlayerDialog != null) {
+            mFriendPlayerDialog.onResume();
+        }
+        if (mFriendActionDialog != null) {
+            mFriendActionDialog.onResume();
         }
     }
 
@@ -154,9 +193,14 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
     public void onPause() {
         super.onPause();
 
-        if ((mDialog != null) && mDialog.isShowing()) {
-            mDialog.dismiss();
-            mDialogResume = true;
+        if (mPrivacyDialog != null) {
+            mPrivacyDialog.onPause();
+        }
+        if (mFriendPlayerDialog != null) {
+            mFriendPlayerDialog.onPause();
+        }
+        if (mFriendActionDialog != null) {
+            mFriendActionDialog.onPause();
         }
     }
 
@@ -258,7 +302,7 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
     @Override
     public void onClick(final DialogInterface dialog, final int which) {
         if (which == DialogInterface.BUTTON_POSITIVE) {
-            final String json = new Gson().toJson(mDialog.getNewName());
+            final String json = new Gson().toJson(mPrivacyDialog.getNewName());
             mConnecting = mChanged = true;
             notifyChanged();
             GAE.getInstance(getActivity()).postPage(this, "standings", json);

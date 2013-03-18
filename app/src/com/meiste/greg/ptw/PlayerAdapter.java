@@ -147,17 +147,14 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
             holder = (_ViewHolder) v.getTag();
         }
 
-        if (pos < mStandings.standings.length)
-            p = mStandings.standings[pos];
-        else
-            p = mStandings.self;
+        p = getItem(pos);
 
-        if (mStandings.self.rank == p.rank)
-            holder.row.setBackgroundResource(R.color.standings_self);
+        if (isSelf(p))
+            holder.row.setBackgroundResource(R.drawable.standings_self);
         else if (p.inChase() || isWildCard(p))
-            holder.row.setBackgroundResource(R.color.standings_chase);
+            holder.row.setBackgroundResource(R.drawable.standings_chase);
         else
-            holder.row.setBackgroundResource(R.color.standings_other);
+            holder.row.setBackgroundResource(R.drawable.standings_other);
 
         holder.rank.setText(p.getRank());
         holder.points.setText(p.getPoints());
@@ -177,13 +174,19 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
     }
 
     @Override
-    public boolean isEnabled(final int position) {
+    public Player getItem(final int position) {
         if (position < mStandings.standings.length) {
-            if (mStandings.self.rank == mStandings.standings[position].rank)
-                return true;
-        } else
-            return true;
+            return mStandings.standings[position];
+        }
+        return mStandings.self;
+    }
 
+    public boolean isSelf(final Player p) {
+        return p == mStandings.self;
+    }
+
+    public boolean isFriend(final Player p) {
+        // TODO: Stub until friends supported on server
         return false;
     }
 

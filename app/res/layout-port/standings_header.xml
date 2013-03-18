@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     Copyright (C) 2012 Gregory S. Meiste <http://gregmeiste.com>
+     Copyright (C) 2012-2013 Gregory S. Meiste <http://gregmeiste.com>
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -20,7 +20,18 @@
     android:layout_height="wrap_content"
     android:orientation="vertical" >
     
-    <TextView style="@style/StandingsAfter" android:id="@+id/after" />
+    <LinearLayout
+        android:layout_height="wrap_content" 
+        android:layout_width="match_parent"
+        android:gravity="center_vertical" >
+        
+        <TextView style="@style/StandingsAfter" android:id="@+id/after" />
+        
+        <ImageView
+            android:id="@+id/add_friend"
+            style="@style/StandingsAddFriend" />
+        
+    </LinearLayout>
     
     <LinearLayout
 	    android:layout_height="wrap_content" 

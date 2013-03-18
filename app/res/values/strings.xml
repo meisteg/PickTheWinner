@@ -21,6 +21,8 @@
     <string name="account_needed">Please select an account</string>
     <string name="account_setup_needed"><b>Account setup required</b>\nTap to select account</string>
     <string name="add_account">Add account&#8230;</string>
+    <string name="add_friend">Add Friend</string>
+    <string name="add_friend_confirm">Add %s as a friend?</string>
     <string name="admob_id">a14f6e08f942b9e</string>
     <string name="app_name">Pick The Winner</string>
     <string name="attention">Attention</string>
@@ -36,6 +38,7 @@
     <string name="exit">Close</string>
     <string name="failed_connect">Failed to connect. Please try again.</string>
     <string name="failed_get">Unable to connect to server.</string>
+    <string name="friend_by_player_name">Enter your friend\'s Player Name</string>
     <string name="hide_name">Hide my player name</string>
     <string name="in_the_chase">In The Chase</string>
     <string name="led">Phone LED</string>
@@ -67,6 +70,8 @@
     <string name="remind_results_summary">Show when the results have been posted</string>
     <string name="remind_results_notify">Results available for %s</string>
     <string name="reminder_settings">Notification Settings</string>
+    <string name="remove_friend">Remove Friend</string>
+    <string name="remove_friend_confirm">Remove %s as a friend?</string>
     <string name="retry">Retry</string>
     <string name="ringtone">Ringtone</string>
     <string name="ringtone_summary">Set a ringtone for notifications</string>

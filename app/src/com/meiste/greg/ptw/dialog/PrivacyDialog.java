@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,34 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.meiste.greg.ptw;
+package com.meiste.greg.ptw.dialog;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.InputFilter;
-import android.text.Spanned;
-import android.text.TextWatcher;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class PrivacyDialog extends AlertDialog implements View.OnClickListener, TextWatcher, InputFilter {
+import com.meiste.greg.ptw.R;
 
-    private final DialogInterface.OnClickListener mListener;
+public class PrivacyDialog extends BasePlayerDialog implements View.OnClickListener {
+
     private CheckBox mCb;
     private TextView mTv;
-    private EditText mEt;
-    private Button mOk;
     private String mCurrentName;
 
-    protected PrivacyDialog(final Context context, final DialogInterface.OnClickListener listener) {
-        super(context);
-        mListener = listener;
+    public PrivacyDialog(final Context context, final DialogInterface.OnClickListener listener) {
+        super(context, listener);
     }
 
     @Override
@@ -54,14 +46,8 @@ public class PrivacyDialog extends AlertDialog implements View.OnClickListener, 
         mEt = (EditText) v.findViewById(R.id.player_name);
 
         mCb.setOnClickListener(this);
-        mEt.addTextChangedListener(this);
-        mEt.setFilters(new InputFilter[] { this });
-        setButton(DialogInterface.BUTTON_POSITIVE, getContext().getString(R.string.ok), mListener);
-        setButton(DialogInterface.BUTTON_NEGATIVE, getContext().getString(R.string.cancel), mListener);
 
         super.onCreate(savedInstanceState);
-
-        mOk = getButton(DialogInterface.BUTTON_POSITIVE);
     }
 
     public void show(final String name) {
@@ -96,31 +82,6 @@ public class PrivacyDialog extends AlertDialog implements View.OnClickListener, 
                 mEt.append(mCurrentName);
             mOk.setEnabled(false);
         }
-    }
-
-    @Override
-    public void afterTextChanged(final Editable editable) {
-        if (editable.length() >= 5)
-            mOk.setEnabled(true);
-        else
-            mOk.setEnabled(false);
-    }
-
-    @Override
-    public void beforeTextChanged(final CharSequence s, final int start, final int count, final int after) {}
-
-    @Override
-    public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {}
-
-    @Override
-    public CharSequence filter(final CharSequence source, final int start, final int end,
-            final Spanned dest, final int dstart, final int dend) {
-        for (int i = start; i < end; i++) {
-            if (!Character.isLetterOrDigit(source.charAt(i))) {
-                return "";
-            }
-        }
-        return null;
     }
 
     public String getNewName() {
