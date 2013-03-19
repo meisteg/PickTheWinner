@@ -176,7 +176,9 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
     @Override
     public Player getItem(final int position) {
         if (position < mStandings.standings.length) {
-            return mStandings.standings[position];
+            if (mStandings.standings[position].rank != mStandings.self.rank) {
+                return mStandings.standings[position];
+            }
         }
         return mStandings.self;
     }
