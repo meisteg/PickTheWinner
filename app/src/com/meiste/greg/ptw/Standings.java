@@ -24,6 +24,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.nfc.NfcAdapter;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,6 +44,7 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.meiste.greg.ptw.GAE.GaeListener;
 import com.meiste.greg.ptw.dialog.FriendActionDialog;
+import com.meiste.greg.ptw.dialog.FriendMethodDialog;
 import com.meiste.greg.ptw.dialog.FriendPlayerDialog;
 import com.meiste.greg.ptw.dialog.PrivacyDialog;
 
@@ -63,6 +65,7 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
     private PrivacyDialog mPrivacyDialog;
     private FriendPlayerDialog mFriendPlayerDialog;
     private FriendActionDialog mFriendActionDialog;
+    private FriendMethodDialog mFriendMethodDialog;
 
     public static Standings newInstance(final Context context) {
         final Standings fragment = new Standings();
@@ -134,9 +137,9 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
                 } else {
                     Util.log("Opening friend action dialog");
                     if (mFriendActionDialog == null) {
-                        mFriendActionDialog = new FriendActionDialog(getActivity(), null);
+                        mFriendActionDialog = new FriendActionDialog(getActivity(), Standings.this);
                     }
-                    mFriendActionDialog.show(player.getName(), mAdapter.isFriend(player));
+                    mFriendActionDialog.show(player, mAdapter.isFriend(player));
                 }
             }
         });
@@ -145,15 +148,17 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
         iv.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(final View v) {
-                if (NfcAdapter.getDefaultAdapter(getActivity()) != null) {
+                if ((NfcAdapter.getDefaultAdapter(getActivity()) != null) &&
+                        (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)) {
                     Util.log("NFC available. Need to ask user add method.");
+                    if (mFriendMethodDialog == null) {
+                        mFriendMethodDialog = new FriendMethodDialog(getActivity(), Standings.this);
+                    }
+                    mFriendMethodDialog.reset();
+                    mFriendMethodDialog.show();
                 } else {
                     Util.log("NFC not available. Adding friend via username.");
-                    if (mFriendPlayerDialog == null) {
-                        mFriendPlayerDialog = new FriendPlayerDialog(getActivity(), null);
-                    }
-                    mFriendPlayerDialog.reset();
-                    mFriendPlayerDialog.show();
+                    showFriendPlayerDialog();
                 }
             }
         });
@@ -187,6 +192,9 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
         if (mFriendActionDialog != null) {
             mFriendActionDialog.onResume();
         }
+        if (mFriendMethodDialog != null) {
+            mFriendMethodDialog.onResume();
+        }
     }
 
     @Override
@@ -201,6 +209,9 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
         }
         if (mFriendActionDialog != null) {
             mFriendActionDialog.onPause();
+        }
+        if (mFriendMethodDialog != null) {
+            mFriendMethodDialog.onPause();
         }
     }
 
@@ -301,12 +312,40 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
 
     @Override
     public void onClick(final DialogInterface dialog, final int which) {
-        if (which == DialogInterface.BUTTON_POSITIVE) {
+        if (which != DialogInterface.BUTTON_POSITIVE) {
+            // Nothing to do
+            return;
+        }
+
+        if (dialog == mPrivacyDialog) {
             final String json = new Gson().toJson(mPrivacyDialog.getNewName());
             mConnecting = mChanged = true;
             notifyChanged();
             GAE.getInstance(getActivity()).postPage(this, "standings", json);
+        } else if (dialog == mFriendActionDialog) {
+            Util.log("Toggling " + mFriendActionDialog.getPlayer().getName() + " friend status");
+        } else if (dialog == mFriendPlayerDialog) {
+            Util.log("Requesting to add " + mFriendPlayerDialog.getPlayerName() + " as friend");
+        } else if (dialog == mFriendMethodDialog) {
+            switch (mFriendMethodDialog.getSelectedMethod()) {
+            case FriendMethodDialog.METHOD_MANUAL:
+                Util.log("Adding friend via username");
+                showFriendPlayerDialog();
+                break;
+            case FriendMethodDialog.METHOD_NFC:
+                Util.log("Adding friend using NFC");
+                // TODO: Launch NFC activity
+                break;
+            }
         }
+    }
+
+    private void showFriendPlayerDialog() {
+        if (mFriendPlayerDialog == null) {
+            mFriendPlayerDialog = new FriendPlayerDialog(getActivity(), this);
+        }
+        mFriendPlayerDialog.reset();
+        mFriendPlayerDialog.show();
     }
 
     public static void update(final Context context, final String json) {

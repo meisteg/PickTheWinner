@@ -39,6 +39,11 @@
     <string name="failed_connect">Failed to connect. Please try again.</string>
     <string name="failed_get">Unable to connect to server.</string>
     <string name="friend_by_player_name">Enter your friend\'s Player Name</string>
+    <string name="friend_method">Complete action using</string>
+    <string name="friend_method_manual">Keyboard</string>
+    <string name="friend_method_manual_desc">Search by typing your friend\'s player name</string>
+    <string name="friend_method_nfc">Android Beam</string>
+    <string name="friend_method_nfc_desc">Transmit player information to another device via NFC</string>
     <string name="hide_name">Hide my player name</string>
     <string name="in_the_chase">In The Chase</string>
     <string name="led">Phone LED</string>

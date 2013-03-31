@@ -43,4 +43,7 @@
     <color name="widget_bg_good_end">#BB00AA00</color>
     <color name="widget_bg_warning_start">#00AA0000</color>
     <color name="widget_bg_warning_end">#BBAA0000</color>
+    
+    <color name="friend_method_selected">#FF82D0ED</color>
+    <color name="friend_method_separator">#FFCCCCCC</color>
 </resources>

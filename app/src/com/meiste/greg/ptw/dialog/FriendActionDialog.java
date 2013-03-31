@@ -21,11 +21,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.meiste.greg.ptw.Player;
 import com.meiste.greg.ptw.R;
 
 public class FriendActionDialog extends BaseDialog {
 
-    private String mPlayerName;
+    private Player mPlayer;
     private boolean mIsFriend = false;
     private TextView mTv;
 
@@ -47,16 +48,22 @@ public class FriendActionDialog extends BaseDialog {
         setTitle(mIsFriend ? R.string.remove_friend : R.string.add_friend);
 
         final int res = mIsFriend ? R.string.remove_friend_confirm : R.string.add_friend_confirm;
-        mTv.setText(getContext().getString(res, mPlayerName));
+        final String name = (mPlayer.getName() == null) ? getContext().getString(R.string.private_name) :
+            mPlayer.getName();
+        mTv.setText(getContext().getString(res, name));
     }
 
-    public void show(final String name, final boolean isFriend) {
-        mPlayerName = (name == null) ? getContext().getString(R.string.private_name) : name;
+    public void show(final Player player, final boolean isFriend) {
+        mPlayer = player;
         mIsFriend = isFriend;
 
         if (mTv != null) {
             setupView();
         }
         show();
+    }
+
+    public Player getPlayer() {
+        return mPlayer;
     }
 }
