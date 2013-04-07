@@ -149,7 +149,8 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
             @Override
             public void onClick(final View v) {
                 if ((NfcAdapter.getDefaultAdapter(getActivity()) != null) &&
-                        (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)) {
+                        (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) &&
+                        mAdapter.getPlayer().isIdentifiable()) {
                     Util.log("NFC available. Need to ask user add method.");
                     if (mFriendMethodDialog == null) {
                         mFriendMethodDialog = new FriendMethodDialog(getActivity(), Standings.this);
@@ -334,7 +335,10 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
                 break;
             case FriendMethodDialog.METHOD_NFC:
                 Util.log("Adding friend using NFC");
-                // TODO: Launch NFC activity
+                final Intent intent = new Intent(getActivity(), NfcSendActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+                intent.putExtra(NfcSendActivity.EXTRA_PLAYER, mAdapter.getPlayer().toJson());
+                startActivity(intent);
                 break;
             }
         }

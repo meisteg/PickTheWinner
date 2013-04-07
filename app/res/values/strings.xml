@@ -23,6 +23,7 @@
     <string name="add_account">Add account&#8230;</string>
     <string name="add_friend">Add Friend</string>
     <string name="add_friend_confirm">Add %s as a friend?</string>
+    <string name="adding_friend">Adding friend&#8230;</string>
     <string name="admob_id">a14f6e08f942b9e</string>
     <string name="app_name">Pick The Winner</string>
     <string name="attention">Attention</string>
@@ -32,6 +33,8 @@
     <string name="connect_text">This application requests permission to connect your mobile device to the cloud.</string>
     <string name="contacting_server">Contacting server&#8230;</string>
     <string name="debug_build">(debug)</string>
+    <string name="enable_beam">Please enable Android Beam to perform this task.</string>
+    <string name="enable_nfc">Please enable NFC to perform this task.</string>
     <string name="eula_title">License</string>
     <string name="eula_accept">Accept</string>
     <string name="eula_refuse">Refuse</string>
@@ -39,6 +42,7 @@
     <string name="failed_connect">Failed to connect. Please try again.</string>
     <string name="failed_get">Unable to connect to server.</string>
     <string name="friend_by_player_name">Enter your friend\'s Player Name</string>
+    <string name="friend_fail_no_account">Friending failed: Account setup required</string>
     <string name="friend_method">Complete action using</string>
     <string name="friend_method_manual">Keyboard</string>
     <string name="friend_method_manual_desc">Search by typing your friend\'s player name</string>
@@ -55,8 +59,15 @@
         property of their respective owners.</string>
     <string name="needs_account">To play Pick The Winner, you must first create a Google account.</string>
     <string name="name_taken">Name already taken. Please pick a different name.</string>
+    <string name="nfc_instructions"><b>Add friend using Android Beam</b>\n\nPlease bring this
+        device close to another NFC-capable device (typically back to back) and then touch your
+        screen. Your player information will be beamed to that device and you will become
+        friends.\n\nFor this to work, the other device must be unlocked, have NFC enabled, and
+        have Pick The Winner installed.</string>
+    <string name="nfc_sent">Player information sent!</string>
     <string name="notifications">Notifications</string>
     <string name="not_available">Not Available</string>
+    <string name="not_supported">Not supported on this device</string>
     <string name="ok">OK</string>
     <string name="personal">Personal</string>
     <string name="player_name">Player Name</string>

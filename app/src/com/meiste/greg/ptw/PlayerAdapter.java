@@ -210,4 +210,11 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
         }
         return mStandings.self.getName();
     }
+
+    public Player getPlayer() {
+        if (mStandings == null) {
+            return new Player();
+        }
+        return mStandings.self;
+    }
 }

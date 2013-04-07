@@ -29,6 +29,7 @@
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.NFC" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="com.android.vending.BILLING" />
@@ -44,6 +45,7 @@
     <uses-permission android:name="com.meiste.greg.ptw.permission.MAPS_RECEIVE" />
 
     <uses-feature android:glEsVersion="0x00020000" android:required="true" />
+    <uses-feature android:name="android.hardware.nfc" android:required="false" />
 
     <application
         android:name=".PTW"
@@ -78,6 +80,22 @@
             android:name=".AccountsActivity"
             android:theme="@style/Theme.Sherlock"
             android:configChanges="orientation" />
+        <activity
+            android:label="@string/app_name"
+            android:name=".NfcSendActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.Sherlock.Light.DarkActionBar" />
+        <activity
+            android:label="@string/app_name"
+            android:name=".NfcRecvActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.Sherlock.Light.DarkActionBar">
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/com.meiste.greg.ptw" />
+            </intent-filter>
+        </activity>
         <receiver android:name=".RaceAlarm" />
         <receiver android:name=".QuestionAlarm" />
         <receiver android:name=".BootSetup">  

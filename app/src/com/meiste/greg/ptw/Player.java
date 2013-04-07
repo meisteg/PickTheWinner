@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 package com.meiste.greg.ptw;
+
+import com.google.gson.Gson;
 
 public final class Player {
     public String name;
@@ -44,5 +46,17 @@ public final class Player {
 
     public boolean inChase() {
         return (rank <= 10) || (points >= 5000);
+    }
+
+    public boolean isIdentifiable() {
+        return (name != null) || (rank != null);
+    }
+
+    public String toJson() {
+        return new Gson().toJson(this);
+    }
+
+    public static Player fromJson(final String json) {
+        return new Gson().fromJson(json, Player.class);
     }
 }

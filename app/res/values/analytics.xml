@@ -35,4 +35,6 @@
     <string name="com.meiste.greg.ptw.EditPreferences">Preferences</string>
     <string name="com.meiste.greg.ptw.RaceActivity">Race Details</string>
     <string name="com.meiste.greg.ptw.AccountsActivity">Account Setup</string>
+    <string name="com.meiste.greg.ptw.NfcSendActivity">NFC Send</string>
+    <string name="com.meiste.greg.ptw.NfcRecvActivity">NFC Receive</string>
 </resources>
