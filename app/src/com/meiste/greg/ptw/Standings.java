@@ -139,7 +139,7 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
                     if (mFriendActionDialog == null) {
                         mFriendActionDialog = new FriendActionDialog(getActivity(), Standings.this);
                     }
-                    mFriendActionDialog.show(player, mAdapter.isFriend(player));
+                    mFriendActionDialog.show(player);
                 }
             }
         });
@@ -242,8 +242,7 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
     }
 
     private String getFooterText(final Context context) {
-        final int topX = Math.max(mAdapter.getCountWithoutPlayer(), 25);
-        return context.getString(R.string.standings_footer, topX);
+        return context.getString(R.string.standings_footer, mAdapter.getTopX());
     }
 
     @Override

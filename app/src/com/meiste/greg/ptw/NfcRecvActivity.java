@@ -82,6 +82,7 @@ public class NfcRecvActivity extends SherlockActivity {
         }
 
         final Player friend = Player.fromJson(json);
+        friend.friend = true;
         // TODO: Send friend information to server
     }
 }

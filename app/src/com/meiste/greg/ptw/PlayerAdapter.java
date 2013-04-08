@@ -115,8 +115,22 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
         return mStandings.standings.length;
     }
 
-    public int getCountWithoutPlayer() {
-        return mStandings.standings.length;
+    public int getTopX() {
+        int i;
+        for (i = 0; i < mStandings.standings.length; ++i) {
+            if (mStandings.standings[i].rank == null)
+                break;
+            if ((i + 1) != mStandings.standings[i].rank)
+                break;
+        }
+
+        // Catch case where friend(s) are ranked just outside Top X.
+        // Server will only send multiple of 5.
+        i -= i % 5;
+
+        // During preseason, the server sends no standings, so make sure
+        // a sane value is returned.
+        return Math.max(i, 25);
     }
 
     @Override
@@ -164,6 +178,10 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
         else
             holder.name.setText(mContext.getString(R.string.private_name));
 
+        final int star = p.isFriend() ? R.drawable.friend_star : 0;
+        holder.name.setCompoundDrawablesWithIntrinsicBounds(star, 0, 0, 0);
+        holder.name.setCompoundDrawablePadding(5);
+
         if (holder.races != null)
             holder.races.setText(p.getRaces());
 
@@ -176,7 +194,8 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
     @Override
     public Player getItem(final int position) {
         if (position < mStandings.standings.length) {
-            if (mStandings.standings[position].rank != mStandings.self.rank) {
+            if ((mStandings.standings[position].rank != mStandings.self.rank) ||
+                    mStandings.standings[position].isFriend()) {
                 return mStandings.standings[position];
             }
         }
@@ -185,11 +204,6 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
 
     public boolean isSelf(final Player p) {
         return p == mStandings.self;
-    }
-
-    public boolean isFriend(final Player p) {
-        // TODO: Stub until friends supported on server
-        return false;
     }
 
     public String getRaceAfterName() {

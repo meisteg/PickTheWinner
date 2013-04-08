@@ -27,7 +27,6 @@ import com.meiste.greg.ptw.R;
 public class FriendActionDialog extends BaseDialog {
 
     private Player mPlayer;
-    private boolean mIsFriend = false;
     private TextView mTv;
 
     public FriendActionDialog(final Context context, final DialogInterface.OnClickListener listener) {
@@ -45,17 +44,16 @@ public class FriendActionDialog extends BaseDialog {
     }
 
     private void setupView() {
-        setTitle(mIsFriend ? R.string.remove_friend : R.string.add_friend);
+        setTitle(mPlayer.isFriend() ? R.string.remove_friend : R.string.add_friend);
 
-        final int res = mIsFriend ? R.string.remove_friend_confirm : R.string.add_friend_confirm;
+        final int res = mPlayer.isFriend() ? R.string.remove_friend_confirm : R.string.add_friend_confirm;
         final String name = (mPlayer.getName() == null) ? getContext().getString(R.string.private_name) :
             mPlayer.getName();
         mTv.setText(getContext().getString(res, name));
     }
 
-    public void show(final Player player, final boolean isFriend) {
+    public void show(final Player player) {
         mPlayer = player;
-        mIsFriend = isFriend;
 
         if (mTv != null) {
             setupView();

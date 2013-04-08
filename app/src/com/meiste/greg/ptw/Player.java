@@ -23,6 +23,7 @@ public final class Player {
     public int points;
     public int races;
     public int wins;
+    public boolean friend;
 
     public String getName() {
         return name;
@@ -50,6 +51,10 @@ public final class Player {
 
     public boolean isIdentifiable() {
         return (name != null) || (rank != null);
+    }
+
+    public boolean isFriend() {
+        return friend;
     }
 
     public String toJson() {
