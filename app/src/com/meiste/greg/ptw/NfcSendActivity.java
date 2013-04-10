@@ -36,7 +36,7 @@ import com.google.analytics.tracking.android.EasyTracker;
 
 public class NfcSendActivity extends SherlockActivity implements OnNdefPushCompleteCallback {
 
-    public static final String EXTRA_PLAYER = "player";
+    public static final String EXTRA_PLAYER_REQ = "player_req";
     private static final int MESSAGE_SENT = 1;
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
@@ -78,14 +78,14 @@ public class NfcSendActivity extends SherlockActivity implements OnNdefPushCompl
             return;
         }
 
-        if (!getIntent().hasExtra(EXTRA_PLAYER)) {
+        if (!getIntent().hasExtra(EXTRA_PLAYER_REQ)) {
             finish();
             return;
         }
 
         final NdefMessage msg = new NdefMessage(NdefRecord.createMime(
                 "application/com.meiste.greg.ptw",
-                getIntent().getStringExtra(EXTRA_PLAYER).getBytes()));
+                getIntent().getStringExtra(EXTRA_PLAYER_REQ).getBytes()));
         nfcAdapter.setNdefPushMessage(msg, this);
         nfcAdapter.setOnNdefPushCompleteCallback(this, this);
 

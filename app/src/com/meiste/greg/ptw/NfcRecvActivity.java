@@ -15,6 +15,7 @@
  */
 package com.meiste.greg.ptw;
 
+import android.content.Context;
 import android.content.Intent;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
@@ -25,8 +26,9 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.google.analytics.tracking.android.EasyTracker;
+import com.meiste.greg.ptw.GAE.GaeListener;
 
-public class NfcRecvActivity extends SherlockActivity {
+public class NfcRecvActivity extends SherlockActivity implements GaeListener {
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -66,7 +68,7 @@ public class NfcRecvActivity extends SherlockActivity {
         setIntent(intent);
     }
 
-    void processIntent(final Intent intent) {
+    private void processIntent(final Intent intent) {
         final Parcelable[] rawMsgs = intent.getParcelableArrayExtra(
                 NfcAdapter.EXTRA_NDEF_MESSAGES);
         // only one message sent during the beam
@@ -81,8 +83,41 @@ public class NfcRecvActivity extends SherlockActivity {
             return;
         }
 
-        final Player friend = Player.fromJson(json);
-        friend.friend = true;
-        // TODO: Send friend information to server
+        final FriendRequest fReq = FriendRequest.fromJson(json);
+        fReq.player.friend = true;
+        GAE.getInstance(this).postPage(this, "friend", fReq.toJson());
     }
+
+    private void showStandings() {
+        final Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.putExtra(MainActivity.INTENT_TAB, 2);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onFailedConnect(final Context context) {
+        // Technically should check if friending failed or if standings update
+        // failed. An error is an error, so just report friending failed.
+        Toast.makeText(this, R.string.friend_fail_generic, Toast.LENGTH_LONG).show();
+        showStandings();
+        finish();
+    }
+
+    @Override
+    public void onConnectSuccess(final Context context, final String json) {
+        GAE.getInstance(context).getPage(this, "standings");
+    }
+
+    @Override
+    public void onGet(final Context context, final String json) {
+        Standings.update(context, json);
+        sendBroadcast(new Intent(PTW.INTENT_ACTION_STANDINGS));
+        Toast.makeText(this, R.string.friend_success, Toast.LENGTH_LONG).show();
+        showStandings();
+        finish();
+    }
+
+    @Override
+    public void onLaunchIntent(final Intent launch) {}
 }

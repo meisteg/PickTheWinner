@@ -38,6 +38,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gcm.GCMRegistrar;
 import com.google.gson.Gson;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
@@ -150,7 +151,8 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
             public void onClick(final View v) {
                 if ((NfcAdapter.getDefaultAdapter(getActivity()) != null) &&
                         (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) &&
-                        mAdapter.getPlayer().isIdentifiable()) {
+                        mAdapter.getPlayer().isIdentifiable() &&
+                        GCMRegistrar.isRegistered(getActivity())) {
                     Util.log("NFC available. Need to ask user add method.");
                     if (mFriendMethodDialog == null) {
                         mFriendMethodDialog = new FriendMethodDialog(getActivity(), Standings.this);
@@ -324,8 +326,19 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
             GAE.getInstance(getActivity()).postPage(this, "standings", json);
         } else if (dialog == mFriendActionDialog) {
             Util.log("Toggling " + mFriendActionDialog.getPlayer().getName() + " friend status");
+            final FriendRequest fReq = new FriendRequest(mFriendActionDialog.getPlayer());
+            fReq.player.friend = !fReq.player.friend;
+            mConnecting = mChanged = true;
+            notifyChanged();
+            GAE.getInstance(getActivity()).postPage(mFriendListener, "friend", fReq.toJson());
         } else if (dialog == mFriendPlayerDialog) {
             Util.log("Requesting to add " + mFriendPlayerDialog.getPlayerName() + " as friend");
+            final FriendRequest fReq = new FriendRequest(new Player());
+            fReq.player.name = mFriendPlayerDialog.getPlayerName();
+            fReq.player.friend = true;
+            mConnecting = mChanged = true;
+            notifyChanged();
+            GAE.getInstance(getActivity()).postPage(mFriendListener, "friend", fReq.toJson());
         } else if (dialog == mFriendMethodDialog) {
             switch (mFriendMethodDialog.getSelectedMethod()) {
             case FriendMethodDialog.METHOD_MANUAL:
@@ -334,9 +347,11 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
                 break;
             case FriendMethodDialog.METHOD_NFC:
                 Util.log("Adding friend using NFC");
+                final FriendRequest fReq = new FriendRequest(mAdapter.getPlayer(),
+                        GCMRegistrar.getRegistrationId(getActivity().getApplicationContext()));
                 final Intent intent = new Intent(getActivity(), NfcSendActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-                intent.putExtra(NfcSendActivity.EXTRA_PLAYER, mAdapter.getPlayer().toJson());
+                intent.putExtra(NfcSendActivity.EXTRA_PLAYER_REQ, fReq.toJson());
                 startActivity(intent);
                 break;
             }
@@ -350,6 +365,35 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
         mFriendPlayerDialog.reset();
         mFriendPlayerDialog.show();
     }
+
+    private final GaeListener mFriendListener = new GaeListener() {
+        @Override
+        public void onConnectSuccess(final Context context, final String json) {
+            GAE.getInstance(context).getPage(this, "standings");
+        }
+
+        @Override
+        public void onFailedConnect(final Context context) {
+            Util.log("Standings: mFriendListener: onFailedConnect");
+            mConnecting = false;
+            mChanged = true;
+            Toast.makeText(context, R.string.failed_connect, Toast.LENGTH_LONG).show();
+
+            // Verify application wasn't closed before callback returned
+            if (getActivity() != null) {
+                notifyChanged();
+            }
+        }
+
+        @Override
+        public void onGet(final Context context, final String json) {
+            Standings.this.onGet(context, json);
+            Toast.makeText(context, R.string.friend_success, Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        public void onLaunchIntent(final Intent launch) {}
+    };
 
     public static void update(final Context context, final String json) {
         try {
