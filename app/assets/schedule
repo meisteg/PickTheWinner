@@ -206,7 +206,7 @@
   {
     "mTv": "FOX",
     "mLayout": "dov",
-    "mName": "Dover 400",
+    "mName": "FedEx 400 benefiting Autism Speaks",
     "mTrackShort": "Dover",
     "mTrackLong": "Dover International Speedway",
     "mSize": "1.0",
@@ -218,7 +218,7 @@
   {
     "mTv": "TNT",
     "mLayout": "poc",
-    "mName": "Fan Driven 400",
+    "mName": "Party in the Poconos 400",
     "mTrackShort": "Pocono",
     "mTrackLong": "Pocono Raceway",
     "mSize": "2.5",
@@ -302,7 +302,7 @@
   {
     "mTv": "ESPN",
     "mLayout": "poc",
-    "mName": "Pennsylvania 400",
+    "mName": "GoBowling.com 400",
     "mTrackShort": "Pocono",
     "mTrackLong": "Pocono Raceway",
     "mSize": "2.5",
