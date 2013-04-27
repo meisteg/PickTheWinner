@@ -17,6 +17,7 @@ package com.meiste.greg.ptw;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.List;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -31,7 +32,7 @@ import com.google.gson.Gson;
 public final class PlayerAdapter extends ArrayAdapter<Player> {
     private class _Standings {
         public int race_id;
-        public Player[] standings;
+        public List<Player> standings;
         public Player self;
         public Player[] wildcards;
     }
@@ -64,9 +65,37 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
                 buffer.append(line).append('\n');
             in.close();
             mStandings = new Gson().fromJson(buffer.toString(), _Standings.class);
+            addSelf();
             findWildCards();
         } catch (final Exception e) {
             Util.log("Standings file not found");
+        }
+    }
+
+    private void addSelf() {
+        if (mStandings.self.rank == null) {
+            mStandings.standings.add(mStandings.self);
+            return;
+        }
+
+        final Player end = mStandings.standings.get(mStandings.standings.size() - 1);
+        if ((end.rank != null) && (end.rank < mStandings.self.rank)) {
+            mStandings.standings.add(mStandings.self);
+            return;
+        }
+
+        for (int i = 0; i < mStandings.standings.size(); ++i) {
+            final Player p = mStandings.standings.get(i);
+            if (p.rank == null) {
+                mStandings.standings.add(i, mStandings.self);
+                break;
+            } else if (p.rank.equals(mStandings.self.rank)) {
+                mStandings.standings.set(i, mStandings.self);
+                break;
+            } else if (mStandings.self.rank < p.rank) {
+                mStandings.standings.add(i, mStandings.self);
+                break;
+            }
         }
     }
 
@@ -78,25 +107,25 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
             return;
 
         // Verify we have at least 12 players (remember, counting from zero)
-        if (mStandings.standings.length < 11)
+        if (mStandings.standings.size() < 11)
             return;
 
         // Start by assuming 11th and 12th in standings are the wild cards
-        if (mStandings.standings[10].wins >= mStandings.standings[11].wins) {
-            mStandings.wildcards[0] = mStandings.standings[10];
-            mStandings.wildcards[1] = mStandings.standings[11];
+        if (mStandings.standings.get(10).wins >= mStandings.standings.get(11).wins) {
+            mStandings.wildcards[0] = mStandings.standings.get(10);
+            mStandings.wildcards[1] = mStandings.standings.get(11);
         } else {
-            mStandings.wildcards[0] = mStandings.standings[11];
-            mStandings.wildcards[1] = mStandings.standings[10];
+            mStandings.wildcards[0] = mStandings.standings.get(11);
+            mStandings.wildcards[1] = mStandings.standings.get(10);
         }
 
         // Then, check 13th - 20th to see if they have more wins
-        for (int i = 12; i < Math.min(20, mStandings.standings.length); ++i) {
-            if (mStandings.standings[i].wins > mStandings.wildcards[0].wins) {
+        for (int i = 12; i < Math.min(20, mStandings.standings.size()); ++i) {
+            if (mStandings.standings.get(i).wins > mStandings.wildcards[0].wins) {
                 mStandings.wildcards[1] = mStandings.wildcards[0];
-                mStandings.wildcards[0] = mStandings.standings[i];
-            } else if (mStandings.standings[i].wins > mStandings.wildcards[1].wins) {
-                mStandings.wildcards[1] = mStandings.standings[i];
+                mStandings.wildcards[0] = mStandings.standings.get(i);
+            } else if (mStandings.standings.get(i).wins > mStandings.wildcards[1].wins) {
+                mStandings.wildcards[1] = mStandings.standings.get(i);
             }
         }
     }
@@ -109,18 +138,15 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
 
     @Override
     public int getCount() {
-        final Integer rank = mStandings.self.rank;
-        if ((rank == null) || (rank > mStandings.standings.length))
-            return mStandings.standings.length + 1;
-        return mStandings.standings.length;
+        return mStandings.standings.size();
     }
 
     public int getTopX() {
         int i;
-        for (i = 0; i < mStandings.standings.length; ++i) {
-            if (mStandings.standings[i].rank == null)
+        for (i = 0; i < mStandings.standings.size(); ++i) {
+            if (mStandings.standings.get(i).rank == null)
                 break;
-            if ((i + 1) != mStandings.standings[i].rank)
+            if ((i + 1) != mStandings.standings.get(i).rank)
                 break;
         }
 
@@ -193,13 +219,7 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
 
     @Override
     public Player getItem(final int position) {
-        if (position < mStandings.standings.length) {
-            if ((mStandings.standings[position].rank != mStandings.self.rank) ||
-                    mStandings.standings[position].isFriend()) {
-                return mStandings.standings[position];
-            }
-        }
-        return mStandings.self;
+        return mStandings.standings.get(position);
     }
 
     public boolean isSelf(final Player p) {

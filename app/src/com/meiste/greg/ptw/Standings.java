@@ -377,7 +377,7 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
             Util.log("Standings: mFriendListener: onFailedConnect");
             mConnecting = false;
             mChanged = true;
-            Toast.makeText(context, R.string.failed_connect, Toast.LENGTH_LONG).show();
+            Toast.makeText(context, R.string.friend_fail_generic, Toast.LENGTH_LONG).show();
 
             // Verify application wasn't closed before callback returned
             if (getActivity() != null) {

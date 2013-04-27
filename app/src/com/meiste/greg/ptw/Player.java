@@ -46,7 +46,7 @@ public final class Player {
     }
 
     public boolean inChase() {
-        return (rank <= 10) || (points >= 5000);
+        return ((rank != null) && (rank <= 10)) || (points >= 5000);
     }
 
     public boolean isIdentifiable() {
