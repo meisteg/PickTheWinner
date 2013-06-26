@@ -22,6 +22,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.TextView;
@@ -29,6 +30,7 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.google.analytics.tracking.android.EasyTracker;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -156,8 +158,23 @@ public class RaceActivity extends SherlockFragmentActivity implements ScrollView
 
     private void moveMap() {
         final LatLngBounds bounds = mBounds.get(mRace.getAbbr());
-        if (bounds != null)
-            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
+        if (bounds != null) {
+            final CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 50);
+            try {
+                mMap.moveCamera(cameraUpdate);
+            } catch (final IllegalStateException e) {
+                Util.log("Failed to move camera! - " + e);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mMap != null) {
+                            Util.log("Trying moveCamera again...");
+                            mMap.moveCamera(cameraUpdate);
+                        }
+                    }
+                }, 500);
+            }
+        }
     }
 
     @Override
