@@ -556,6 +556,12 @@ public class IabHelper {
         catch (JSONException e) {
             throw new IabException(IABHELPER_BAD_RESPONSE, "Error parsing JSON response while refreshing inventory.", e);
         }
+        // START PICK THE WINNER WORKAROUND
+        // The queryPurchases function can throw a NPE if mService is null.
+        catch (NullPointerException e) {
+            throw new IabException(IABHELPER_REMOTE_EXCEPTION, "Null pointer exception while refreshing inventory.", e);
+        }
+        // END PICK THE WINNER WORKAROUND
     }
 
     /**
