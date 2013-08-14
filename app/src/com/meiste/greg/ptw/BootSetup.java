@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,14 @@ public final class BootSetup extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
+        if (Intent.ACTION_PACKAGE_REPLACED.equals(intent.getAction())) {
+            Util.log("Checking package replaced");
+            if (!intent.getData().getSchemeSpecificPart().equals(context.getPackageName())) {
+                // Not Pick The Winner, so ignore
+                return;
+            }
+        }
+
         if (Eula.hasAccepted(context)) {
             Util.log("Running boot setup");
             RaceAlarm.set(context);
