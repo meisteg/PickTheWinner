@@ -20,12 +20,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.google.analytics.tracking.android.EasyTracker;
@@ -77,6 +80,17 @@ public final class Suggest extends TabFragment implements View.OnClickListener, 
 
             @Override
             public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {}
+        });
+        mQuestion.setOnEditorActionListener(new OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(final TextView v, final int actionId, final KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEND) {
+                    if (send.isEnabled())
+                        send.performClick();
+                    return true;
+                }
+                return false;
+            }
         });
 
         final ObservableScrollView sv = (ObservableScrollView) v.findViewById(R.id.scroll_suggest);
