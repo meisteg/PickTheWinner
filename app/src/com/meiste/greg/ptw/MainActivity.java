@@ -219,7 +219,7 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
         RaceAlarm.set(this);
         QuestionAlarm.set(this);
 
-        if (!GCMRegistrar.isRegistered(this)) {
+        if (!GCMRegistrar.isRegistered(this) || !GCMRegistrar.isRegisteredOnServer(this)) {
             Util.log("Registering with GCM");
             GCMRegistrar.register(getApplicationContext(), PTW.GCM_SENDER_ID);
         } else {
