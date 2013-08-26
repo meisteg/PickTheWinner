@@ -18,6 +18,7 @@ package com.meiste.greg.ptw;
 import java.io.File;
 import java.io.FileOutputStream;
 
+import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -316,6 +317,11 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
     public void onClick(final DialogInterface dialog, final int which) {
         if (which != DialogInterface.BUTTON_POSITIVE) {
             // Nothing to do
+            return;
+        }
+
+        if (ActivityManager.isUserAMonkey()) {
+            Util.log("Standings: onClick: User is a monkey!");
             return;
         }
 

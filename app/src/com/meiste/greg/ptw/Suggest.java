@@ -15,6 +15,7 @@
  */
 package com.meiste.greg.ptw;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -102,8 +103,12 @@ public final class Suggest extends TabFragment implements View.OnClickListener, 
 
     @Override
     public void onClick(final View v) {
-        final String json = new Gson().toJson(mQuestion.getText().toString().trim());
-        GAE.getInstance(getActivity()).postPage(this, "suggest", json);
+        if (ActivityManager.isUserAMonkey()) {
+            Util.log("Suggest: onClick: User is a monkey!");
+        } else {
+            final String json = new Gson().toJson(mQuestion.getText().toString().trim());
+            GAE.getInstance(getActivity()).postPage(this, "suggest", json);
+        }
 
         Toast.makeText(getActivity(), R.string.suggest_success, Toast.LENGTH_SHORT).show();
         mQuestion.setText("");

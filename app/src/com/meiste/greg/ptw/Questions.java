@@ -18,6 +18,7 @@ package com.meiste.greg.ptw;
 import java.util.Calendar;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -490,6 +491,11 @@ public final class Questions extends TabFragment implements View.OnClickListener
 
     @Override
     public void onClick(final View v) {
+        if (ActivityManager.isUserAMonkey()) {
+            Util.log("Questions: onClick: User is a monkey!");
+            return;
+        }
+
         mScroll = 0;
         mSending = true;
         notifyChanged();

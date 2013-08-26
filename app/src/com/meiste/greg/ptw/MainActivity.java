@@ -16,6 +16,7 @@
 package com.meiste.greg.ptw;
 
 import android.annotation.SuppressLint;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -254,7 +255,10 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
 
         mAdView = (AdView)findViewById(R.id.ad);
         mAdView.setAdListener(mAdListener);
-        mAdView.loadAd(adRequest);
+
+        if (!ActivityManager.isUserAMonkey()) {
+            mAdView.loadAd(adRequest);
+        }
     }
 
     private void trackEvent(final String action, final String label) {
