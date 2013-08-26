@@ -196,6 +196,9 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
                 EasyTracker.getTracker().sendException(msg, false);
                 mIabReady = false;
                 invalidateOptionsMenu();
+            } catch (final IllegalStateException e) {
+                // Can be caused by user double clicking option item
+                Util.log("Unable to launch purchase flow: " + e);
             }
             return true;
         }
