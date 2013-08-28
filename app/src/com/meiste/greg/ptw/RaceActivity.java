@@ -102,8 +102,12 @@ public class RaceActivity extends SherlockFragmentActivity implements ScrollView
         trackLong.setText(mRace.getTrack(Race.NAME_LONG));
         tv.setText(getString(R.string.details_tv, mRace.getTv()));
 
-        final ObservableScrollView sv = (ObservableScrollView) findViewById(R.id.scroll);
-        sv.setScrollViewListener(this);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+            // Workaround no longer needed on Android 4.1+. See:
+            // https://code.google.com/p/gmaps-api-issues/issues/detail?id=4659#c35
+            final ObservableScrollView sv = (ObservableScrollView) findViewById(R.id.scroll);
+            sv.setScrollViewListener(this);
+        }
 
         setUpMapIfNeeded();
     }
@@ -113,8 +117,10 @@ public class RaceActivity extends SherlockFragmentActivity implements ScrollView
         /* WORKAROUND: Toggle view visibility to force re-layout, preventing map
          * from blacking out part of layout.
          * See http://stackoverflow.com/q/13793483/1620158 for more details. */
-        sv.setVisibility(View.GONE);
-        sv.setVisibility(View.VISIBLE);
+        if (y != oldy) {
+            sv.setVisibility(View.GONE);
+            sv.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
