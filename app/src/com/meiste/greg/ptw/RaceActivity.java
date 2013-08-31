@@ -23,7 +23,9 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.TextureView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.TextView;
 
@@ -102,14 +104,34 @@ public class RaceActivity extends SherlockFragmentActivity implements ScrollView
         trackLong.setText(mRace.getTrack(Race.NAME_LONG));
         tv.setText(getString(R.string.details_tv, mRace.getTv()));
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-            // Workaround no longer needed on Android 4.1+. See:
+        if (isWorkaroundNeeded((ViewGroup) getSupportFragmentManager().findFragmentById(R.id.map).getView())) {
+            // Workaround not needed on Android 4.1+ devices using TextureView:
             // https://code.google.com/p/gmaps-api-issues/issues/detail?id=4659#c35
+            Util.log("Google Map scrolling workaround needed");
             final ObservableScrollView sv = (ObservableScrollView) findViewById(R.id.scroll);
             sv.setScrollViewListener(this);
         }
 
         setUpMapIfNeeded();
+    }
+
+    private boolean isWorkaroundNeeded(final ViewGroup vg) {
+        boolean isNeeded = true;
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+            return isNeeded;
+        }
+
+        for (int i = 0; (i < vg.getChildCount()) && isNeeded; ++i) {
+            final View v = vg.getChildAt(i);
+            if (v instanceof ViewGroup) {
+                isNeeded = isWorkaroundNeeded((ViewGroup) v);
+            } else {
+                isNeeded = !(v instanceof TextureView);
+            }
+        }
+
+        return isNeeded;
     }
 
     @Override
