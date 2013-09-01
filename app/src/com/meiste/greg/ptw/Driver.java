@@ -15,21 +15,32 @@
  */
 package com.meiste.greg.ptw;
 
-import android.content.Context;
 import android.content.res.Resources;
+import android.text.TextUtils;
 
 import com.google.gson.Gson;
 
 public final class Driver {
     private int mNumber;
-    private String mName;
+    private String mFirstName;
+    private String mLastName;
 
-    public static Driver newInstance(final Context context, final int id) {
-        final String json = context.getResources().getStringArray(R.array.drivers)[id];
+    public static Driver fromJson(final String json) {
         return new Gson().fromJson(json, Driver.class);
     }
 
-    public static Driver newInstance(final Resources res, final int num) {
+    public static Driver find(final Driver[] drivers, final Resources res, final int num) {
+        if (drivers != null) {
+            for (final Driver driver : drivers) {
+                if (driver.getNumber() == num) {
+                    return driver;
+                }
+            }
+        }
+        return newInstance(res, num);
+    }
+
+    private static Driver newInstance(final Resources res, final int num) {
         String[] drivers = res.getStringArray(R.array.drivers);
         final Gson gson = new Gson();
 
@@ -49,12 +60,9 @@ public final class Driver {
 
         final Driver driver = new Driver();
         driver.mNumber = num;
-        driver.mName = res.getString(R.string.not_available);
+        driver.mFirstName = "";
+        driver.mLastName = res.getString(R.string.not_available);
         return driver;
-    }
-
-    public static int getNumDrivers(final Context context) {
-        return context.getResources().getStringArray(R.array.drivers).length;
     }
 
     public int getNumber() {
@@ -62,7 +70,10 @@ public final class Driver {
     }
 
     public String getName() {
-        return mName;
+        if (TextUtils.isEmpty(mFirstName)) {
+            return mLastName;
+        }
+        return mFirstName + " " + mLastName;
     }
 
     @Override

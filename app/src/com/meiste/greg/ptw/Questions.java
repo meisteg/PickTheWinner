@@ -151,7 +151,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
                 v = inflater.inflate(R.layout.questions, container, false);
 
                 final Spinner winner = (Spinner) v.findViewById(R.id.winner);
-                winner.setAdapter(new DriverAdapter(getActivity()));
+                winner.setAdapter(new DriverAdapter(getActivity(), rq.drivers));
                 winner.setOnItemSelectedListener(new WinnerSelectedListener());
 
                 final Spinner a2 = (Spinner) v.findViewById(R.id.question2a);
@@ -169,7 +169,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
                 a3.setOnItemSelectedListener(new A3SelectedListener());
 
                 final Spinner mostlaps = (Spinner) v.findViewById(R.id.mostlaps);
-                mostlaps.setAdapter(new DriverAdapter(getActivity()));
+                mostlaps.setAdapter(new DriverAdapter(getActivity(), rq.drivers));
                 mostlaps.setOnItemSelectedListener(new MostLapsSelectedListener());
 
                 final Spinner numleaders = (Spinner) v.findViewById(R.id.numleaders);
@@ -189,7 +189,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
                 final RaceAnswers ra = RaceAnswers.fromJson(json);
 
                 final TextView a1 = (TextView) v.findViewById(R.id.answer1);
-                a1.setText(Driver.newInstance(res, ra.a1).getName());
+                a1.setText(Driver.find(rq.drivers, res, ra.a1).getName());
 
                 final TextView a2 = (TextView) v.findViewById(R.id.answer2);
                 a2.setText(rq.a2[ra.a2]);
@@ -198,7 +198,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
                 a3.setText(rq.a3[ra.a3]);
 
                 final TextView a4 = (TextView) v.findViewById(R.id.answer4);
-                a4.setText(Driver.newInstance(res, ra.a4).getName());
+                a4.setText(Driver.find(rq.drivers, res, ra.a4).getName());
 
                 final TextView a5 = (TextView) v.findViewById(R.id.answer5);
                 a5.setText(res.getStringArray(R.array.num_leaders)[ra.a5]);
@@ -231,7 +231,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
                                 a1.setPaintFlags(a1.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                                 a1.setTextColor(res.getColor(R.color.answer_wrong));
                                 final TextView c1 = (TextView) v.findViewById(R.id.correct1);
-                                c1.setText(Driver.newInstance(res, rca.a1).getName());
+                                c1.setText(Driver.find(rq.drivers, res, rca.a1).getName());
                                 c1.setVisibility(View.VISIBLE);
                             }
                         }
@@ -264,7 +264,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
                                 a4.setPaintFlags(a4.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                                 a4.setTextColor(res.getColor(R.color.answer_wrong));
                                 final TextView c4 = (TextView) v.findViewById(R.id.correct4);
-                                c4.setText(Driver.newInstance(res, rca.a4).getName());
+                                c4.setText(Driver.find(rq.drivers, res, rca.a4).getName());
                                 c4.setVisibility(View.VISIBLE);
                             }
                         }
