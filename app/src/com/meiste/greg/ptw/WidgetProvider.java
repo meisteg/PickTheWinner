@@ -213,6 +213,10 @@ public class WidgetProvider extends AppWidgetProvider {
 
             switch (result) {
             case RESULT_SUCCESS:
+                if (sRace == null) {
+                    // Schedule update received while downloading logo
+                    return;
+                }
                 final int str_id = sRace.isRecent() ? R.string.widget_current_race : R.string.widget_next_race;
                 final String nextRace = mContext.getString(str_id, sRace.getStartRelative(mContext));
                 rViews = new RemoteViews(mContext.getPackageName(), R.layout.widget);
