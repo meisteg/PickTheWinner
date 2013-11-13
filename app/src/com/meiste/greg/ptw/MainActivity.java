@@ -21,19 +21,19 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.view.View;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
-import com.google.ads.Ad;
-import com.google.ads.AdListener;
-import com.google.ads.AdRequest;
-import com.google.ads.AdRequest.ErrorCode;
-import com.google.ads.AdView;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gcm.GCMRegistrar;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdRequest.Builder;
+import com.google.android.gms.ads.AdView;
 import com.meiste.greg.ptw.iab.IabHelper;
 import com.meiste.greg.ptw.iab.IabResult;
 import com.meiste.greg.ptw.iab.Inventory;
@@ -113,6 +113,10 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
     public void onPause() {
         super.onPause();
 
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+
         Util.log("Saving state: tab=" + mPager.getCurrentItem());
         Util.getState(this).edit().putInt(LAST_TAB, mPager.getCurrentItem()).apply();
 
@@ -120,6 +124,15 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
         Eula.hide();
         if ((mLegalDialog != null) && (mLegalDialog.isShowing())) {
             mLegalDialog.dismiss();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (mAdView != null) {
+            mAdView.resume();
         }
     }
 
@@ -243,21 +256,22 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
     }
 
     private void loadAd() {
-        final AdRequest adRequest = new AdRequest();
-        adRequest.addKeyword("NASCAR");
-        adRequest.addKeyword("racing");
+        final Builder adReqBuilder = new AdRequest.Builder();
+        adReqBuilder.addKeyword("NASCAR");
+        adReqBuilder.addKeyword("racing");
 
         if (BuildConfig.DEBUG) {
-            adRequest.addTestDevice("CB529BCBD1E778FAD10EE145EE29045F"); // Atrix 4G
-            adRequest.addTestDevice("36A52B9CBB347B995EA40ACDD0D36376"); // XOOM
-            adRequest.addTestDevice("E64392AEFC7C9A13D2A6A76E9EA034C4"); // RAZR
+            adReqBuilder.addTestDevice(AdRequest.DEVICE_ID_EMULATOR);
+            adReqBuilder.addTestDevice("CB529BCBD1E778FAD10EE145EE29045F"); // Atrix 4G
+            adReqBuilder.addTestDevice("36A52B9CBB347B995EA40ACDD0D36376"); // XOOM
+            adReqBuilder.addTestDevice("E64392AEFC7C9A13D2A6A76E9EA034C4"); // RAZR
         }
 
         mAdView = (AdView)findViewById(R.id.ad);
         mAdView.setAdListener(mAdListener);
 
         if (!ActivityManager.isUserAMonkey()) {
-            mAdView.loadAd(adRequest);
+            mAdView.loadAd(adReqBuilder.build());
         }
     }
 
@@ -267,23 +281,17 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
 
     private final AdListener mAdListener = new AdListener() {
         @Override
-        public void onReceiveAd(final Ad ad) {
-            Util.log("onReceiveAd");
+        public void onAdLoaded() {
+            Util.log("onAdLoaded");
+            if (mAdView != null) {
+                mAdView.setVisibility(View.VISIBLE);
+            }
         }
 
         @Override
-        public void onFailedToReceiveAd(final Ad ad, final ErrorCode err) {
-            Util.log("onFailedToReceiveAd: " + err);
+        public void onAdFailedToLoad(final int errorCode) {
+            Util.log("onAdFailedToLoad: " + errorCode);
         }
-
-        @Override
-        public void onLeaveApplication(final Ad ad) {}
-
-        @Override
-        public void onPresentScreen(final Ad ad) {}
-
-        @Override
-        public void onDismissScreen(final Ad ad) {}
     };
 
     private final IabHelper.OnIabSetupFinishedListener mIabSetupListener =
@@ -339,6 +347,7 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
                 invalidateOptionsMenu();
 
                 if (mAdView != null) {
+                    mAdView.setVisibility(View.GONE);
                     mAdView.removeAllViews();
                     mAdView.destroy();
                     mAdView = null;
