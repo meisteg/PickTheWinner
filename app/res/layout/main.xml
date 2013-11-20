@@ -47,7 +47,7 @@
         android:layout_height="wrap_content"
         android:background="@color/ad_background"
         android:visibility="gone"
-        ads:adSize="BANNER"
+        ads:adSize="@string/admob_size"
         ads:adUnitId="@string/admob_id" />
 
 </LinearLayout>
