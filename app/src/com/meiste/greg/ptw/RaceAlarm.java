@@ -91,7 +91,7 @@ public final class RaceAlarm extends BroadcastReceiver {
 
             final String ns = Context.NOTIFICATION_SERVICE;
             final NotificationManager nm = (NotificationManager) context.getSystemService(ns);
-            nm.notify(R.string.remind_race_ticker, builder.getNotification());
+            nm.notify(R.string.remind_race_ticker, builder.build());
         } else {
             Util.log("Ignoring race alarm since option is disabled");
         }

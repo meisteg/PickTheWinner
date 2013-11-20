@@ -97,7 +97,7 @@ public final class QuestionAlarm extends BroadcastReceiver {
 
             final String ns = Context.NOTIFICATION_SERVICE;
             final NotificationManager nm = (NotificationManager) context.getSystemService(ns);
-            nm.notify(R.string.remind_questions_ticker, builder.getNotification());
+            nm.notify(R.string.remind_questions_ticker, builder.build());
         } else {
             Util.log("Ignoring question alarm since option is disabled");
         }

@@ -330,7 +330,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 
             final String ns = Context.NOTIFICATION_SERVICE;
             final NotificationManager nm = (NotificationManager) context.getSystemService(ns);
-            nm.notify(R.string.remind_results_notify, builder.getNotification());
+            nm.notify(R.string.remind_results_notify, builder.build());
         }
     }
 }
