@@ -39,13 +39,6 @@ public final class Schedule extends TabFragment implements OnRefreshListener<Lis
     private PullToRefreshListView mPullToRefresh;
     private RaceItemAdapter mAdapter;
 
-    public static Schedule newInstance(final Context context) {
-        final Schedule fragment = new Schedule();
-        fragment.setTitle(context.getString(R.string.tab_schedule));
-
-        return fragment;
-    }
-
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
             final Bundle savedInstanceState) {

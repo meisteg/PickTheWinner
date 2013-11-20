@@ -15,24 +15,14 @@
  */
 package com.meiste.greg.ptw;
 
-import android.os.Bundle;
 import android.os.Handler;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.meiste.greg.ptw.TabFragmentAdapter.FragmentListener;
 
 public class TabFragment extends SherlockFragment {
-    private static final String KEY_TITLE = "TabFragment:Title";
-    private String mTitle = "???";
+
     private FragmentListener mFragmentListener;
-
-    public void setTitle(final String title) {
-        mTitle = title;
-    }
-
-    public String getTitle() {
-        return mTitle;
-    }
 
     public void setFragmentListener(final FragmentListener fl) {
         mFragmentListener = fl;
@@ -59,20 +49,5 @@ public class TabFragment extends SherlockFragment {
 
     public boolean isChanged() {
         return false;
-    }
-
-    @Override
-    public void onCreate(final Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if ((savedInstanceState != null) && savedInstanceState.containsKey(KEY_TITLE)) {
-            setTitle(savedInstanceState.getString(KEY_TITLE));
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(final Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString(KEY_TITLE, getTitle());
     }
 }

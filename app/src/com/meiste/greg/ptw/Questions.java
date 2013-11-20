@@ -85,13 +85,6 @@ public final class Questions extends TabFragment implements View.OnClickListener
     private Spinner mRaceSpinner = null;
     private QuestionsRaceAdapter mRaceAdapter;
 
-    public static Questions newInstance(final Context context) {
-        final Questions fragment = new Questions();
-        fragment.setTitle(context.getString(R.string.tab_questions));
-
-        return fragment;
-    }
-
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         View v;

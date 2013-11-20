@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,15 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.view.ViewGroup;
 
 class TabFragmentAdapter extends FragmentPagerAdapter {
+
+    private static final int[] TAB_TITLES = {
+        R.string.tab_rule_book,
+        R.string.tab_questions,
+        R.string.tab_standings,
+        R.string.tab_schedule,
+        R.string.tab_suggest,
+    };
+
     private final TabFragment[] mFragments = new TabFragment[5];
     private final FragmentListener mFragmentListener = new _FragmentListener();
     private final Context mContext;
@@ -54,15 +63,15 @@ class TabFragmentAdapter extends FragmentPagerAdapter {
     public Fragment getItem(final int position) {
         switch (position) {
         case 0:
-            return RuleBook.newInstance(mContext);
+            return new RuleBook();
         case 1:
-            return Questions.newInstance(mContext);
+            return new Questions();
         case 2:
-            return Standings.newInstance(mContext);
+            return new Standings();
         case 3:
-            return Schedule.newInstance(mContext);
+            return new Schedule();
         case 4:
-            return Suggest.newInstance(mContext);
+            return new Suggest();
         default:
             return null;
         }
@@ -80,13 +89,14 @@ class TabFragmentAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(final int position) {
-        if (mFragments[position] == null)
+        if (position >= TAB_TITLES.length) {
             return Integer.toString(position);
-
-        return mFragments[position].getTitle();
+        }
+        return mContext.getString(TAB_TITLES[position]);
     }
 
     private class _FragmentListener implements FragmentListener {
+        @Override
         public void onChangedFragment() {
             notifyDataSetChanged();
         }

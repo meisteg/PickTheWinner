@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package com.meiste.greg.ptw;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,13 +24,6 @@ import com.meiste.greg.ptw.ObservableScrollView.ScrollViewListener;
 
 public final class RuleBook extends TabFragment implements ScrollViewListener {
     private int mScroll = 0;
-
-    public static RuleBook newInstance(final Context context) {
-        final RuleBook fragment = new RuleBook();
-        fragment.setTitle(context.getString(R.string.tab_rule_book));
-
-        return fragment;
-    }
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,

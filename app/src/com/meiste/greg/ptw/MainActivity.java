@@ -20,6 +20,7 @@ import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.Toast;
@@ -38,7 +39,6 @@ import com.meiste.greg.ptw.iab.IabHelper;
 import com.meiste.greg.ptw.iab.IabResult;
 import com.meiste.greg.ptw.iab.Inventory;
 import com.meiste.greg.ptw.iab.Purchase;
-import com.viewpagerindicator.TitlePageIndicator;
 
 public class MainActivity extends SherlockFragmentActivity implements Eula.OnEulaAgreedTo {
 
@@ -49,7 +49,6 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
 
     private IabHelper mHelper;
     private ViewPager mPager;
-    private TitlePageIndicator mIndicator;
     private AdView mAdView;
     private AlertDialog mLegalDialog;
     private boolean mIsAdFree = false;
@@ -83,10 +82,11 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
         mPager = (ViewPager)findViewById(R.id.pager);
         mPager.setOffscreenPageLimit(2);
         mPager.setAdapter(new TabFragmentAdapter(getSupportFragmentManager(), this));
+        mPager.setCurrentItem(getTab(getIntent()));
 
-        mIndicator = (TitlePageIndicator)findViewById(R.id.indicator);
-        mIndicator.setViewPager(mPager);
-        mIndicator.setCurrentItem(getTab(getIntent()));
+        final PagerTabStrip tabs = (PagerTabStrip) findViewById(R.id.pager_title_strip);
+        tabs.setTabIndicatorColorResource(R.color.tab_footer);
+        tabs.setDrawFullUnderline(true);
     }
 
     @Override
@@ -94,7 +94,7 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
         Util.log("MainActivity.onNewIntent: " + intent);
 
         setIntent(intent);
-        mIndicator.setCurrentItem(getTab(intent));
+        mPager.setCurrentItem(getTab(intent));
     }
 
     @Override

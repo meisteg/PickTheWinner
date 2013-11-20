@@ -18,7 +18,6 @@
 <resources>
     <color name="tab_bg">#18FF0000</color>
     <color name="tab_footer">#FFAA2222</color>
-    <color name="tab_text">#AA000000</color>
     <color name="tab_selected">#FF000000</color>
     
     <color name="answer_right">#FF1A8800</color>

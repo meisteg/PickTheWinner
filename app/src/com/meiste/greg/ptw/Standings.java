@@ -69,13 +69,6 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
     private FriendActionDialog mFriendActionDialog;
     private FriendMethodDialog mFriendMethodDialog;
 
-    public static Standings newInstance(final Context context) {
-        final Standings fragment = new Standings();
-        fragment.setTitle(context.getString(R.string.tab_standings));
-
-        return fragment;
-    }
-
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         mSetupNeeded = GAE.isAccountSetupNeeded(getActivity());

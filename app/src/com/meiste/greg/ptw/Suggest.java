@@ -41,13 +41,6 @@ public final class Suggest extends TabFragment implements View.OnClickListener, 
     private EditText mQuestion;
     private int mScroll = 0;
 
-    public static Suggest newInstance(final Context context) {
-        final Suggest fragment = new Suggest();
-        fragment.setTitle(context.getString(R.string.tab_suggest));
-
-        return fragment;
-    }
-
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
             final Bundle savedInstanceState) {

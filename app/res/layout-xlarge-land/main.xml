@@ -17,19 +17,29 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:ads="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    tools:context=".MainActivity" >
 
-    <com.viewpagerindicator.TitlePageIndicator
-        android:id="@+id/indicator"
-        style="@style/TabTitles" />
-    
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1">
+
+        <android.support.v4.view.PagerTabStrip
+            android:id="@+id/pager_title_strip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:background="@color/tab_bg"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:textColor="@color/tab_selected" />
+
+    </android.support.v4.view.ViewPager>
     
     <com.google.android.gms.ads.AdView
         android:id="@+id/ad"
