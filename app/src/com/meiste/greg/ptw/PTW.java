@@ -15,7 +15,11 @@
  */
 package com.meiste.greg.ptw;
 
+import java.io.File;
+
+import uk.co.senab.bitmapcache.BitmapLruCache;
 import android.app.Application;
+import android.content.Context;
 
 import com.google.analytics.tracking.android.EasyTracker;
 
@@ -32,6 +36,8 @@ public class PTW extends Application {
     public final static String INTENT_ACTION_SCHEDULE = "com.meiste.greg.ptw.action.SCHEDULE";
     public final static String INTENT_ACTION_STANDINGS = "com.meiste.greg.ptw.action.STANDINGS";
 
+    private BitmapLruCache mCache;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -43,5 +49,22 @@ public class PTW extends Application {
          * services. For some reason, passing getApplicationContext() to GAE
          * from a service doesn't work */
         GAE.getInstance(this);
+
+        final File cacheLocation = new File(getCacheDir() + File.separator + "bitmaps");
+        cacheLocation.mkdirs();
+
+        final BitmapLruCache.Builder builder = new BitmapLruCache.Builder(this);
+        builder.setMemoryCacheEnabled(true).setMemoryCacheMaxSizeUsingHeapSize();
+        builder.setDiskCacheEnabled(true).setDiskCacheLocation(cacheLocation);
+
+        mCache = builder.build();
+    }
+
+    public BitmapLruCache getBitmapCache() {
+        return mCache;
+    }
+
+    public static PTW getApplication(final Context context) {
+        return (PTW) context.getApplicationContext();
     }
 }

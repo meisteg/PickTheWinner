@@ -17,6 +17,7 @@ package com.meiste.greg.ptw;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Calendar;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -26,8 +27,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import com.google.analytics.tracking.android.EasyTracker;
-
+import uk.co.senab.bitmapcache.BitmapLruCache;
+import uk.co.senab.bitmapcache.CacheableBitmapDrawable;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -37,31 +38,22 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.text.format.DateUtils;
 import android.widget.RemoteViews;
 
-public class WidgetProvider extends AppWidgetProvider {
+import com.google.analytics.tracking.android.EasyTracker;
 
-    private static final int RESULT_SUCCESS = 0;
-    private static final int RESULT_FAILURE = -1;
-    private static final int RESULT_NO_RACE = 1;
+public class WidgetProvider extends AppWidgetProvider {
 
     private static final long UPDATE_INTERVAL = DateUtils.MINUTE_IN_MILLIS;
     private static final long UPDATE_FUDGE = 50; /* milliseconds */
     private static final long UPDATE_WARNING = (DateUtils.HOUR_IN_MILLIS * 2) + UPDATE_FUDGE;
 
-    private static final int PI_REQ_CODE = 810647;
-
     private static final String WIDGET_STATE = "widget.enabled";
 
-    private static final String URL_PREFIX = GAE.PROD_URL + "/img/race/";
-
     private static Race sRace;
-    private static Bitmap sBitmap;
 
     @Override
     public void onReceive (final Context context, final Intent intent) {
@@ -78,7 +70,6 @@ public class WidgetProvider extends AppWidgetProvider {
             if (appWidgetIds.length > 0) {
                 /* Force full widget update */
                 sRace = null;
-                sBitmap = null;
                 onUpdate(context, AppWidgetManager.getInstance(context), appWidgetIds);
             }
         } else if (intent.getAction().equals(PTW.INTENT_ACTION_ANSWERS)) {
@@ -155,33 +146,67 @@ public class WidgetProvider extends AppWidgetProvider {
     }
 
     private class UpdateWidgetTask extends AsyncTask<Context, Integer, Integer> {
+        private static final int RESULT_SUCCESS = 0;
+        private static final int RESULT_FAILURE = -1;
+        private static final int RESULT_NO_RACE = 1;
+
+        private static final int PI_REQ_CODE = 810647;
+
         private Context mContext;
+        private CacheableBitmapDrawable mBitmapDrawable;
+
+        private String getURL(final Race race, final boolean addYear) {
+            final StringBuilder sb = new StringBuilder();
+            sb.append(GAE.PROD_URL).append("/img/race/");
+
+            if (addYear) {
+                sb.append(Calendar.getInstance().get(Calendar.YEAR));
+                sb.append('_');
+            }
+
+            sb.append(race.getId()).append(".png");
+
+            return sb.toString();
+        }
 
         @Override
         protected Integer doInBackground(final Context... context) {
             mContext = context[0];
-            final Race race = Race.getNext(mContext, true, true);
+            final BitmapLruCache bitmapCache = PTW.getApplication(mContext).getBitmapCache();
 
-            if (race == null)
-                return RESULT_NO_RACE;
-
-            if ((sRace != null) && (sBitmap != null)) {
-                if (sRace.isRecent()) {
+            // First handle recent race scenario
+            if ((sRace != null) && sRace.isRecent()) {
+                mBitmapDrawable = bitmapCache.get(getURL(sRace, true));
+                if (mBitmapDrawable != null) {
+                    Util.log("Recent race logo found in cache");
                     try {
                         /* Need to fudge the time the other way */
                         Thread.sleep(UPDATE_FUDGE * 2);
                     } catch (final InterruptedException e) {}
+
+                    if (sRace.isRecent()) {
+                        return RESULT_SUCCESS;
+                    }
                 }
-
-                if ((sRace.getId() == race.getId()) || (sRace.isRecent()))
-                    return RESULT_SUCCESS;
             }
-            sRace = race;
 
+            sRace = Race.getNext(mContext, true, true);
+
+            // Second, handle end of season scenario
+            if (sRace == null)
+                return RESULT_NO_RACE;
+
+            // Third, handle upcoming race already cached scenario
+            final String url = getURL(sRace, true);
+            mBitmapDrawable = bitmapCache.get(url);
+            if (mBitmapDrawable != null) {
+                Util.log("Upcoming race logo found in cache");
+                return RESULT_SUCCESS;
+            }
+
+            // Finally, handle upcoming race not cached scenario
             try {
-                final URL url = new URL(URL_PREFIX + sRace.getId() + ".png");
-                final HttpGet httpRequest = new HttpGet(url.toURI());
-
+                final HttpGet httpRequest = new HttpGet(new URL(getURL(sRace, false)).toURI());
                 final HttpClient httpclient = new DefaultHttpClient();
                 final HttpResponse resp = httpclient.execute(httpRequest);
                 final int statusCode = resp.getStatusLine().getStatusCode();
@@ -192,7 +217,11 @@ public class WidgetProvider extends AppWidgetProvider {
                     final BufferedHttpEntity b_entity = new BufferedHttpEntity(entity);
                     final InputStream input = b_entity.getContent();
 
-                    sBitmap = BitmapFactory.decodeStream(input);
+                    mBitmapDrawable = bitmapCache.put(url, input);
+                    if (mBitmapDrawable == null) {
+                        Util.log("Get logo failed to decode bitmap");
+                        return RESULT_FAILURE;
+                    }
                     break;
                 default:
                     Util.log("Get logo failed (statusCode = " + statusCode + ")");
@@ -221,7 +250,7 @@ public class WidgetProvider extends AppWidgetProvider {
                 final String nextRace = mContext.getString(str_id, sRace.getStartRelative(mContext));
                 rViews = new RemoteViews(mContext.getPackageName(), R.layout.widget);
                 rViews.setTextViewText(R.id.when, nextRace);
-                rViews.setImageViewBitmap(R.id.race_logo, sBitmap);
+                rViews.setImageViewBitmap(R.id.race_logo, mBitmapDrawable.getBitmap());
 
                 if (sRace.isExhibition()) {
                     rViews.setInt(R.id.status, "setText", R.string.widget_exhibition);
