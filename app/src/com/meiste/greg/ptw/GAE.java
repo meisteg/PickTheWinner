@@ -42,6 +42,7 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -49,6 +50,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -87,7 +89,29 @@ public final class GAE {
 
     public static boolean isAccountSetupNeeded(final Context context) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getString(EditPreferences.KEY_ACCOUNT_EMAIL, "").length() == 0;
+        final String account = prefs.getString(EditPreferences.KEY_ACCOUNT_EMAIL, "");
+
+        if (account.length() == 0) {
+            // Account not setup at all
+            return true;
+        }
+
+        final AccountManager mgr = AccountManager.get(context);
+        final Account[] accts = mgr.getAccountsByType("com.google");
+        for (final Account acct : accts) {
+            if (acct.name.equals(account)) {
+                // Account setup and found on system
+                return false;
+            }
+        }
+
+        // Account setup, but no longer present on system
+        final SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(EditPreferences.KEY_ACCOUNT_EMAIL, null);
+        editor.putString(EditPreferences.KEY_ACCOUNT_COOKIE, null);
+        editor.apply();
+
+        return true;
     }
 
     public static GAE getInstance(final Context context) {
@@ -211,16 +235,23 @@ public final class GAE {
         reconnect();
     }
 
+    @SuppressLint("NewApi")
     @SuppressWarnings("deprecation")
-    private void reconnect() {
+    private boolean reconnect() {
         final AccountManager mgr = AccountManager.get(mContext);
         final Account[] accts = mgr.getAccountsByType("com.google");
         for (final Account acct : accts) {
             if (acct.name.equals(mAccountName)) {
-                mgr.getAuthToken(acct, "ah", false, new AuthTokenCallback(), null);
-                break;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                    mgr.getAuthToken(acct, "ah", null, false, new AuthTokenCallback(), null);
+                } else {
+                    mgr.getAuthToken(acct, "ah", false, new AuthTokenCallback(), null);
+                }
+                return true;
             }
         }
+        Util.log("Account " + mAccountName + " not found!");
+        return false;
     }
 
     private class AuthTokenCallback implements AccountManagerCallback<Bundle> {
@@ -364,8 +395,7 @@ public final class GAE {
                     Util.log("Cookie expired? Attempting reconnect");
                     mGetPage = pages[0];
                     mAccountName = prefs.getString(EditPreferences.KEY_ACCOUNT_EMAIL, null);
-                    reconnect();
-                    break;
+                    return reconnect();
                 default:
                     Util.log("Get page failed (invalid status code)");
                     return false;
@@ -427,8 +457,7 @@ public final class GAE {
                     mGetPage = args[0];
                     mJson = args[1];
                     mAccountName = prefs.getString(EditPreferences.KEY_ACCOUNT_EMAIL, null);
-                    reconnect();
-                    break;
+                    return reconnect();
                 default:
                     Util.log("Post page failed (invalid status code)");
                     return false;
