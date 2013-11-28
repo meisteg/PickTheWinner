@@ -34,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.meiste.greg.ptw.GAE.GaeListener;
@@ -41,11 +42,20 @@ import com.meiste.greg.ptw.GAE.GaeListener;
 public class AccountsActivity extends SherlockActivity implements GaeListener {
 
     private static final int REQUEST_LAUNCH_INTENT = 0;
+
+    // EXTRA_ACCOUNT_TYPES was added in API 18 (Android 4.3), but works
+    // fine on many older versions and is simply ignored by the rest.
+    @SuppressLint("InlinedApi")
+    private final Intent mAccountIntent = new Intent(Settings.ACTION_ADD_ACCOUNT)
+    .putExtra(Settings.EXTRA_ACCOUNT_TYPES, new String[] {
+            GAE.ACCOUNT_TYPE
+    });
+
     private int mAccountSelectedPosition = 0;
     private String mAccountName;
     private GAE mGae;
+    private boolean mShouldFinish;
 
-    @SuppressLint("InlinedApi")
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,17 +89,11 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage(R.string.needs_account);
 
-            final Intent accountIntent = new Intent(Settings.ACTION_ADD_ACCOUNT);
-            // EXTRA_ACCOUNT_TYPES was added in API 18 (Android 4.3), but works
-            // fine on many older versions or is simply ignored.
-            accountIntent.putExtra(Settings.EXTRA_ACCOUNT_TYPES, new String[] {
-                    GAE.ACCOUNT_TYPE
-            });
-            if (accountIntent.resolveActivity(getPackageManager()) != null) {
+            if (mAccountIntent.resolveActivity(getPackageManager()) != null) {
                 builder.setPositiveButton(R.string.add_account, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(final DialogInterface dialog, final int which) {
-                        startActivity(accountIntent);
+                        startActivity(mAccountIntent);
                         finish();
                     }
                 });
@@ -135,12 +139,37 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
     public void onStop() {
         super.onStop();
         EasyTracker.getInstance().activityStop(this);
+
+        if (mShouldFinish) {
+            finish();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(final Menu menu) {
+        // Add menu item to add account on ICS MR1 or later. Older versions
+        // don't support directing user straight to Google account setup.
+        if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) &&
+                (mAccountIntent.resolveActivity(getPackageManager()) != null)) {
+            menu.add(Menu.NONE, R.string.add_account, Menu.NONE, R.string.add_account)
+            .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+            return true;
+        }
+
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
+        switch (item.getItemId()) {
+        case android.R.id.home:
             finish();
+            return true;
+        case R.string.add_account:
+            // To make the transition to the system activity look correct,
+            // delay the finish() call of this activity.
+            mShouldFinish = true;
+            startActivity(mAccountIntent);
             return true;
         }
         return super.onOptionsItemSelected(item);

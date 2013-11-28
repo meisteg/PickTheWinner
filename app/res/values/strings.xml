@@ -20,7 +20,7 @@
     <string name="account">Account</string>
     <string name="account_needed">Please select an account</string>
     <string name="account_setup_needed"><b>Account setup required</b>\nTap to select account</string>
-    <string name="add_account">Add account&#8230;</string>
+    <string name="add_account">Add account</string>
     <string name="add_friend">Add Friend</string>
     <string name="add_friend_confirm">Add %s as a friend? Friending a player ensures they will
         always appear in the standings regardless of their rank.</string>
