@@ -17,6 +17,7 @@ package com.meiste.greg.ptw;
 
 import java.util.List;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -44,6 +45,7 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
     private String mAccountName;
     private GAE mGae;
 
+    @SuppressLint("InlinedApi")
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,19 +78,30 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
             // Show a dialog and invoke the "Add Account" activity if requested
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage(R.string.needs_account);
-            builder.setPositiveButton(R.string.add_account, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(final DialogInterface dialog, final int which) {
-                    startActivity(new Intent(Settings.ACTION_ADD_ACCOUNT));
-                    finish();
-                }
+
+            final Intent accountIntent = new Intent(Settings.ACTION_ADD_ACCOUNT);
+            // EXTRA_ACCOUNT_TYPES was added in API 18 (Android 4.3), but works
+            // fine on many older versions or is simply ignored.
+            accountIntent.putExtra(Settings.EXTRA_ACCOUNT_TYPES, new String[] {
+                    GAE.ACCOUNT_TYPE
             });
+            if (accountIntent.resolveActivity(getPackageManager()) != null) {
+                builder.setPositiveButton(R.string.add_account, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(final DialogInterface dialog, final int which) {
+                        startActivity(accountIntent);
+                        finish();
+                    }
+                });
+            }
+
             builder.setNegativeButton(R.string.skip, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(final DialogInterface dialog, final int which) {
                     finish();
                 }
             });
+
             builder.setIcon(android.R.drawable.stat_sys_warning);
             builder.setTitle(R.string.attention);
             builder.setCancelable(false);

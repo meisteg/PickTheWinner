@@ -20,7 +20,7 @@
     android:versionCode="320"
     android:versionName="3.2.0-dev" >
 
-    <uses-sdk android:minSdkVersion="10" android:targetSdkVersion="17" />
+    <uses-sdk android:minSdkVersion="10" android:targetSdkVersion="18" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -46,7 +46,8 @@
         android:name=".PTW"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:allowBackup="false" >
+        android:allowBackup="false"
+        android:requiredAccountType="com.google" >
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyAE_JAGDH6A-J_UKNp54uGRqCmc-zjfh8Q" />
