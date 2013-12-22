@@ -15,6 +15,7 @@
  */
 package com.meiste.greg.ptw;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -24,6 +25,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 
@@ -34,6 +36,7 @@ public final class QuestionAlarm extends BroadcastReceiver {
     private static final int PI_REQ_CODE = 146066;
     private static boolean alarm_set = false;
 
+    @SuppressLint("NewApi")
     public static void set(final Context context) {
         // Get next points race: allow in progress
         Race race = Race.getNext(context, false, true);
@@ -56,7 +59,12 @@ public final class QuestionAlarm extends BroadcastReceiver {
             intent.putExtra(RACE_ID, race.getId());
             final PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
-            am.set(AlarmManager.RTC_WAKEUP, race.getQuestionTimestamp(), pendingIntent);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                am.setExact(AlarmManager.RTC_WAKEUP, race.getQuestionTimestamp(), pendingIntent);
+            } else {
+                am.set(AlarmManager.RTC_WAKEUP, race.getQuestionTimestamp(), pendingIntent);
+            }
 
             alarm_set = true;
         } else {

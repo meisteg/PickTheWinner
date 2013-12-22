@@ -29,6 +29,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import uk.co.senab.bitmapcache.BitmapLruCache;
 import uk.co.senab.bitmapcache.CacheableBitmapDrawable;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -39,7 +40,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.os.SystemClock;
+import android.os.Build;
 import android.text.format.DateUtils;
 import android.widget.RemoteViews;
 
@@ -60,6 +61,7 @@ public class WidgetProvider extends AppWidgetProvider {
         if (intent.hasExtra(Intent.EXTRA_ALARM_COUNT)) {
             Util.log("WidgetProvider.onReceive: Widget alarm");
             new UpdateWidgetTask().execute(context);
+            setAlarm(context);
         } else if (intent.getAction().equals(Intent.ACTION_TIME_CHANGED)) {
             Util.log("WidgetProvider.onReceive: Time change");
             setAlarm(context);
@@ -120,18 +122,24 @@ public class WidgetProvider extends AppWidgetProvider {
         EasyTracker.getTracker().sendEvent("Widget", "state", "disabled", (long) 0);
     }
 
+    @SuppressLint("NewApi")
     private void setAlarm(final Context context) {
         /* No point setting alarm if no widgets */
         if (getInstalledWidgets(context).length == 0)
             return;
 
-        /* Android relative time rounds down, so update needs to be early if anything */
-        final long trigger = UPDATE_INTERVAL - (System.currentTimeMillis() % UPDATE_INTERVAL) - UPDATE_FUDGE;
+        final long now = System.currentTimeMillis();
+        long next = UPDATE_INTERVAL - (now % UPDATE_INTERVAL) - UPDATE_FUDGE;
+        if (next <= 0) {
+            next += UPDATE_INTERVAL;
+        }
 
         final AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-        am.setRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + trigger,
-                UPDATE_INTERVAL, getAlarmIntent(context));
-        Util.log("Initial trigger is " + trigger + " milliseconds from now");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            am.setExact(AlarmManager.RTC, now + next, getAlarmIntent(context));
+        } else {
+            am.set(AlarmManager.RTC, now + next, getAlarmIntent(context));
+        }
     }
 
     private PendingIntent getAlarmIntent(final Context context) {

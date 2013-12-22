@@ -20,7 +20,7 @@
     android:versionCode="320"
     android:versionName="3.2.0-dev" >
 
-    <uses-sdk android:minSdkVersion="10" android:targetSdkVersion="18" />
+    <uses-sdk android:minSdkVersion="10" android:targetSdkVersion="19" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.INTERNET" />
