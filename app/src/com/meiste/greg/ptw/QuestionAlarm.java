@@ -103,9 +103,7 @@ public final class QuestionAlarm extends BroadcastReceiver {
             .setSound(Uri.parse(prefs.getString(EditPreferences.KEY_NOTIFY_RINGTONE,
                     "content://settings/system/notification_sound")));
 
-            final String ns = Context.NOTIFICATION_SERVICE;
-            final NotificationManager nm = (NotificationManager) context.getSystemService(ns);
-            nm.notify(R.string.remind_questions_ticker, builder.build());
+            getNM(context).notify(R.string.remind_questions_ticker, builder.build());
         } else {
             Util.log("Ignoring question alarm since option is disabled");
         }
@@ -116,5 +114,13 @@ public final class QuestionAlarm extends BroadcastReceiver {
         // Reset alarm for the next race
         set(context);
         context.sendBroadcast(new Intent(PTW.INTENT_ACTION_RACE_ALARM));
+    }
+
+    public static void clearNotification(final Context context) {
+        getNM(context).cancel(R.string.remind_questions_ticker);
+    }
+
+    private static NotificationManager getNM(final Context context) {
+        return (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 }

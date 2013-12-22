@@ -149,6 +149,10 @@ public class RaceActivity extends SherlockFragmentActivity implements ScrollView
     protected void onResume() {
         super.onResume();
         setUpMapIfNeeded();
+
+        if (mRace.isRecent()) {
+            RaceAlarm.clearNotification(getApplicationContext());
+        }
     }
 
     private void setUpMapIfNeeded() {

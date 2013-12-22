@@ -311,6 +311,10 @@ public final class Questions extends TabFragment implements View.OnClickListener
         filter.addAction(PTW.INTENT_ACTION_RACE_ALARM);
         getActivity().registerReceiver(mBroadcastReceiver, filter);
 
+        if ((mRaceSelected != null) && mRaceSelected.inProgress()) {
+            QuestionAlarm.clearNotification(getActivity().getApplicationContext());
+        }
+
         // Check if user changed their account status
         mChanged = mSetupNeeded != GAE.isAccountSetupNeeded(getActivity());
         // Check if user has switched accounts
