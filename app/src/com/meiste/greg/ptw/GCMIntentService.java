@@ -43,6 +43,7 @@ import com.meiste.greg.ptw.GAE.GaeListener;
 public class GCMIntentService extends GCMBaseIntentService {
 
     private static final int MAX_ATTEMPTS = 5;
+    private static final int PI_REQ_CODE = 426801;
     private static final int BACKOFF_MILLI_SECONDS = 2000;
     private final Semaphore sem = new Semaphore(0);
     private boolean mGaeSuccess = false;
@@ -302,14 +303,14 @@ public class GCMIntentService extends GCMBaseIntentService {
         }
     }
 
-    private void showResultsNotification(final Context context, final String race) {
+    private static void showResultsNotification(final Context context, final String race) {
         // Only show notification if user wants results notifications
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         if (prefs.getBoolean(EditPreferences.KEY_NOTIFY_RESULTS, true)) {
             final Intent notificationIntent = new Intent(context, MainActivity.class);
             notificationIntent.putExtra(MainActivity.INTENT_TAB, 2);
-            final PendingIntent pi = PendingIntent.getActivity(context, 0, notificationIntent,
-                    PendingIntent.FLAG_CANCEL_CURRENT);
+            final PendingIntent pi = PendingIntent.getActivity(context, PI_REQ_CODE,
+                    notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
             int defaults = 0;
             if (prefs.getBoolean(EditPreferences.KEY_NOTIFY_VIBRATE, true))
@@ -328,9 +329,15 @@ public class GCMIntentService extends GCMBaseIntentService {
             .setSound(Uri.parse(prefs.getString(EditPreferences.KEY_NOTIFY_RINGTONE,
                     "content://settings/system/notification_sound")));
 
-            final String ns = Context.NOTIFICATION_SERVICE;
-            final NotificationManager nm = (NotificationManager) context.getSystemService(ns);
-            nm.notify(R.string.remind_results_notify, builder.build());
+            getNM(context).notify(R.string.remind_results_notify, builder.build());
         }
+    }
+
+    public static void clearNotification(final Context context) {
+        getNM(context).cancel(R.string.remind_results_notify);
+    }
+
+    private static NotificationManager getNM(final Context context) {
+        return (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 }

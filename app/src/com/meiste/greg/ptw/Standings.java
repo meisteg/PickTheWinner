@@ -192,6 +192,7 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
         if (mFriendMethodDialog != null) {
             mFriendMethodDialog.onResume();
         }
+        GCMIntentService.clearNotification(getActivity().getApplicationContext());
     }
 
     @Override
