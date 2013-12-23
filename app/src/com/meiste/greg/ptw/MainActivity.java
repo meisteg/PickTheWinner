@@ -119,12 +119,6 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
 
         Util.log("Saving state: tab=" + mPager.getCurrentItem());
         Util.getState(this).edit().putInt(LAST_TAB, mPager.getCurrentItem()).apply();
-
-        // Hide dialogs to prevent window leaks on orientation changes
-        Eula.hide();
-        if ((mLegalDialog != null) && (mLegalDialog.isShowing())) {
-            mLegalDialog.dismiss();
-        }
     }
 
     @Override
@@ -138,6 +132,12 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
 
     @Override
     public void onDestroy() {
+        // Hide dialogs to prevent window leaks on orientation changes
+        Eula.hide();
+        if ((mLegalDialog != null) && (mLegalDialog.isShowing())) {
+            mLegalDialog.dismiss();
+        }
+
         if (mAdView != null) {
             mAdView.removeAllViews();
             mAdView.destroy();
