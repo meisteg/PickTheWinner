@@ -38,10 +38,12 @@ public final class Schedule extends TabFragment implements OnRefreshListener<Lis
 
     private PullToRefreshListView mPullToRefresh;
     private RaceItemAdapter mAdapter;
+    private boolean mNeedScroll = true;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
             final Bundle savedInstanceState) {
+        setRetainInstance(true);
         final View v = inflater.inflate(R.layout.schedule, container, false);
 
         mPullToRefresh = (PullToRefreshListView) v.findViewById(R.id.schedule);
@@ -63,6 +65,14 @@ public final class Schedule extends TabFragment implements OnRefreshListener<Lis
                 startActivity(intent);
             }
         });
+
+        if (mNeedScroll) {
+            final Race race = Race.getNext(getActivity(), true, true);
+            if (race != null) {
+                lv.setSelection(race.getId());
+            }
+            mNeedScroll = false;
+        }
 
         final IntentFilter filter = new IntentFilter(PTW.INTENT_ACTION_SCHEDULE);
         getActivity().registerReceiver(mScheduleUpdateReceiver, filter);
