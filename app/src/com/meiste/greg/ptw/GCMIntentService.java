@@ -45,6 +45,10 @@ public class GCMIntentService extends GCMBaseIntentService {
     private static final int MAX_ATTEMPTS = 5;
     private static final int PI_REQ_CODE = 426801;
     private static final int BACKOFF_MILLI_SECONDS = 2000;
+
+    private static final String MSG_KEY = "collapse_key";
+    private static final String MSG_KEY_SYNC = "ptw_sync";
+
     private final Semaphore sem = new Semaphore(0);
     private boolean mGaeSuccess = false;
 
@@ -116,54 +120,17 @@ public class GCMIntentService extends GCMBaseIntentService {
 
     @Override
     protected void onMessage(final Context context, final Intent intent) {
-        Util.log("Received message from GCM");
-        long backoff = BACKOFF_MILLI_SECONDS;
-
-        /* First update schedule */
-        for (int i = 1; i <= MAX_ATTEMPTS; i++) {
-            Util.log("Attempt #" + i + " to sync schedule from PTW server");
-            GAE.getInstance(getApplicationContext()).getPage(scheduleListener, "schedule");
-            try {
-                sem.acquire();
-            } catch (final InterruptedException e) {}
-
-            if (mGaeSuccess || (i == MAX_ATTEMPTS))
-                break;
-            try {
-                Util.log("Sleeping for " + backoff + " ms before retry");
-                Thread.sleep(backoff);
-            } catch (final InterruptedException e) {}
-
-            // increase backoff exponentially
-            backoff *= 2;
+        if (!intent.hasExtra(MSG_KEY)) {
+            return;
         }
 
-        /* Reset variables */
-        backoff = BACKOFF_MILLI_SECONDS;
-        mGaeSuccess = false;
+        final String message = intent.getStringExtra(MSG_KEY);
+        Util.log("Received " + message + " message from GCM");
 
-        /* Next update standings */
-        for (int i = 1; i <= MAX_ATTEMPTS; i++) {
-            if (GAE.isAccountSetupNeeded(this)) {
-                Util.log("Skipping Standings sync since account not setup");
-                break;
-            }
-
-            Util.log("Attempt #" + i + " to sync standings from PTW server");
-            GAE.getInstance(getApplicationContext()).getPage(standingsListener, "standings");
-            try {
-                sem.acquire();
-            } catch (final InterruptedException e) {}
-
-            if (mGaeSuccess || (i == MAX_ATTEMPTS))
-                break;
-            try {
-                Util.log("Sleeping for " + backoff + " ms before retry");
-                Thread.sleep(backoff);
-            } catch (final InterruptedException e) {}
-
-            // increase backoff exponentially
-            backoff *= 2;
+        if (MSG_KEY_SYNC.equals(message)) {
+            handleMsgSync();
+        } else {
+            Util.log("Message type unknown. Ignoring...");
         }
     }
 
@@ -235,6 +202,57 @@ public class GCMIntentService extends GCMBaseIntentService {
             if (conn != null) {
                 conn.disconnect();
             }
+        }
+    }
+
+    private void handleMsgSync() {
+        long backoff = BACKOFF_MILLI_SECONDS;
+
+        /* First update schedule */
+        for (int i = 1; i <= MAX_ATTEMPTS; i++) {
+            Util.log("Attempt #" + i + " to sync schedule from PTW server");
+            GAE.getInstance(getApplicationContext()).getPage(scheduleListener, "schedule");
+            try {
+                sem.acquire();
+            } catch (final InterruptedException e) {}
+
+            if (mGaeSuccess || (i == MAX_ATTEMPTS))
+                break;
+            try {
+                Util.log("Sleeping for " + backoff + " ms before retry");
+                Thread.sleep(backoff);
+            } catch (final InterruptedException e) {}
+
+            // increase backoff exponentially
+            backoff *= 2;
+        }
+
+        /* Reset variables */
+        backoff = BACKOFF_MILLI_SECONDS;
+        mGaeSuccess = false;
+
+        /* Next update standings */
+        for (int i = 1; i <= MAX_ATTEMPTS; i++) {
+            if (GAE.isAccountSetupNeeded(this)) {
+                Util.log("Skipping Standings sync since account not setup");
+                break;
+            }
+
+            Util.log("Attempt #" + i + " to sync standings from PTW server");
+            GAE.getInstance(getApplicationContext()).getPage(standingsListener, "standings");
+            try {
+                sem.acquire();
+            } catch (final InterruptedException e) {}
+
+            if (mGaeSuccess || (i == MAX_ATTEMPTS))
+                break;
+            try {
+                Util.log("Sleeping for " + backoff + " ms before retry");
+                Thread.sleep(backoff);
+            } catch (final InterruptedException e) {}
+
+            // increase backoff exponentially
+            backoff *= 2;
         }
     }
 
