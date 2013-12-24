@@ -15,8 +15,6 @@
  */
 package com.meiste.greg.ptw.gcm;
 
-import java.util.concurrent.Semaphore;
-
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -28,6 +26,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
+import android.text.format.DateUtils;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.meiste.greg.ptw.EditPreferences;
@@ -47,11 +46,12 @@ public class GcmIntentService extends IntentService {
     private static final int MAX_ATTEMPTS = 5;
     private static final int PI_REQ_CODE = 426801;
     private static final int BACKOFF_MILLI_SECONDS = 2000;
+    private static final long WAIT_TIMEOUT = DateUtils.MINUTE_IN_MILLIS;
 
     private static final String MSG_KEY = "collapse_key";
     private static final String MSG_KEY_SYNC = "ptw_sync";
 
-    private final Semaphore sem = new Semaphore(0);
+    private final Object mSync = new Object();
     private boolean mGaeSuccess = false;
 
     public GcmIntentService() {
@@ -98,10 +98,12 @@ public class GcmIntentService extends IntentService {
         /* First update schedule */
         for (int i = 1; i <= MAX_ATTEMPTS; i++) {
             Util.log("Attempt #" + i + " to sync schedule from PTW server");
-            GAE.getInstance(getApplicationContext()).getPage(scheduleListener, "schedule");
-            try {
-                sem.acquire();
-            } catch (final InterruptedException e) {}
+            synchronized (mSync) {
+                GAE.getInstance(getApplicationContext()).getPage(scheduleListener, "schedule");
+                try {
+                    mSync.wait(WAIT_TIMEOUT);
+                } catch (final InterruptedException e) {}
+            }
 
             if (mGaeSuccess || (i == MAX_ATTEMPTS))
                 break;
@@ -126,10 +128,12 @@ public class GcmIntentService extends IntentService {
             }
 
             Util.log("Attempt #" + i + " to sync standings from PTW server");
-            GAE.getInstance(getApplicationContext()).getPage(standingsListener, "standings");
-            try {
-                sem.acquire();
-            } catch (final InterruptedException e) {}
+            synchronized (mSync) {
+                GAE.getInstance(getApplicationContext()).getPage(standingsListener, "standings");
+                try {
+                    mSync.wait(WAIT_TIMEOUT);
+                } catch (final InterruptedException e) {}
+            }
 
             if (mGaeSuccess || (i == MAX_ATTEMPTS))
                 break;
@@ -182,29 +186,37 @@ public class GcmIntentService extends IntentService {
     private class GcmGaeListener implements GaeListener {
         @Override
         public void onGet(final Context context, final String json) {
-            mGaeSuccess = true;
-            sem.release();
+            synchronized (mSync) {
+                mGaeSuccess = true;
+                mSync.notify();
+            }
         }
 
         @Override
         public void onFailedConnect(final Context context) {
             Util.log("GcmGaeListener: onFailedConnect");
-            mGaeSuccess = false;
-            sem.release();
+            synchronized (mSync) {
+                mGaeSuccess = false;
+                mSync.notify();
+            }
         }
 
         @Override
         public void onLaunchIntent(final Intent launch) {
-            // Should never happen, but release semaphore to prevent stuck wakelock
-            mGaeSuccess = false;
-            sem.release();
+            // Should never happen
+            synchronized (mSync) {
+                mGaeSuccess = false;
+                mSync.notify();
+            }
         }
 
         @Override
         public void onConnectSuccess(final Context context, final String json) {
-            // Should never happen, but release semaphore to prevent stuck wakelock
-            mGaeSuccess = false;
-            sem.release();
+            // Should never happen
+            synchronized (mSync) {
+                mGaeSuccess = false;
+                mSync.notify();
+            }
         }
     }
 
