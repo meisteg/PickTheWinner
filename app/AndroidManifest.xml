@@ -109,15 +109,14 @@
             android:name="com.google.android.gms.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
         <receiver
-            android:name="com.google.android.gcm.GCMBroadcastReceiver"
+            android:name=".gcm.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
                 <category android:name="com.meiste.greg.ptw" />
             </intent-filter>
         </receiver>
-        <service android:name=".GCMIntentService" />
+        <service android:name=".gcm.GcmIntentService" />
         <receiver android:name=".WidgetProvider" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_ENABLED" />

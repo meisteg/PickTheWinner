@@ -13,19 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.meiste.greg.ptw;
+package com.meiste.greg.ptw.gcm;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.Semaphore;
 
+import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -33,14 +25,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 
-import com.google.android.gcm.GCMBaseIntentService;
-import com.google.android.gcm.GCMRegistrar;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.meiste.greg.ptw.EditPreferences;
+import com.meiste.greg.ptw.GAE;
 import com.meiste.greg.ptw.GAE.GaeListener;
+import com.meiste.greg.ptw.MainActivity;
+import com.meiste.greg.ptw.PTW;
+import com.meiste.greg.ptw.PlayerAdapter;
+import com.meiste.greg.ptw.R;
+import com.meiste.greg.ptw.RaceAlarm;
+import com.meiste.greg.ptw.Races;
+import com.meiste.greg.ptw.Standings;
+import com.meiste.greg.ptw.Util;
 
-public class GCMIntentService extends GCMBaseIntentService {
+public class GcmIntentService extends IntentService {
 
     private static final int MAX_ATTEMPTS = 5;
     private static final int PI_REQ_CODE = 426801;
@@ -52,157 +54,42 @@ public class GCMIntentService extends GCMBaseIntentService {
     private final Semaphore sem = new Semaphore(0);
     private boolean mGaeSuccess = false;
 
-    public GCMIntentService() {
-        super(PTW.GCM_SENDER_ID);
+    public GcmIntentService() {
+        super(GcmIntentService.class.getSimpleName());
     }
 
     @Override
-    protected void onRegistered(final Context context, final String regId) {
-        Util.log("Device registered with GCM: regId = " + regId);
+    protected void onHandleIntent(final Intent intent) {
+        final Bundle extras = intent.getExtras();
+        final GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
+        final String messageType = gcm.getMessageType(intent);
 
-        final String serverUrl = GAE.PROD_URL + "/register";
-        final Map<String, String> params = new HashMap<String, String>();
-        params.put("regId", regId);
-        long backoff = BACKOFF_MILLI_SECONDS;
+        if (!extras.isEmpty()) {
+            /*
+             * Filter messages based on message type. Since it is likely that GCM will be
+             * extended in the future with new message types, just ignore any message types
+             * not recognized.
+             */
+            if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
+                Util.log("GCM send error: " + extras.toString());
+            } else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED.equals(messageType)) {
+                Util.log("GCM deleted messages on server: " + extras.toString());
+            } else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
+                if (intent.hasExtra(MSG_KEY)) {
+                    final String message = intent.getStringExtra(MSG_KEY);
+                    Util.log("Received " + message + " message from GCM");
 
-        for (int i = 1; i <= MAX_ATTEMPTS; i++) {
-            Util.log("Attempt #" + i + " to register device on PTW server");
-            try {
-                post(serverUrl, params);
-                GCMRegistrar.setRegisteredOnServer(context, true);
-                Util.log("Device successfully registered on PTW server");
-                return;
-            } catch (final IOException e) {
-                Util.log("Failed to register on attempt " + i + " with " + e);
-                if (i == MAX_ATTEMPTS) {
-                    break;
+                    if (MSG_KEY_SYNC.equals(message)) {
+                        handleMsgSync();
+                    } else {
+                        Util.log("Message type unknown. Ignoring...");
+                    }
                 }
-                try {
-                    Util.log("Sleeping for " + backoff + " ms before retry");
-                    Thread.sleep(backoff);
-                } catch (final InterruptedException e1) {
-                    Util.log("Thread interrupted: abort remaining retries!");
-                    Thread.currentThread().interrupt();
-                    break;
-                }
-                // increase backoff exponentially
-                backoff *= 2;
             }
         }
 
-        Util.log("PTW server register failed. Unregister from GCM");
-        GCMRegistrar.unregister(context);
-    }
-
-    @Override
-    protected void onUnregistered(final Context context, final String regId) {
-        Util.log("Device unregistered from GCM");
-
-        if (!GCMRegistrar.isRegisteredOnServer(context))
-            return;
-
-        final String serverUrl = GAE.PROD_URL + "/unregister";
-        final Map<String, String> params = new HashMap<String, String>();
-        params.put("regId", regId);
-        try {
-            post(serverUrl, params);
-            GCMRegistrar.setRegisteredOnServer(context, false);
-            Util.log("Device unregistered from PTW server");
-        } catch (final IOException e) {
-            // At this point the device is unregistered from GCM, but still
-            // registered in the server. It is not necessary to try to
-            // unregister again: if the server tries to send a message to the
-            // device, it will get a "NotRegistered" error message and should
-            // unregister the device.
-            Util.log("Failed to unregister device from PTW server");
-        }
-    }
-
-    @Override
-    protected void onMessage(final Context context, final Intent intent) {
-        if (!intent.hasExtra(MSG_KEY)) {
-            return;
-        }
-
-        final String message = intent.getStringExtra(MSG_KEY);
-        Util.log("Received " + message + " message from GCM");
-
-        if (MSG_KEY_SYNC.equals(message)) {
-            handleMsgSync();
-        } else {
-            Util.log("Message type unknown. Ignoring...");
-        }
-    }
-
-    @Override
-    protected void onDeletedMessages(final Context context, final int total) {
-        Util.log("Received deleted messages notification from GCM");
-    }
-
-    @Override
-    public void onError(final Context context, final String errorId) {
-        Util.log("Received error from GCM: " + errorId);
-    }
-
-    @Override
-    protected boolean onRecoverableError(final Context context, final String errorId) {
-        Util.log("Received recoverable error from GCM: " + errorId);
-        return super.onRecoverableError(context, errorId);
-    }
-
-    /**
-     * Issue a POST request to the server.
-     *
-     * @param endpoint POST address.
-     * @param params request parameters.
-     *
-     * @throws IOException propagated from POST.
-     */
-    private static void post(final String endpoint, final Map<String, String> params)
-            throws IOException {
-        URL url;
-        try {
-            url = new URL(endpoint);
-        } catch (final MalformedURLException e) {
-            throw new IllegalArgumentException("invalid url: " + endpoint);
-        }
-        final StringBuilder bodyBuilder = new StringBuilder();
-        final Iterator<Entry<String, String>> iterator = params.entrySet().iterator();
-        // constructs the POST body using the parameters
-        while (iterator.hasNext()) {
-            final Entry<String, String> param = iterator.next();
-            bodyBuilder.append(param.getKey()).append('=')
-            .append(param.getValue());
-            if (iterator.hasNext()) {
-                bodyBuilder.append('&');
-            }
-        }
-        final String body = bodyBuilder.toString();
-        Util.log("Posting '" + body + "' to " + url);
-        final byte[] bytes = body.getBytes();
-        HttpURLConnection conn = null;
-        try {
-            conn = (HttpURLConnection) url.openConnection();
-            conn.setDoOutput(true);
-            conn.setUseCaches(false);
-            conn.setFixedLengthStreamingMode(bytes.length);
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Content-Type",
-                    "application/x-www-form-urlencoded;charset=UTF-8");
-            // post the request
-            final OutputStream out = conn.getOutputStream();
-            out.write(bytes);
-            out.close();
-            // handle the response
-            final int status = conn.getResponseCode();
-            if (status != 200) {
-                throw new IOException("Post failed with error code " + status);
-            }
-        } finally {
-            if (conn != null) {
-                conn.disconnect();
-            }
-        }
+        // Release the wake lock provided by the WakefulBroadcastReceiver.
+        GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
 
     private void handleMsgSync() {

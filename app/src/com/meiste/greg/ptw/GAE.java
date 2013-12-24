@@ -81,7 +81,7 @@ public final class GAE {
     private String mGetPage;
     private String mJson;
 
-    static interface GaeListener {
+    public static interface GaeListener {
         void onFailedConnect(Context context);
         void onLaunchIntent(Intent launch);
         void onConnectSuccess(Context context, String json);

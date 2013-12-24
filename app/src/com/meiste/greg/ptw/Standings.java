@@ -39,7 +39,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gcm.GCMRegistrar;
 import com.google.gson.Gson;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
@@ -49,6 +48,8 @@ import com.meiste.greg.ptw.dialog.FriendActionDialog;
 import com.meiste.greg.ptw.dialog.FriendMethodDialog;
 import com.meiste.greg.ptw.dialog.FriendPlayerDialog;
 import com.meiste.greg.ptw.dialog.PrivacyDialog;
+import com.meiste.greg.ptw.gcm.Gcm;
+import com.meiste.greg.ptw.gcm.GcmIntentService;
 
 public final class Standings extends TabFragment implements OnRefreshListener<ListView>, GaeListener, DialogInterface.OnClickListener {
     public static final String FILENAME = "standings";
@@ -146,7 +147,7 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
                 if ((NfcAdapter.getDefaultAdapter(getActivity()) != null) &&
                         (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) &&
                         mAdapter.getPlayer().isIdentifiable() &&
-                        GCMRegistrar.isRegistered(getActivity())) {
+                        Gcm.isRegistered(getActivity())) {
                     Util.log("NFC available. Need to ask user add method.");
                     if (mFriendMethodDialog == null) {
                         mFriendMethodDialog = new FriendMethodDialog(getActivity(), Standings.this);
@@ -192,7 +193,7 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
         if (mFriendMethodDialog != null) {
             mFriendMethodDialog.onResume();
         }
-        GCMIntentService.clearNotification(getActivity().getApplicationContext());
+        GcmIntentService.clearNotification(getActivity().getApplicationContext());
     }
 
     @Override
@@ -348,7 +349,7 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
             case FriendMethodDialog.METHOD_NFC:
                 Util.log("Adding friend using NFC");
                 final FriendRequest fReq = new FriendRequest(mAdapter.getPlayer(),
-                        GCMRegistrar.getRegistrationId(getActivity().getApplicationContext()));
+                        Gcm.getRegistrationId(getActivity().getApplicationContext()));
                 final Intent intent = new Intent(getActivity(), NfcSendActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
                 intent.putExtra(NfcSendActivity.EXTRA_PLAYER_REQ, fReq.toJson());

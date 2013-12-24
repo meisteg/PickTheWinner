@@ -18,6 +18,9 @@ package com.meiste.greg.ptw;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.PagerTabStrip;
@@ -30,11 +33,13 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 import com.google.analytics.tracking.android.EasyTracker;
-import com.google.android.gcm.GCMRegistrar;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdRequest.Builder;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.meiste.greg.ptw.gcm.Gcm;
 import com.meiste.greg.ptw.iab.IabHelper;
 import com.meiste.greg.ptw.iab.IabResult;
 import com.meiste.greg.ptw.iab.Inventory;
@@ -46,23 +51,18 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
     private static final String LAST_TAB = "tab.last";
     private static final String SKU_AD_FREE = "ad_free";
     private static final int IAB_REQUEST = 10001;
+    private static final int GPS_REQUEST = 9000;
 
     private IabHelper mHelper;
     private ViewPager mPager;
     private AdView mAdView;
-    private AlertDialog mLegalDialog;
+    private Dialog mDialog;
     private boolean mIsAdFree = false;
     private boolean mIabReady = false;
 
-    /** Called when the activity is first created. */
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (BuildConfig.DEBUG) {
-            GCMRegistrar.checkDevice(this);
-            GCMRegistrar.checkManifest(this);
-        }
 
         mHelper = new IabHelper(this, PTW.PUB_KEY);
         mHelper.enableDebugLogging(BuildConfig.DEBUG, PTW.TAG);
@@ -128,14 +128,18 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
         if (mAdView != null) {
             mAdView.resume();
         }
+
+        if (checkPlayServices()) {
+            Gcm.registerIfNeeded(getApplicationContext());
+        }
     }
 
     @Override
     public void onDestroy() {
         // Hide dialogs to prevent window leaks on orientation changes
         Eula.hide();
-        if ((mLegalDialog != null) && (mLegalDialog.isShowing())) {
-            mLegalDialog.dismiss();
+        if ((mDialog != null) && (mDialog.isShowing())) {
+            mDialog.dismiss();
         }
 
         if (mAdView != null) {
@@ -143,8 +147,6 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
             mAdView.destroy();
             mAdView = null;
         }
-
-        GCMRegistrar.onDestroy(getApplicationContext());
 
         if (mHelper != null) {
             try {
@@ -192,8 +194,8 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
             builder.setCancelable(true);
             builder.setPositiveButton(R.string.ok, null);
             builder.setMessage(R.string.legal_content);
-            mLegalDialog = builder.create();
-            mLegalDialog.show();
+            mDialog = builder.create();
+            mDialog.show();
             return true;
 
         case R.string.ads_remove:
@@ -231,15 +233,33 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
     public void onEulaAgreedTo() {
         RaceAlarm.set(this);
         QuestionAlarm.set(this);
-
-        if (!GCMRegistrar.isRegistered(this) || !GCMRegistrar.isRegisteredOnServer(this)) {
-            Util.log("Registering with GCM");
-            GCMRegistrar.register(getApplicationContext(), PTW.GCM_SENDER_ID);
-        } else {
-            Util.log("Already registered with GCM: " + GCMRegistrar.getRegistrationId(getApplicationContext()));
-        }
-
         mHelper.startSetup(mIabSetupListener);
+    }
+
+    /**
+     * Check the device to make sure it has the Google Play Services APK. If
+     * it doesn't, display a dialog that allows users to download the APK from
+     * the Google Play Store or enable it in the device's system settings.
+     */
+    private boolean checkPlayServices() {
+        final int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                mDialog = GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+                        GPS_REQUEST, new OnCancelListener() {
+                    @Override
+                    public void onCancel(final DialogInterface dialog) {
+                        finish();
+                    }
+                });
+                mDialog.show();
+            } else {
+                Util.log("This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
     }
 
     private int getTab(final Intent intent) {
