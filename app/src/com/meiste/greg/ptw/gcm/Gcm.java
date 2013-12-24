@@ -22,19 +22,17 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.meiste.greg.ptw.EditPreferences;
 import com.meiste.greg.ptw.GAE;
 import com.meiste.greg.ptw.Util;
 
@@ -205,14 +203,12 @@ public final class Gcm {
         Util.log("Device registered with GCM: regId = " + regId);
 
         final String serverUrl = GAE.PROD_URL + "/register";
-        final Map<String, String> params = new HashMap<String, String>();
-        params.put("regId", regId);
         long backoff = BACKOFF_MILLI_SECONDS;
 
         for (int i = 1; i <= MAX_ATTEMPTS; i++) {
             Util.log("Attempt #" + i + " to register device on PTW server");
             try {
-                post(serverUrl, params);
+                post(context, serverUrl, regId);
                 setRegisteredOnServer(context, true);
                 Util.log("Device successfully registered on PTW server");
                 return true;
@@ -238,31 +234,22 @@ public final class Gcm {
     /**
      * Issue a POST request to the server.
      *
+     * @param context application's context.
      * @param endpoint POST address.
-     * @param params request parameters.
+     * @param regId registration ID
      *
      * @throws IOException propagated from POST.
      */
-    private static void post(final String endpoint, final Map<String, String> params)
+    private static void post(final Context context, final String endpoint, final String regId)
             throws IOException {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         URL url;
         try {
             url = new URL(endpoint);
         } catch (final MalformedURLException e) {
             throw new IllegalArgumentException("invalid url: " + endpoint);
         }
-        final StringBuilder bodyBuilder = new StringBuilder();
-        final Iterator<Entry<String, String>> iterator = params.entrySet().iterator();
-        // constructs the POST body using the parameters
-        while (iterator.hasNext()) {
-            final Entry<String, String> param = iterator.next();
-            bodyBuilder.append(param.getKey()).append('=')
-            .append(param.getValue());
-            if (iterator.hasNext()) {
-                bodyBuilder.append('&');
-            }
-        }
-        final String body = bodyBuilder.toString();
+        final String body = "regId=" + regId;
         Util.log("Posting '" + body + "' to " + url);
         final byte[] bytes = body.getBytes();
         HttpURLConnection conn = null;
@@ -274,6 +261,7 @@ public final class Gcm {
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type",
                     "application/x-www-form-urlencoded;charset=UTF-8");
+            conn.setRequestProperty("Cookie", prefs.getString(EditPreferences.KEY_ACCOUNT_COOKIE, null));
             // post the request
             final OutputStream out = conn.getOutputStream();
             out.write(bytes);

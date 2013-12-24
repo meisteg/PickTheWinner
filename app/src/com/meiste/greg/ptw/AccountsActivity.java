@@ -38,6 +38,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.meiste.greg.ptw.GAE.GaeListener;
+import com.meiste.greg.ptw.gcm.Gcm;
 
 public class AccountsActivity extends SherlockActivity implements GaeListener {
 
@@ -209,6 +210,7 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
     @Override
     public void onGet(final Context context, final String json) {
         PlayerHistory.fromJson(json).commit(context);
+        Gcm.register(context);
         finish();
     }
 }
