@@ -309,6 +309,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
 
         final IntentFilter filter = new IntentFilter(PTW.INTENT_ACTION_SCHEDULE);
         filter.addAction(PTW.INTENT_ACTION_RACE_ALARM);
+        filter.addAction(PTW.INTENT_ACTION_HISTORY);
         getActivity().registerReceiver(mBroadcastReceiver, filter);
 
         if ((mRaceSelected != null) && mRaceSelected.inProgress()) {
@@ -319,6 +320,8 @@ public final class Questions extends TabFragment implements View.OnClickListener
         mChanged = mSetupNeeded != GAE.isAccountSetupNeeded(getActivity());
         // Check if user has switched accounts
         mChanged |= mAccountSetupTime != Util.getAccountSetupTime(getActivity());
+        // Check if user submitted answers on a different device
+        mChanged |= mOnCreateViewTime < PlayerHistory.getTime(getActivity());
         if (mRaceNext != null) {
             // See if race questions are now available but weren't previously
             mChanged |= (mOnCreateViewTime < mRaceNext.getQuestionTimestamp()) && mRaceNext.inProgress();
@@ -353,7 +356,8 @@ public final class Questions extends TabFragment implements View.OnClickListener
         @Override
         public void onReceive(final Context context, final Intent intent) {
             if (intent.getAction().equals(PTW.INTENT_ACTION_SCHEDULE) ||
-                    intent.getAction().equals(PTW.INTENT_ACTION_RACE_ALARM)) {
+                    intent.getAction().equals(PTW.INTENT_ACTION_RACE_ALARM) ||
+                    intent.getAction().equals(PTW.INTENT_ACTION_HISTORY)) {
                 Util.log("Questions.onReceive: " + intent.getAction());
                 resetRaceSelected();
             }

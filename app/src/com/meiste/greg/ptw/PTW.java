@@ -34,6 +34,7 @@ public class PTW extends Application {
     public final static String INTENT_ACTION_RACE_ALARM = "com.meiste.greg.ptw.action.RACE_ALARM";
     public final static String INTENT_ACTION_SCHEDULE = "com.meiste.greg.ptw.action.SCHEDULE";
     public final static String INTENT_ACTION_STANDINGS = "com.meiste.greg.ptw.action.STANDINGS";
+    public final static String INTENT_ACTION_HISTORY = "com.meiste.greg.ptw.action.HISTORY";
 
     private BitmapLruCache mCache;
 

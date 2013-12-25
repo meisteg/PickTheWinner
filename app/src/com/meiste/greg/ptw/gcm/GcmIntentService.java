@@ -35,6 +35,7 @@ import com.meiste.greg.ptw.GAE.GaeListener;
 import com.meiste.greg.ptw.MainActivity;
 import com.meiste.greg.ptw.PTW;
 import com.meiste.greg.ptw.PlayerAdapter;
+import com.meiste.greg.ptw.PlayerHistory;
 import com.meiste.greg.ptw.R;
 import com.meiste.greg.ptw.RaceAlarm;
 import com.meiste.greg.ptw.Races;
@@ -50,6 +51,7 @@ public class GcmIntentService extends IntentService {
 
     private static final String MSG_KEY = "collapse_key";
     private static final String MSG_KEY_SYNC = "ptw_sync";
+    private static final String MSG_KEY_HISTORY = "ptw_history";
 
     private final Object mSync = new Object();
     private boolean mGaeSuccess = false;
@@ -81,6 +83,8 @@ public class GcmIntentService extends IntentService {
 
                     if (MSG_KEY_SYNC.equals(message)) {
                         handleMsgSync();
+                    } else if (MSG_KEY_HISTORY.equals(message)) {
+                        handleMsgHistory();
                     } else {
                         Util.log("Message type unknown. Ignoring...");
                     }
@@ -147,6 +151,30 @@ public class GcmIntentService extends IntentService {
         }
     }
 
+    private void handleMsgHistory() {
+        long backoff = BACKOFF_MILLI_SECONDS;
+
+        for (int i = 1; i <= MAX_ATTEMPTS; i++) {
+            Util.log("Attempt #" + i + " to get history from PTW server");
+            synchronized (mSync) {
+                GAE.getInstance(getApplicationContext()).getPage(historyListener, "history");
+                try {
+                    mSync.wait(WAIT_TIMEOUT);
+                } catch (final InterruptedException e) {}
+            }
+
+            if (mGaeSuccess || (i == MAX_ATTEMPTS))
+                break;
+            try {
+                Util.log("Sleeping for " + backoff + " ms before retry");
+                Thread.sleep(backoff);
+            } catch (final InterruptedException e) {}
+
+            // increase backoff exponentially
+            backoff *= 2;
+        }
+    }
+
     private final GcmGaeListener scheduleListener = new GcmGaeListener() {
         @Override
         public void onGet(final Context context, final String json) {
@@ -178,6 +206,18 @@ public class GcmIntentService extends IntentService {
                 Util.log("Notifying user of standings update");
                 showResultsNotification(context, pAdapter.getRaceAfterName());
             }
+
+            super.onGet(context, json);
+        }
+    };
+
+    private final GcmGaeListener historyListener = new GcmGaeListener() {
+        @Override
+        public void onGet(final Context context, final String json) {
+            Util.log("historyListener: onGet");
+
+            PlayerHistory.fromJson(json).commit(context);
+            sendBroadcast(new Intent(PTW.INTENT_ACTION_HISTORY));
 
             super.onGet(context, json);
         }

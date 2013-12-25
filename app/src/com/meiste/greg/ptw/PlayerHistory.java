@@ -56,5 +56,11 @@ public final class PlayerHistory {
 
         qeditor.apply();
         aeditor.apply();
+
+        Util.getState(context).edit().putLong("history", System.currentTimeMillis()).apply();
+    }
+
+    public static long getTime(final Context context) {
+        return Util.getState(context).getLong("history", 0);
     }
 }
