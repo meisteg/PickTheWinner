@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     Copyright (C) 2012 Gregory S. Meiste <http://gregmeiste.com>
+     Copyright (C) 2012-2013 Gregory S. Meiste <http://gregmeiste.com>
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="wrap_content" 
     android:layout_width="wrap_content"
     android:id="@+id/row"
@@ -37,18 +38,21 @@
         android:id="@+id/race_track_short"
 		android:layout_width="0px"
 		android:layout_height="wrap_content"
-		android:layout_weight="0.30" />
+		android:layout_weight="0.30"
+		tools:ignore="InconsistentLayout" />
     
     <TextView
         android:id="@+id/race_time"
 		android:layout_width="0px"
 		android:layout_height="wrap_content"
-		android:layout_weight="0.15" />
+		android:layout_weight="0.15"
+		tools:ignore="InconsistentLayout" />
     
     <TextView
         android:id="@+id/race_tv"
 		android:layout_width="0px"
 		android:layout_height="wrap_content"
-		android:layout_weight="0.15" />
+		android:layout_weight="0.15"
+		tools:ignore="InconsistentLayout" />
     
 </LinearLayout>
