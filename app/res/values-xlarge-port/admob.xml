@@ -16,5 +16,5 @@
 -->
 
 <resources>
-    <string name="admob_size">LEADERBOARD</string>
+    <string name="admob_size" translatable="false">LEADERBOARD</string>
 </resources>

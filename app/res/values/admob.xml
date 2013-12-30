@@ -16,6 +16,6 @@
 -->
 
 <resources>
-    <string name="admob_id">a14f6e08f942b9e</string>
-    <string name="admob_size">BANNER</string>
+    <string name="admob_id" translatable="false">ca-app-pub-7320309569335167/2158746536</string>
+    <string name="admob_size" translatable="false">BANNER</string>
 </resources>

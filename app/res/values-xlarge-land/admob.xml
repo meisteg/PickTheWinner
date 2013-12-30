@@ -16,5 +16,5 @@
 -->
 
 <resources>
-    <string name="admob_size">FULL_BANNER</string>
+    <string name="admob_size" translatable="false">FULL_BANNER</string>
 </resources>
