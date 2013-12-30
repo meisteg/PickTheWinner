@@ -60,24 +60,6 @@
         <item name="android:visibility">gone</item>
     </style>
 
-    <style name="StandingsAfter">
-        <item name="android:textSize">18sp</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:padding">10dp</item>
-        <item name="android:layout_weight">1</item>
-    </style>
-
-    <style name="StandingsAddFriend">
-        <item name="android:layout_height">fill_parent</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_marginLeft">5dp</item>
-        <item name="android:paddingLeft">16dp</item>
-        <item name="android:paddingRight">10dp</item>
-        <item name="android:src">@drawable/ic_menu_invite</item>
-        <item name="android:background">@drawable/standings_button</item>
-    </style>
-
     <style name="SuggestText">
         <item name="android:textSize">18sp</item>
         <item name="android:layout_height">wrap_content</item>

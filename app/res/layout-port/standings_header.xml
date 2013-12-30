@@ -20,18 +20,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical" >
     
-    <LinearLayout
-        android:layout_height="wrap_content" 
-        android:layout_width="match_parent"
-        android:gravity="center_vertical" >
-        
-        <TextView style="@style/StandingsAfter" android:id="@+id/after" />
-        
-        <ImageView
-            android:id="@+id/add_friend"
-            style="@style/StandingsAddFriend" />
-        
-    </LinearLayout>
+    <include layout="@layout/standings_header_common" />
     
     <LinearLayout
 	    android:layout_height="wrap_content" 
