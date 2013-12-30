@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.meiste.greg.ptw;
+package com.meiste.greg.ptw.tab;
 
 import android.app.ActivityManager;
 import android.content.Context;
@@ -34,8 +34,13 @@ import android.widget.Toast;
 
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.gson.Gson;
+import com.meiste.greg.ptw.GAE;
 import com.meiste.greg.ptw.GAE.GaeListener;
+import com.meiste.greg.ptw.ObservableScrollView;
 import com.meiste.greg.ptw.ObservableScrollView.ScrollViewListener;
+import com.meiste.greg.ptw.R;
+import com.meiste.greg.ptw.Race;
+import com.meiste.greg.ptw.Util;
 
 public final class Suggest extends TabFragment implements View.OnClickListener, ScrollViewListener, GaeListener {
     private EditText mQuestion;

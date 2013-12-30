@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.meiste.greg.ptw;
+package com.meiste.greg.ptw.tab;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -32,7 +32,17 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
+import com.meiste.greg.ptw.BuildConfig;
+import com.meiste.greg.ptw.GAE;
 import com.meiste.greg.ptw.GAE.GaeListener;
+import com.meiste.greg.ptw.PTW;
+import com.meiste.greg.ptw.R;
+import com.meiste.greg.ptw.Race;
+import com.meiste.greg.ptw.RaceActivity;
+import com.meiste.greg.ptw.RaceAlarm;
+import com.meiste.greg.ptw.RaceItemAdapter;
+import com.meiste.greg.ptw.Races;
+import com.meiste.greg.ptw.Util;
 
 public final class Schedule extends TabFragment implements OnRefreshListener<ListView>, GaeListener  {
 

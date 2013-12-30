@@ -21,7 +21,14 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.view.ViewGroup;
 
-class TabFragmentAdapter extends FragmentPagerAdapter {
+import com.meiste.greg.ptw.tab.Questions;
+import com.meiste.greg.ptw.tab.RuleBook;
+import com.meiste.greg.ptw.tab.Schedule;
+import com.meiste.greg.ptw.tab.Standings;
+import com.meiste.greg.ptw.tab.Suggest;
+import com.meiste.greg.ptw.tab.TabFragment;
+
+public class TabFragmentAdapter extends FragmentPagerAdapter {
 
     private static final int[] TAB_TITLES = {
         R.string.tab_rule_book,

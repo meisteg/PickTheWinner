@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.meiste.greg.ptw;
+package com.meiste.greg.ptw.tab;
 
 import android.os.Handler;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.meiste.greg.ptw.TabFragmentAdapter.FragmentListener;
+import com.meiste.greg.ptw.Util;
 
-public class TabFragment extends SherlockFragment {
+public abstract class TabFragment extends SherlockFragment {
 
     private FragmentListener mFragmentListener;
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.meiste.greg.ptw;
+package com.meiste.greg.ptw.tab;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -43,7 +43,15 @@ import com.google.gson.Gson;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
+import com.meiste.greg.ptw.FriendRequest;
+import com.meiste.greg.ptw.GAE;
 import com.meiste.greg.ptw.GAE.GaeListener;
+import com.meiste.greg.ptw.NfcSendActivity;
+import com.meiste.greg.ptw.PTW;
+import com.meiste.greg.ptw.Player;
+import com.meiste.greg.ptw.PlayerAdapter;
+import com.meiste.greg.ptw.R;
+import com.meiste.greg.ptw.Util;
 import com.meiste.greg.ptw.dialog.FriendActionDialog;
 import com.meiste.greg.ptw.dialog.FriendMethodDialog;
 import com.meiste.greg.ptw.dialog.FriendPlayerDialog;

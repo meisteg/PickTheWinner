@@ -18,8 +18,8 @@ package com.meiste.greg.ptw;
 import com.google.gson.Gson;
 
 public final class FriendRequest {
-    protected final Player player;
-    protected final String gcmRegId;
+    public final Player player;
+    public final String gcmRegId;
 
     public FriendRequest(final Player p, final String id) {
         player = p;

@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.meiste.greg.ptw;
+package com.meiste.greg.ptw.tab;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.meiste.greg.ptw.ObservableScrollView;
 import com.meiste.greg.ptw.ObservableScrollView.ScrollViewListener;
+import com.meiste.greg.ptw.R;
 
 public final class RuleBook extends TabFragment implements ScrollViewListener {
     private int mScroll = 0;

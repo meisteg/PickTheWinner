@@ -45,6 +45,7 @@ import android.text.format.DateUtils;
 import android.widget.RemoteViews;
 
 import com.google.analytics.tracking.android.EasyTracker;
+import com.meiste.greg.ptw.tab.Questions;
 
 public class WidgetProvider extends AppWidgetProvider {
 

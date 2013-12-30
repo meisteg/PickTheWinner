@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.meiste.greg.ptw.GAE.GaeListener;
+import com.meiste.greg.ptw.tab.Standings;
 
 public class NfcRecvActivity extends SherlockActivity implements GaeListener {
 

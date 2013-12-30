@@ -32,6 +32,7 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.meiste.greg.ptw.EditPreferences;
 import com.meiste.greg.ptw.GAE;
 import com.meiste.greg.ptw.GAE.GaeListener;
+import com.meiste.greg.ptw.tab.Standings;
 import com.meiste.greg.ptw.MainActivity;
 import com.meiste.greg.ptw.PTW;
 import com.meiste.greg.ptw.PlayerAdapter;
@@ -39,7 +40,6 @@ import com.meiste.greg.ptw.PlayerHistory;
 import com.meiste.greg.ptw.R;
 import com.meiste.greg.ptw.RaceAlarm;
 import com.meiste.greg.ptw.Races;
-import com.meiste.greg.ptw.Standings;
 import com.meiste.greg.ptw.Util;
 
 public class GcmIntentService extends IntentService {

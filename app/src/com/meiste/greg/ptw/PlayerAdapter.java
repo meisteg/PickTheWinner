@@ -28,6 +28,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.meiste.greg.ptw.tab.Standings;
 
 public final class PlayerAdapter extends ArrayAdapter<Player> {
     private class _Standings {
