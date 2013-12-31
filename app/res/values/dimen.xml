@@ -19,6 +19,7 @@
     <dimen name="DetailsTop">14dp</dimen>
     <dimen name="DetailsText">18dp</dimen>
     <dimen name="DetailsName">22dp</dimen>
+    <dimen name="DetailsMapSize">250dp</dimen>
     
     <dimen name="widget_margin">8dp</dimen>
 </resources>

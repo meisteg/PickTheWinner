@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     Copyright (C) 2012-2013 Gregory S. Meiste <http://gregmeiste.com>
+     Copyright (C) 2013 Gregory S. Meiste <http://gregmeiste.com>
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 -->
 
 <resources>
-    <dimen name="DetailsTop">20dp</dimen>
-    <dimen name="DetailsText">24dp</dimen>
-    <dimen name="DetailsName">28dp</dimen>
-    <dimen name="DetailsMapSize">500dp</dimen>
+    <item name="standings_header" type="layout">@layout/standings_header_full</item>
+    <item name="standings_row" type="layout">@layout/standings_row_full</item>
 </resources>
