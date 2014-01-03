@@ -51,8 +51,8 @@ public final class PlayerHistory {
         final Editor aeditor = acache.edit();
 
         for (int i = 0; i < ids.size(); i++) {
-            qeditor.putString(Questions.CACHE_PREFIX + ids.get(i), questions.get(i).toJson());
-            aeditor.putString(Questions.CACHE_PREFIX + ids.get(i), answers.get(i).toJson());
+            qeditor.putString(Questions.cachePrefix() + ids.get(i), questions.get(i).toJson());
+            aeditor.putString(Questions.cachePrefix() + ids.get(i), answers.get(i).toJson());
         }
 
         qeditor.apply();

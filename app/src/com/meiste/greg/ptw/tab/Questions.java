@@ -50,7 +50,6 @@ public final class Questions extends TabFragment implements GaeListener {
     public final static String QCACHE = "question_cache";
     public final static String ACACHE = "answer_cache";
     public final static String CACACHE = "correct_answer_cache";
-    public final static String CACHE_PREFIX = Calendar.getInstance().get(Calendar.YEAR) + "_race";
 
     private boolean mSetupNeeded;
     private boolean mChanged = false;
@@ -62,6 +61,10 @@ public final class Questions extends TabFragment implements GaeListener {
     private long mAccountSetupTime = 0;
     private Spinner mRaceSpinner = null;
     private QuestionsRaceAdapter mRaceAdapter;
+
+    public final static String cachePrefix() {
+        return Calendar.getInstance().get(Calendar.YEAR) + "_race";
+    }
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
@@ -122,7 +125,7 @@ public final class Questions extends TabFragment implements GaeListener {
             f = QuestionsConnectFail.getInstance(getChildFragmentManager(), ftag);
         } else if (mRaceSelected.inProgress() || !mRaceSelected.isFuture()) {
             SharedPreferences cache = getActivity().getSharedPreferences(QCACHE, Activity.MODE_PRIVATE);
-            final String qjson = cache.getString(CACHE_PREFIX + mRaceSelected.getId(), null);
+            final String qjson = cache.getString(cachePrefix() + mRaceSelected.getId(), null);
             if (qjson == null) {
                 selectEnable = false;
                 ftag = QuestionsConnecting.class.getName();
@@ -130,13 +133,13 @@ public final class Questions extends TabFragment implements GaeListener {
                 GAE.getInstance(getActivity()).getPage(this, "questions");
             } else {
                 cache = getActivity().getSharedPreferences(ACACHE, Activity.MODE_PRIVATE);
-                final String ajson = cache.getString(CACHE_PREFIX + mRaceSelected.getId(), null);
+                final String ajson = cache.getString(cachePrefix() + mRaceSelected.getId(), null);
                 if (ajson == null) {
                     ftag = qjson;
                     f = QuestionsForm.getInstance(getChildFragmentManager(), qjson);
                 } else {
                     cache = getActivity().getSharedPreferences(CACACHE, Activity.MODE_PRIVATE);
-                    final String cajson = cache.getString(CACHE_PREFIX + mRaceSelected.getId(), null);
+                    final String cajson = cache.getString(cachePrefix() + mRaceSelected.getId(), null);
                     if (cajson == null) {
                         final int raceAfterNum = new PlayerAdapter(getActivity()).getRaceAfterNum();
                         if (raceAfterNum >= mRaceSelected.getId()) {
@@ -286,7 +289,7 @@ public final class Questions extends TabFragment implements GaeListener {
             Util.log("CorrectAnswersListener: onGet: " + json);
 
             final SharedPreferences cache = context.getSharedPreferences(CACACHE, Activity.MODE_PRIVATE);
-            cache.edit().putString(CACHE_PREFIX + raceId, json).apply();
+            cache.edit().putString(cachePrefix() + raceId, json).apply();
 
             // Check for null in case race alarm has fired, changing the view
             if (mRaceSpinner != null) {
@@ -332,7 +335,7 @@ public final class Questions extends TabFragment implements GaeListener {
         Util.log("Questions: onGet: " + json);
 
         final SharedPreferences cache = context.getSharedPreferences(QCACHE, Activity.MODE_PRIVATE);
-        cache.edit().putString(CACHE_PREFIX + mRaceNext.getId(), json).apply();
+        cache.edit().putString(cachePrefix() + mRaceNext.getId(), json).apply();
 
         // Verify application wasn't closed before callback returned
         if (getActivity() != null) {
@@ -346,7 +349,7 @@ public final class Questions extends TabFragment implements GaeListener {
         Toast.makeText(context, R.string.questions_success, Toast.LENGTH_SHORT).show();
 
         final SharedPreferences cache = context.getSharedPreferences(ACACHE, Activity.MODE_PRIVATE);
-        cache.edit().putString(CACHE_PREFIX + mRaceNext.getId(), json).apply();
+        cache.edit().putString(cachePrefix() + mRaceNext.getId(), json).apply();
 
         context.sendBroadcast(new Intent(PTW.INTENT_ACTION_ANSWERS));
 

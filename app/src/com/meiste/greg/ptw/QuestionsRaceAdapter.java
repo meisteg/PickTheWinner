@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012, 2014 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,6 @@ package com.meiste.greg.ptw;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.meiste.greg.ptw.tab.Questions;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -29,6 +27,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import com.meiste.greg.ptw.tab.Questions;
 
 public final class QuestionsRaceAdapter extends ArrayAdapter<Race> {
     private final List<Race> mRaces = new ArrayList<Race>();
@@ -49,8 +49,8 @@ public final class QuestionsRaceAdapter extends ArrayAdapter<Race> {
         final SharedPreferences acache = context.getSharedPreferences(Questions.ACACHE, Activity.MODE_PRIVATE);
 
         for (final Race race : allRaces) {
-            if (qcache.contains(Questions.CACHE_PREFIX + race.getId()) &&
-                    acache.contains(Questions.CACHE_PREFIX + race.getId())) {
+            if (qcache.contains(Questions.cachePrefix() + race.getId()) &&
+                    acache.contains(Questions.cachePrefix() + race.getId())) {
                 mRaces.add(race);
             }
         }

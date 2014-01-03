@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2013-2014 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -273,7 +273,7 @@ public class WidgetProvider extends AppWidgetProvider {
                 } else {
                     final SharedPreferences acache =
                             mContext.getSharedPreferences(Questions.ACACHE, Activity.MODE_PRIVATE);
-                    if (acache.contains(Questions.CACHE_PREFIX + sRace.getId())) {
+                    if (acache.contains(Questions.cachePrefix() + sRace.getId())) {
                         rViews.setInt(R.id.status, "setText", R.string.widget_submitted);
                         rViews.setInt(R.id.widget_text_layout, "setBackgroundResource", R.drawable.widget_good);
                     } else if ((sRace.getStartTimestamp() - System.currentTimeMillis()) <= UPDATE_WARNING) {
