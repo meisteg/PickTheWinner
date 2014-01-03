@@ -100,6 +100,14 @@ public final class Questions extends TabFragment implements GaeListener {
     public void setSubFragment() {
         mSubFragmentTime = System.currentTimeMillis();
 
+        // Sanity check to verify time has not gone backwards (must likely due
+        // to user manually setting back time). This is needed so the check in
+        // onResume() will not continuously (and incorrectly) set mChanged=true
+        if (mSubFragmentTime < PlayerHistory.getTime(getActivity())) {
+            Util.log("Reseting player history time to " + mSubFragmentTime);
+            PlayerHistory.setTime(getActivity(), mSubFragmentTime);
+        }
+
         boolean selectEnable = true;
         final Fragment f;
         final String ftag;
@@ -177,10 +185,14 @@ public final class Questions extends TabFragment implements GaeListener {
         // Check if user has switched accounts
         mChanged |= mAccountSetupTime != Util.getAccountSetupTime(getActivity());
         // Check if user submitted answers on a different device
-        mChanged |= mSubFragmentTime < PlayerHistory.getTime(getActivity());
+        if (mSubFragmentTime > 0) {
+            mChanged |= mSubFragmentTime < PlayerHistory.getTime(getActivity());
+        }
         if (mRaceNext != null) {
-            // See if race questions are now available but weren't previously
-            mChanged |= (mSubFragmentTime < mRaceNext.getQuestionTimestamp()) && mRaceNext.inProgress();
+            if (mSubFragmentTime > 0) {
+                // See if race questions are now available but weren't previously
+                mChanged |= (mSubFragmentTime < mRaceNext.getQuestionTimestamp()) && mRaceNext.inProgress();
+            }
             // Check if questions form needs to disappear because race started
             mChanged |= !mRaceNext.isFuture();
         }

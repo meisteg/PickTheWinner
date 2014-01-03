@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,7 +58,11 @@ public final class PlayerHistory {
         qeditor.apply();
         aeditor.apply();
 
-        Util.getState(context).edit().putLong("history", System.currentTimeMillis()).apply();
+        setTime(context, System.currentTimeMillis());
+    }
+
+    public static void setTime(final Context context, final long time) {
+        Util.getState(context).edit().putLong("history", time).apply();
     }
 
     public static long getTime(final Context context) {
