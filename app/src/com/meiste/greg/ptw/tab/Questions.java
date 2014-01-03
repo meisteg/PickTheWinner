@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,37 +18,24 @@ package com.meiste.greg.ptw.tab;
 import java.util.Calendar;
 
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.graphics.Paint;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.analytics.tracking.android.EasyTracker;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-import com.meiste.greg.ptw.Driver;
-import com.meiste.greg.ptw.DriverAdapter;
 import com.meiste.greg.ptw.GAE;
 import com.meiste.greg.ptw.GAE.GaeListener;
-import com.meiste.greg.ptw.ObservableScrollView;
-import com.meiste.greg.ptw.ObservableScrollView.ScrollViewListener;
 import com.meiste.greg.ptw.PTW;
 import com.meiste.greg.ptw.PlayerAdapter;
 import com.meiste.greg.ptw.PlayerHistory;
@@ -56,60 +43,33 @@ import com.meiste.greg.ptw.QuestionAlarm;
 import com.meiste.greg.ptw.QuestionsRaceAdapter;
 import com.meiste.greg.ptw.R;
 import com.meiste.greg.ptw.Race;
-import com.meiste.greg.ptw.RaceAnswers;
-import com.meiste.greg.ptw.RaceQuestions;
 import com.meiste.greg.ptw.Util;
 
-public final class Questions extends TabFragment implements View.OnClickListener, ScrollViewListener, GaeListener {
+public final class Questions extends TabFragment implements GaeListener {
 
     public final static String QCACHE = "question_cache";
     public final static String ACACHE = "answer_cache";
     public final static String CACACHE = "correct_answer_cache";
     public final static String CACHE_PREFIX = Calendar.getInstance().get(Calendar.YEAR) + "_race";
 
-    @Expose
-    @SerializedName("a1")
-    private int mWinner;
-
-    @Expose
-    @SerializedName("a2")
-    private int mA2;
-
-    @Expose
-    @SerializedName("a3")
-    private int mA3;
-
-    @Expose
-    @SerializedName("a4")
-    private int mMostLaps;
-
-    @Expose
-    @SerializedName("a5")
-    private int mNumLeaders;
-
-    private int mScroll = 0;
     private boolean mSetupNeeded;
     private boolean mChanged = false;
     private Race mRaceNext;
     private Race mRaceSelected = null;
     private boolean mFailedConnect = false;
     private boolean mSending = false;
-    private long mOnCreateViewTime = 0;
+    private long mSubFragmentTime = 0;
     private long mAccountSetupTime = 0;
     private Spinner mRaceSpinner = null;
     private QuestionsRaceAdapter mRaceAdapter;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-        View v;
         mRaceNext = Race.getNext(getActivity(), false, true);
         mSetupNeeded = GAE.isAccountSetupNeeded(getActivity());
         mChanged = false;
         mRaceAdapter = new QuestionsRaceAdapter(getActivity());
-        mOnCreateViewTime = System.currentTimeMillis();
         mAccountSetupTime = Util.getAccountSetupTime(getActivity());
-        setRetainInstance(true);
-        boolean spinnerEnable = true;
 
         if (mRaceSelected == null) {
             if (mRaceNext != null) {
@@ -123,198 +83,80 @@ public final class Questions extends TabFragment implements View.OnClickListener
             return Util.getAccountSetupView(getActivity(), inflater, container);
         } else if (mRaceSelected == null) {
             return inflater.inflate(R.layout.questions_no_race, container, false);
-        } else if (mSending) {
-            return inflater.inflate(R.layout.connecting, container, false);
-        } else if (mRaceSelected.inProgress() || !mRaceSelected.isFuture()) {
-            if (mFailedConnect) {
-                mFailedConnect = false;
-                v = inflater.inflate(R.layout.no_connection, container, false);
-
-                final Button retry = (Button) v.findViewById(R.id.retry);
-                retry.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(final View v) {
-                        notifyChanged();
-                    }
-                });
-
-                return v;
-            }
-
-            SharedPreferences cache = getActivity().getSharedPreferences(QCACHE, Activity.MODE_PRIVATE);
-            String json = cache.getString(CACHE_PREFIX + mRaceSelected.getId(), null);
-            if (json == null) {
-                GAE.getInstance(getActivity()).getPage(this, "questions");
-                return inflater.inflate(R.layout.connecting, container, false);
-            }
-
-            final RaceQuestions rq = RaceQuestions.fromJson(json);
-
-            cache = getActivity().getSharedPreferences(ACACHE, Activity.MODE_PRIVATE);
-            json = cache.getString(CACHE_PREFIX + mRaceSelected.getId(), null);
-            if (json == null) {
-                Util.log("Questions: Showing form");
-
-                v = inflater.inflate(R.layout.questions, container, false);
-
-                final Spinner winner = (Spinner) v.findViewById(R.id.winner);
-                winner.setAdapter(new DriverAdapter(getActivity(), rq.drivers));
-                winner.setOnItemSelectedListener(new WinnerSelectedListener());
-
-                final Spinner a2 = (Spinner) v.findViewById(R.id.question2a);
-                final ArrayAdapter<CharSequence> a2_adapter = new ArrayAdapter<CharSequence>(
-                        getActivity(), android.R.layout.simple_spinner_item, rq.a2);
-                a2_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                a2.setAdapter(a2_adapter);
-                a2.setOnItemSelectedListener(new A2SelectedListener());
-
-                final Spinner a3 = (Spinner) v.findViewById(R.id.question3a);
-                final ArrayAdapter<CharSequence> a3_adapter = new ArrayAdapter<CharSequence>(
-                        getActivity(), android.R.layout.simple_spinner_item, rq.a3);
-                a3_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                a3.setAdapter(a3_adapter);
-                a3.setOnItemSelectedListener(new A3SelectedListener());
-
-                final Spinner mostlaps = (Spinner) v.findViewById(R.id.mostlaps);
-                mostlaps.setAdapter(new DriverAdapter(getActivity(), rq.drivers));
-                mostlaps.setOnItemSelectedListener(new MostLapsSelectedListener());
-
-                final Spinner numleaders = (Spinner) v.findViewById(R.id.numleaders);
-                final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-                        getActivity(), R.array.num_leaders, android.R.layout.simple_spinner_item);
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                numleaders.setAdapter(adapter);
-                numleaders.setOnItemSelectedListener(new NumLeadersSelectedListener());
-
-                final Button send = (Button) v.findViewById(R.id.send);
-                send.setOnClickListener(this);
-            } else {
-                Util.log("Questions: Showing submitted answers");
-
-                v = inflater.inflate(R.layout.questions_answered, container, false);
-                final Resources res = getActivity().getResources();
-                final RaceAnswers ra = RaceAnswers.fromJson(json);
-
-                final TextView a1 = (TextView) v.findViewById(R.id.answer1);
-                a1.setText(Driver.find(rq.drivers, res, ra.a1).getName());
-
-                final TextView a2 = (TextView) v.findViewById(R.id.answer2);
-                a2.setText(rq.a2[ra.a2]);
-
-                final TextView a3 = (TextView) v.findViewById(R.id.answer3);
-                a3.setText(rq.a3[ra.a3]);
-
-                final TextView a4 = (TextView) v.findViewById(R.id.answer4);
-                a4.setText(Driver.find(rq.drivers, res, ra.a4).getName());
-
-                final TextView a5 = (TextView) v.findViewById(R.id.answer5);
-                a5.setText(res.getStringArray(R.array.num_leaders)[ra.a5]);
-
-                if (!mRaceSelected.isFuture() && !mRaceSelected.isRecent()) {
-                    cache = getActivity().getSharedPreferences(CACACHE, Activity.MODE_PRIVATE);
-                    json = cache.getString(CACHE_PREFIX + mRaceSelected.getId(), null);
-                    if (json == null) {
-                        final PlayerAdapter pAdapter = new PlayerAdapter(getActivity());
-                        if (pAdapter.getRaceAfterNum() >= mRaceSelected.getId()) {
-                            // Standings are available for race, so correct answers
-                            // should be available for download.
-                            getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
-                            spinnerEnable = false;
-                            GAE.getInstance(getActivity()).getPage(
-                                    new CorrectAnswersListener(mRaceSelected.getId()),
-                                    "answers?year=" + mRaceSelected.getStartYear() +
-                                    "&race_id=" + mRaceSelected.getId());
-                        }
-                    } else {
-                        Util.log("Questions: Correct answers available");
-
-                        final RaceAnswers rca = RaceAnswers.fromJson(json);
-
-                        // Have to check for null in case there is no correct answer
-                        if ((rca.a1 != null) && (rca.a1 >= 0)) {
-                            if (rca.a1 == ra.a1) {
-                                a1.setTextColor(res.getColor(R.color.answer_right));
-                            } else {
-                                a1.setPaintFlags(a1.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                                a1.setTextColor(res.getColor(R.color.answer_wrong));
-                                final TextView c1 = (TextView) v.findViewById(R.id.correct1);
-                                c1.setText(Driver.find(rq.drivers, res, rca.a1).getName());
-                                c1.setVisibility(View.VISIBLE);
-                            }
-                        }
-                        if ((rca.a2 != null) && (rca.a2 >= 0)) {
-                            if (rca.a2 == ra.a2) {
-                                a2.setTextColor(res.getColor(R.color.answer_right));
-                            } else {
-                                a2.setPaintFlags(a2.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                                a2.setTextColor(res.getColor(R.color.answer_wrong));
-                                final TextView c2 = (TextView) v.findViewById(R.id.correct2);
-                                c2.setText(rq.a2[rca.a2]);
-                                c2.setVisibility(View.VISIBLE);
-                            }
-                        }
-                        if ((rca.a3 != null) && (rca.a3 >= 0)) {
-                            if (rca.a3 == ra.a3) {
-                                a3.setTextColor(res.getColor(R.color.answer_right));
-                            } else {
-                                a3.setPaintFlags(a3.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                                a3.setTextColor(res.getColor(R.color.answer_wrong));
-                                final TextView c3 = (TextView) v.findViewById(R.id.correct3);
-                                c3.setText(rq.a3[rca.a3]);
-                                c3.setVisibility(View.VISIBLE);
-                            }
-                        }
-                        if ((rca.a4 != null) && (rca.a4 >= 0)) {
-                            if (rca.a4 == ra.a4) {
-                                a4.setTextColor(res.getColor(R.color.answer_right));
-                            } else {
-                                a4.setPaintFlags(a4.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                                a4.setTextColor(res.getColor(R.color.answer_wrong));
-                                final TextView c4 = (TextView) v.findViewById(R.id.correct4);
-                                c4.setText(Driver.find(rq.drivers, res, rca.a4).getName());
-                                c4.setVisibility(View.VISIBLE);
-                            }
-                        }
-                        if ((rca.a5 != null) && (rca.a5 >= 0)) {
-                            if (rca.a5 == ra.a5) {
-                                a5.setTextColor(res.getColor(R.color.answer_right));
-                            } else {
-                                a5.setPaintFlags(a5.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                                a5.setTextColor(res.getColor(R.color.answer_wrong));
-                                final TextView c5 = (TextView) v.findViewById(R.id.correct5);
-                                c5.setText(res.getStringArray(R.array.num_leaders)[rca.a5]);
-                                c5.setVisibility(View.VISIBLE);
-                            }
-                        }
-                    } // Correct answers available
-                } // !mRaceSelected.isFuture()
-            }
-
-            final TextView q2 = (TextView) v.findViewById(R.id.question2);
-            q2.setText(getActivity().getString(R.string.questions_2, rq.q2));
-
-            final TextView q3 = (TextView) v.findViewById(R.id.question3);
-            q3.setText(getActivity().getString(R.string.questions_3, rq.q3));
-
-            final ObservableScrollView sv = (ObservableScrollView) v.findViewById(R.id.scroll_questions);
-            sv.postScrollTo(0, mScroll);
-            sv.setScrollViewListener(this);
-        } else {
-            v = inflater.inflate(R.layout.questions_not_yet, container, false);
-
-            final TextView time = (TextView) v.findViewById(R.id.questiontime);
-            time.setText(mRaceSelected.getQuestionDateTime(getActivity()));
         }
 
+        final View v = inflater.inflate(R.layout.questions, container, false);
         mRaceSpinner = (Spinner) v.findViewById(R.id.race_spinner);
         if (mRaceSpinner != null) {
             mRaceSpinner.setAdapter(mRaceAdapter);
             mRaceSpinner.setSelection(mRaceAdapter.getPosition(mRaceSelected));
             mRaceSpinner.setOnItemSelectedListener(new RaceSelectedListener());
-            mRaceSpinner.setEnabled(spinnerEnable);
         }
 
+        setSubFragment();
         return v;
+    }
+
+    public void setSubFragment() {
+        mSubFragmentTime = System.currentTimeMillis();
+
+        boolean selectEnable = true;
+        final Fragment f;
+        final String ftag;
+
+        if (mSending) {
+            selectEnable = false;
+            ftag = QuestionsConnecting.class.getName();
+            f = QuestionsConnecting.getInstance(getChildFragmentManager(), ftag);
+        } else if (mFailedConnect) {
+            mFailedConnect = false;
+            ftag = QuestionsConnectFail.class.getName();
+            f = QuestionsConnectFail.getInstance(getChildFragmentManager(), ftag);
+        } else if (mRaceSelected.inProgress() || !mRaceSelected.isFuture()) {
+            SharedPreferences cache = getActivity().getSharedPreferences(QCACHE, Activity.MODE_PRIVATE);
+            final String qjson = cache.getString(CACHE_PREFIX + mRaceSelected.getId(), null);
+            if (qjson == null) {
+                selectEnable = false;
+                ftag = QuestionsConnecting.class.getName();
+                f = QuestionsConnecting.getInstance(getChildFragmentManager(), ftag);
+                GAE.getInstance(getActivity()).getPage(this, "questions");
+            } else {
+                cache = getActivity().getSharedPreferences(ACACHE, Activity.MODE_PRIVATE);
+                final String ajson = cache.getString(CACHE_PREFIX + mRaceSelected.getId(), null);
+                if (ajson == null) {
+                    ftag = qjson;
+                    f = QuestionsForm.getInstance(getChildFragmentManager(), qjson);
+                } else {
+                    cache = getActivity().getSharedPreferences(CACACHE, Activity.MODE_PRIVATE);
+                    final String cajson = cache.getString(CACHE_PREFIX + mRaceSelected.getId(), null);
+                    if (cajson == null) {
+                        final int raceAfterNum = new PlayerAdapter(getActivity()).getRaceAfterNum();
+                        if (raceAfterNum >= mRaceSelected.getId()) {
+                            // Standings are available for race, so correct answers
+                            // should be available for download.
+                            getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
+                            selectEnable = false;
+                            GAE.getInstance(getActivity()).getPage(
+                                    new CorrectAnswersListener(mRaceSelected.getId()),
+                                    "answers?year=" + mRaceSelected.getStartYear() +
+                                    "&race_id=" + mRaceSelected.getId());
+                        }
+                    }
+
+                    ftag = QuestionsAnswers.getTag(qjson, ajson, cajson);
+                    f = QuestionsAnswers.getInstance(getChildFragmentManager(), qjson, ajson, cajson);
+                }
+            }
+        } else {
+            ftag = QuestionsNotYet.getTag(mRaceSelected);
+            f = QuestionsNotYet.getInstance(getChildFragmentManager(), mRaceSelected);
+        }
+
+        getChildFragmentManager().beginTransaction().replace(R.id.race_questions, f, ftag).commit();
+
+        if (mRaceSpinner != null) {
+            mRaceSpinner.setEnabled(selectEnable);
+        }
     }
 
     @Override
@@ -331,14 +173,14 @@ public final class Questions extends TabFragment implements View.OnClickListener
         }
 
         // Check if user changed their account status
-        mChanged = mSetupNeeded != GAE.isAccountSetupNeeded(getActivity());
+        mChanged |= mSetupNeeded != GAE.isAccountSetupNeeded(getActivity());
         // Check if user has switched accounts
         mChanged |= mAccountSetupTime != Util.getAccountSetupTime(getActivity());
         // Check if user submitted answers on a different device
-        mChanged |= mOnCreateViewTime < PlayerHistory.getTime(getActivity());
+        mChanged |= mSubFragmentTime < PlayerHistory.getTime(getActivity());
         if (mRaceNext != null) {
             // See if race questions are now available but weren't previously
-            mChanged |= (mOnCreateViewTime < mRaceNext.getQuestionTimestamp()) && mRaceNext.inProgress();
+            mChanged |= (mSubFragmentTime < mRaceNext.getQuestionTimestamp()) && mRaceNext.inProgress();
             // Check if questions form needs to disappear because race started
             mChanged |= !mRaceNext.isFuture();
         }
@@ -369,12 +211,9 @@ public final class Questions extends TabFragment implements View.OnClickListener
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(final Context context, final Intent intent) {
-            if (intent.getAction().equals(PTW.INTENT_ACTION_SCHEDULE) ||
-                    intent.getAction().equals(PTW.INTENT_ACTION_RACE_ALARM) ||
-                    intent.getAction().equals(PTW.INTENT_ACTION_HISTORY)) {
-                Util.log("Questions.onReceive: " + intent.getAction());
-                resetRaceSelected();
-            }
+            Util.log("Questions.onReceive: " + intent.getAction());
+            mChanged = true;
+            resetRaceSelected();
         }
     };
 
@@ -396,60 +235,12 @@ public final class Questions extends TabFragment implements View.OnClickListener
             if (mRaceSelected.getId() != race.getId()) {
                 mRaceSelected = race;
                 Util.log("Questions: Selected race = " + mRaceSelected.getId());
-                notifyChanged();
+                if (mChanged) {
+                    notifyChanged();
+                } else {
+                    setSubFragment();
+                }
             }
-        }
-
-        @Override
-        public void onNothingSelected(final AdapterView<?> parent) {}
-    }
-
-    private class WinnerSelectedListener implements OnItemSelectedListener {
-        @Override
-        public void onItemSelected(final AdapterView<?> parent, final View v, final int pos, final long id) {
-            final Driver driver = (Driver) parent.getItemAtPosition(pos);
-            mWinner = driver.getNumber();
-        }
-
-        @Override
-        public void onNothingSelected(final AdapterView<?> parent) {}
-    }
-
-    private class A2SelectedListener implements OnItemSelectedListener {
-        @Override
-        public void onItemSelected(final AdapterView<?> parent, final View v, final int pos, final long id) {
-            mA2 = pos;
-        }
-
-        @Override
-        public void onNothingSelected(final AdapterView<?> parent) {}
-    }
-
-    private class A3SelectedListener implements OnItemSelectedListener {
-        @Override
-        public void onItemSelected(final AdapterView<?> parent, final View v, final int pos, final long id) {
-            mA3 = pos;
-        }
-
-        @Override
-        public void onNothingSelected(final AdapterView<?> parent) {}
-    }
-
-    private class MostLapsSelectedListener implements OnItemSelectedListener {
-        @Override
-        public void onItemSelected(final AdapterView<?> parent, final View v, final int pos, final long id) {
-            final Driver driver = (Driver) parent.getItemAtPosition(pos);
-            mMostLaps = driver.getNumber();
-        }
-
-        @Override
-        public void onNothingSelected(final AdapterView<?> parent) {}
-    }
-
-    private class NumLeadersSelectedListener implements OnItemSelectedListener {
-        @Override
-        public void onItemSelected(final AdapterView<?> parent, final View v, final int pos, final long id) {
-            mNumLeaders = pos;
         }
 
         @Override
@@ -493,7 +284,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
             // Verify application wasn't closed before callback returned
             if (getSherlockActivity() != null) {
                 getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
-                notifyChanged();
+                setSubFragment();
             }
         }
 
@@ -504,26 +295,12 @@ public final class Questions extends TabFragment implements View.OnClickListener
         public void onLaunchIntent(final Intent launch) {}
     }
 
-    @Override
-    public void onClick(final View v) {
-        if (ActivityManager.isUserAMonkey()) {
-            Util.log("Questions: onClick: User is a monkey!");
-            return;
-        }
-
-        mScroll = 0;
+    public void onSubmitAnswers(final String json) {
         mSending = true;
-        notifyChanged();
+        setSubFragment();
 
-        final Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-        GAE.getInstance(getActivity()).postPage(this, "questions", gson.toJson(this));
-
+        GAE.getInstance(getActivity()).postPage(this, "questions", json);
         EasyTracker.getTracker().sendEvent("Questions", "button", "send", (long) 0);
-    }
-
-    @Override
-    public void onScrollChanged(final ObservableScrollView sv, final int x, final int y, final int oldx, final int oldy) {
-        mScroll = y;
     }
 
     @Override
@@ -534,7 +311,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
         if (getActivity() != null) {
             mSending = false;
             mFailedConnect = true;
-            notifyChanged();
+            setSubFragment();
         }
     }
 
@@ -547,7 +324,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
 
         // Verify application wasn't closed before callback returned
         if (getActivity() != null) {
-            notifyChanged();
+            setSubFragment();
         }
     }
 
@@ -564,7 +341,7 @@ public final class Questions extends TabFragment implements View.OnClickListener
         // Verify application wasn't closed before callback returned
         if (getActivity() != null) {
             mSending = false;
-            notifyChanged();
+            setSubFragment();
         }
     }
 
