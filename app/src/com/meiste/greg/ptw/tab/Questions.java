@@ -29,7 +29,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -60,6 +62,7 @@ public final class Questions extends TabFragment implements GaeListener {
     private long mSubFragmentTime = 0;
     private long mAccountSetupTime = 0;
     private Spinner mRaceSpinner = null;
+    private ListView mRaceList = null;
     private QuestionsRaceAdapter mRaceAdapter;
 
     public final static String cachePrefix() {
@@ -73,6 +76,7 @@ public final class Questions extends TabFragment implements GaeListener {
         mChanged = false;
         mRaceAdapter = new QuestionsRaceAdapter(getActivity());
         mAccountSetupTime = Util.getAccountSetupTime(getActivity());
+        setRetainInstance(true);
 
         if (mRaceSelected == null) {
             if (mRaceNext != null) {
@@ -89,11 +93,21 @@ public final class Questions extends TabFragment implements GaeListener {
         }
 
         final View v = inflater.inflate(R.layout.questions, container, false);
+        final int position = mRaceAdapter.getPosition(mRaceSelected);
         mRaceSpinner = (Spinner) v.findViewById(R.id.race_spinner);
         if (mRaceSpinner != null) {
             mRaceSpinner.setAdapter(mRaceAdapter);
-            mRaceSpinner.setSelection(mRaceAdapter.getPosition(mRaceSelected));
+            mRaceSpinner.setSelection(position);
             mRaceSpinner.setOnItemSelectedListener(new RaceSelectedListener());
+        } else {
+            mRaceList = (ListView) v.findViewById(R.id.race_list);
+            if (mRaceList != null) {
+                mRaceList.setAdapter(mRaceAdapter);
+                mRaceList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+                mRaceList.setSelection(position);
+                mRaceList.setItemChecked(position, true);
+                mRaceList.setOnItemClickListener(new RaceSelectedListener());
+            }
         }
 
         setSubFragment();
@@ -167,6 +181,8 @@ public final class Questions extends TabFragment implements GaeListener {
 
         if (mRaceSpinner != null) {
             mRaceSpinner.setEnabled(selectEnable);
+        } else if (mRaceList != null) {
+            mRaceList.setEnabled(selectEnable);
         }
     }
 
@@ -233,17 +249,24 @@ public final class Questions extends TabFragment implements GaeListener {
     };
 
     private void resetRaceSelected() {
+        final int lastPos = mRaceAdapter.getCount() - 1;
+
         // Workaround to ensure the spinner is set back to next race
         if ((mRaceSpinner != null) && (mRaceAdapter.getCount() > 0) &&
-                (mRaceSpinner.getSelectedItemPosition() != (mRaceAdapter.getCount() - 1))) {
+                (mRaceSpinner.getSelectedItemPosition() != lastPos)) {
             // Making new selection causes notifyChanged to be called by listener
-            mRaceSpinner.setSelection(mRaceAdapter.getCount() - 1);
+            mRaceSpinner.setSelection(lastPos);
+        } else if ((mRaceList != null) && (mRaceAdapter.getCount() > 0) &&
+                (mRaceList.getSelectedItemPosition() != lastPos)) {
+            mRaceList.performItemClick(null, lastPos, 0);
+            mRaceList.smoothScrollToPosition(lastPos);
+            mRaceList.setItemChecked(lastPos, true);
         } else {
             notifyChanged();
         }
     }
 
-    private class RaceSelectedListener implements OnItemSelectedListener {
+    private class RaceSelectedListener implements OnItemSelectedListener, OnItemClickListener {
         @Override
         public void onItemSelected(final AdapterView<?> parent, final View v, final int pos, final long id) {
             final Race race = (Race) parent.getItemAtPosition(pos);
@@ -260,6 +283,11 @@ public final class Questions extends TabFragment implements GaeListener {
 
         @Override
         public void onNothingSelected(final AdapterView<?> parent) {}
+
+        @Override
+        public void onItemClick(final AdapterView<?> parent, final View v, final int pos, final long id) {
+            onItemSelected(parent, v, pos, id);
+        }
     }
 
     private class CorrectAnswersListener implements GaeListener {
@@ -273,9 +301,10 @@ public final class Questions extends TabFragment implements GaeListener {
         public void onFailedConnect(final Context context) {
             Util.log("CorrectAnswersListener: onFailedConnect");
 
-            // Check for null in case race alarm has fired, changing the view
             if (mRaceSpinner != null) {
                 mRaceSpinner.setEnabled(true);
+            } else if (mRaceList != null) {
+                mRaceList.setEnabled(true);
             }
 
             // Verify application wasn't closed before callback returned
@@ -291,9 +320,10 @@ public final class Questions extends TabFragment implements GaeListener {
             final SharedPreferences cache = context.getSharedPreferences(CACACHE, Activity.MODE_PRIVATE);
             cache.edit().putString(cachePrefix() + raceId, json).apply();
 
-            // Check for null in case race alarm has fired, changing the view
             if (mRaceSpinner != null) {
                 mRaceSpinner.setEnabled(true);
+            } else if (mRaceList != null) {
+                mRaceList.setEnabled(true);
             }
 
             // Verify application wasn't closed before callback returned
