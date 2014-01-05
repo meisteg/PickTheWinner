@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
@@ -176,6 +178,12 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         }
 
+        if (Util.isGooglePlusInstalled(this) &&
+                (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)) {
+            menu.add(Menu.NONE, R.string.google_plus, Menu.NONE, R.string.google_plus)
+            .setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+        }
+
         return true;
     }
 
@@ -196,6 +204,11 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
             builder.setMessage(R.string.legal_content);
             mDialog = builder.create();
             mDialog.show();
+            return true;
+
+        case R.string.google_plus:
+            startActivity(new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("https://plus.google.com/109696002032953241222/posts")));
             return true;
 
         case R.string.ads_remove:

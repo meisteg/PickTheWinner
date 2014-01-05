@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.text.format.DateUtils;
 import android.text.format.Time;
 import android.util.Log;
@@ -34,6 +36,10 @@ public final class Util {
     private final static String PREFS_SETUP = "setup";
 
     public static boolean LOGGING_ENABLED = BuildConfig.DEBUG;
+
+    private Util() {
+        throw new UnsupportedOperationException();
+    }
 
     public static void log(final String msg) {
         if (LOGGING_ENABLED) Log.d(PTW.TAG, msg);
@@ -64,6 +70,16 @@ public final class Util {
             }
         });
         return v;
+    }
+
+    public static boolean isGooglePlusInstalled(final Context context) {
+        try {
+            final ApplicationInfo ai = context.getPackageManager()
+                    .getApplicationInfo("com.google.android.apps.plus", 0);
+            return ai.enabled;
+        } catch (final NameNotFoundException e) {
+        }
+        return false;
     }
 
     /* Android's DateUtils.getRelativeTimeSpanString implementation is broken
