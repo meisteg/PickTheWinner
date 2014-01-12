@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,6 +89,7 @@ public class RaceActivity extends SherlockFragmentActivity implements ScrollView
         final TextView name = (TextView) findViewById(R.id.race_name);
         final TextView trackLong = (TextView) findViewById(R.id.race_track);
         final TextView tv = (TextView) findViewById(R.id.race_tv);
+        final TextView cityState = (TextView) findViewById(R.id.race_citystate);
 
         if (mRace.isExhibition()) {
             raceNum.setVisibility(View.GONE);
@@ -103,6 +104,7 @@ public class RaceActivity extends SherlockFragmentActivity implements ScrollView
         name.setText(mRace.getName());
         trackLong.setText(mRace.getTrack(Race.NAME_LONG));
         tv.setText(getString(R.string.details_tv, mRace.getTv()));
+        cityState.setText(mRace.getCityState());
 
         if (isWorkaroundNeeded((ViewGroup) getSupportFragmentManager().findFragmentById(R.id.map).getView())) {
             // Workaround not needed on Android 4.1+ devices using TextureView:

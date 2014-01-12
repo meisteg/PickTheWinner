@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ public final class Race {
     private long mStart;
     private long mQuestion;
     private String mLayout;
+    private String mCityState;
 
     public static Race getInstance(final Context context, final int id) {
         return Races.get(context)[id];
@@ -148,5 +149,9 @@ public final class Race {
 
     public String getTrackSize(final Context context) {
         return context.getString(R.string.details_size, mSize);
+    }
+
+    public String getCityState() {
+        return mCityState;
     }
 }

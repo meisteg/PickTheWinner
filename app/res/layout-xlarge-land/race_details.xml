@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     Copyright (C) 2012-2013 Gregory S. Meiste <http://gregmeiste.com>
+     Copyright (C) 2012-2014 Gregory S. Meiste <http://gregmeiste.com>
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -22,19 +22,19 @@
     android:layout_height="fill_parent"
     android:scrollbars="vertical"
     android:fillViewport="true" >
-    
+
     <LinearLayout
         android:layout_height="fill_parent" 
         android:layout_width="fill_parent"
         android:baselineAligned="false" >
-        
+
         <RelativeLayout
             android:layout_width="0px"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
             android:orientation="vertical"
             android:padding="20sp" >
-            
+
             <TextView
                 android:id="@+id/race_num"
 	            android:layout_width="wrap_content"
@@ -55,7 +55,7 @@
 	            android:paddingRight="20sp"
 	            android:visibility="gone"
 	            android:layout_alignParentRight="true" />
-            
+
             <TextView
                 android:id="@+id/race_name"
                 style="@style/RaceDetailsName"
@@ -64,14 +64,21 @@
             <TextView
                 android:id="@+id/race_track"
                 style="@style/RaceDetailsText"
-                android:paddingBottom="20sp"
                 android:layout_below="@id/race_name"
                 android:textIsSelectable="true" />
-            
+            <TextView
+                android:id="@+id/race_citystate"
+                style="@style/RaceDetailsText"
+                android:paddingBottom="20sp"
+                android:layout_below="@id/race_track"
+                android:textColor="@android:color/darker_gray"
+                android:textStyle="italic"
+                android:textIsSelectable="true" />
+
             <TextView
                 android:id="@+id/race_time"
                 style="@style/RaceDetailsText"
-                android:layout_below="@id/race_track"
+                android:layout_below="@id/race_citystate"
                 android:textIsSelectable="true" />
             <TextView
                 android:id="@+id/race_tv"
@@ -79,22 +86,22 @@
                 android:paddingBottom="20sp"
                 android:layout_below="@id/race_time"
                 android:textIsSelectable="true" />
-            
+
             <TextView
                 android:id="@+id/race_track_size"
                 style="@style/RaceDetailsText"
                 android:layout_below="@id/race_tv"
                 android:textIsSelectable="true" />
-            
+
         </RelativeLayout>
-    
+
         <fragment
             android:id="@+id/map"
             android:layout_width="0px"
             android:layout_height="fill_parent"
             android:layout_weight="0.5"
             class="com.google.android.gms.maps.SupportMapFragment" />
-        
+
     </LinearLayout>
-    
+
 </com.meiste.greg.ptw.ObservableScrollView>
