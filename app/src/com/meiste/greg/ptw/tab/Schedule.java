@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,6 @@ import com.meiste.greg.ptw.PTW;
 import com.meiste.greg.ptw.R;
 import com.meiste.greg.ptw.Race;
 import com.meiste.greg.ptw.RaceActivity;
-import com.meiste.greg.ptw.RaceAlarm;
 import com.meiste.greg.ptw.RaceItemAdapter;
 import com.meiste.greg.ptw.Races;
 import com.meiste.greg.ptw.Util;
@@ -109,9 +108,7 @@ public final class Schedule extends TabFragment implements OnRefreshListener<Lis
     @Override
     public void onGet(final Context context, final String json) {
         Races.update(context, json);
-        RaceAlarm.reset(context);
         mPullToRefresh.onRefreshComplete();
-        context.sendBroadcast(new Intent(PTW.INTENT_ACTION_SCHEDULE));
     }
 
     @Override

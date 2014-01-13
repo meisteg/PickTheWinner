@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012, 2014 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import android.content.Context;
+import android.content.Intent;
 
 import com.google.gson.Gson;
 
@@ -60,6 +61,9 @@ public final class Races {
                 fos.write(json.getBytes());
                 fos.close();
                 sRaces = null;
+
+                RaceAlarm.reset(context);
+                context.sendBroadcast(new Intent(PTW.INTENT_ACTION_SCHEDULE));
             } catch (final Exception e) {
                 Util.log("Failed to save update to schedule");
             }

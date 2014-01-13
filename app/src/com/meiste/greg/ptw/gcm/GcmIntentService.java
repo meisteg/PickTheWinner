@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,15 +32,14 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.meiste.greg.ptw.EditPreferences;
 import com.meiste.greg.ptw.GAE;
 import com.meiste.greg.ptw.GAE.GaeListener;
-import com.meiste.greg.ptw.tab.Standings;
 import com.meiste.greg.ptw.MainActivity;
 import com.meiste.greg.ptw.PTW;
 import com.meiste.greg.ptw.PlayerAdapter;
 import com.meiste.greg.ptw.PlayerHistory;
 import com.meiste.greg.ptw.R;
-import com.meiste.greg.ptw.RaceAlarm;
 import com.meiste.greg.ptw.Races;
 import com.meiste.greg.ptw.Util;
+import com.meiste.greg.ptw.tab.Standings;
 
 public class GcmIntentService extends IntentService {
 
@@ -181,9 +180,6 @@ public class GcmIntentService extends IntentService {
             Util.log("scheduleListener: onGet");
 
             Races.update(context, json);
-            RaceAlarm.reset(context);
-            sendBroadcast(new Intent(PTW.INTENT_ACTION_SCHEDULE));
-
             super.onGet(context, json);
         }
     };
