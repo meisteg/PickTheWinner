@@ -261,7 +261,7 @@ public class GcmIntentService extends IntentService {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         if (prefs.getBoolean(EditPreferences.KEY_NOTIFY_RESULTS, true)) {
             final Intent notificationIntent = new Intent(context, MainActivity.class);
-            notificationIntent.putExtra(MainActivity.INTENT_TAB, 2);
+            notificationIntent.putExtra(PTW.INTENT_EXTRA_TAB, 2);
             final PendingIntent pi = PendingIntent.getActivity(context, PI_REQ_CODE,
                     notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 

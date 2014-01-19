@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,7 +82,7 @@ public final class QuestionAlarm extends BroadcastReceiver {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         if (prefs.getBoolean(EditPreferences.KEY_NOTIFY_QUESTIONS, true)) {
             final Intent notificationIntent = new Intent(context, MainActivity.class);
-            notificationIntent.putExtra(MainActivity.INTENT_TAB, 1);
+            notificationIntent.putExtra(PTW.INTENT_EXTRA_TAB, 1);
             final PendingIntent pi = PendingIntent.getActivity(context, PI_REQ_CODE,
                     notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 

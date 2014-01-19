@@ -49,7 +49,6 @@ import com.meiste.greg.ptw.iab.Purchase;
 
 public class MainActivity extends SherlockFragmentActivity implements Eula.OnEulaAgreedTo {
 
-    public static final String INTENT_TAB = "tab_select";
     private static final String LAST_TAB = "tab.last";
     private static final String SKU_AD_FREE = "ad_free";
     private static final int IAB_REQUEST = 10001;
@@ -279,7 +278,7 @@ public class MainActivity extends SherlockFragmentActivity implements Eula.OnEul
         // Recent applications caches intent with extras. Only want to listen
         // to INTENT_TAB extra if launched from notification.
         if ((intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) == 0) {
-            final int intent_tab = intent.getIntExtra(INTENT_TAB, -1);
+            final int intent_tab = intent.getIntExtra(PTW.INTENT_EXTRA_TAB, -1);
             if (intent_tab >= 0) {
                 return intent_tab;
             }

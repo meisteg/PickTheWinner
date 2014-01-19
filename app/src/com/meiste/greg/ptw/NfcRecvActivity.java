@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2013-2014 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -92,7 +92,7 @@ public class NfcRecvActivity extends SherlockActivity implements GaeListener {
     private void showStandings() {
         final Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        intent.putExtra(MainActivity.INTENT_TAB, 2);
+        intent.putExtra(PTW.INTENT_EXTRA_TAB, 2);
         startActivity(intent);
     }
 

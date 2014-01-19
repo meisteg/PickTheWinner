@@ -286,7 +286,7 @@ public class WidgetProvider extends AppWidgetProvider {
                 }
 
                 Intent intent = new Intent(mContext, MainActivity.class);
-                intent.putExtra(MainActivity.INTENT_TAB, 1);
+                intent.putExtra(PTW.INTENT_EXTRA_TAB, 1);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 PendingIntent pi = PendingIntent.getActivity(mContext, PI_REQ_CODE,
                         intent, PendingIntent.FLAG_UPDATE_CURRENT);
