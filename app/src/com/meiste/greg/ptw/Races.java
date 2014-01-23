@@ -16,8 +16,10 @@
 package com.meiste.greg.ptw;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import android.content.Context;
@@ -36,18 +38,13 @@ public final class Races {
             if (sRaces == null) {
                 Util.log("Populating race array");
 
-                final Race[] lRaces = getLatest(context);
-                final Race[] iRaces = getIncluded(context);
-                if ((lRaces == null) || (lRaces.length <= 0)) {
-                    // User doesn't have updated schedule, so use included schedule
-                    sRaces = iRaces;
-                } else if (lRaces[lRaces.length-1].getStartTimestamp() < iRaces[0].getStartTimestamp()) {
-                    // Included schedule is newer than updated schedule
-                    sRaces = iRaces;
-                    Util.log("Removing downloaded schedule because included is newer");
-                    context.deleteFile(FILENAME);
-                } else {
-                    sRaces = lRaces;
+                sRaces = getDownloaded(context);
+                if (BuildConfig.DEBUG) {
+                    final Race[] includedRaces = getIncluded(context);
+                    if (includedRaces.length > 0) {
+                        Util.log("DEBUG build schedule override");
+                        sRaces = includedRaces;
+                    }
                 }
             }
         }
@@ -72,7 +69,25 @@ public final class Races {
 
     private static Race[] getIncluded(final Context context) {
         try {
-            final BufferedReader in = new BufferedReader(new InputStreamReader(context.getAssets().open(FILENAME)));
+            return parseInputStream(context.getAssets().open(FILENAME));
+        } catch (final IOException e) {
+            Util.log("No included schedule found");
+        }
+        return new Race[0];
+    }
+
+    private static Race[] getDownloaded(final Context context) {
+        try {
+            return parseInputStream(context.openFileInput(FILENAME));
+        } catch (final FileNotFoundException e) {
+            Util.log("No downloaded schedule found");
+        }
+        return new Race[0];
+    }
+
+    private static Race[] parseInputStream(final InputStream is) {
+        try {
+            final BufferedReader in = new BufferedReader(new InputStreamReader(is));
             String line;
             final StringBuilder buffer = new StringBuilder();
             while ((line = in.readLine()) != null)
@@ -80,24 +95,7 @@ public final class Races {
             in.close();
             return new Gson().fromJson(buffer.toString(), Race[].class);
         } catch (final IOException e) {
-            Util.log("Unable to open included schedule: " + e);
         }
-
-        return null;
-    }
-
-    private static Race[] getLatest(final Context context) {
-        try {
-            final BufferedReader in = new BufferedReader(new InputStreamReader(context.openFileInput(FILENAME)));
-            String line;
-            final StringBuilder buffer = new StringBuilder();
-            while ((line = in.readLine()) != null)
-                buffer.append(line).append('\n');
-            in.close();
-            return new Gson().fromJson(buffer.toString(), Race[].class);
-        } catch (final Exception e) {
-            Util.log("No updated schedule found");
-        }
-        return null;
+        return new Race[0];
     }
 }
