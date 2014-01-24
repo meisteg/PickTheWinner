@@ -32,6 +32,7 @@
 
     <!-- Screen names for activities -->
     <string name="com.meiste.greg.ptw.MainActivity">Main</string>
+    <string name="com.meiste.greg.ptw.GameActivity">Main</string>
     <string name="com.meiste.greg.ptw.EditPreferences">Preferences</string>
     <string name="com.meiste.greg.ptw.RaceActivity">Race Details</string>
     <string name="com.meiste.greg.ptw.AccountsActivity">Account Setup</string>
