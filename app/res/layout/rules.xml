@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     Copyright (C) 2012-2013 Gregory S. Meiste <http://gregmeiste.com>
+     Copyright (C) 2012-2014 Gregory S. Meiste <http://gregmeiste.com>
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -22,39 +22,11 @@
     android:layout_height="wrap_content"
     android:scrollbars="vertical"
     android:fillViewport="true">
-    
+
     <LinearLayout
+        android:id="@+id/rules_container"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-        
-        <TextView
-            style="@style/RuleBookHeader"
-            android:text="@string/scoring_header"
-            android:textIsSelectable="true" />
-        <TextView
-            style="@style/RuleBookText"
-            android:text="@string/scoring"
-            android:textIsSelectable="true" />
-        
-        <TextView
-            style="@style/RuleBookHeader"
-            android:text="@string/chase_header"
-            android:textIsSelectable="true" />
-        <TextView
-            style="@style/RuleBookText"
-            android:text="@string/chase"
-            android:textIsSelectable="true" />
-        
-        <TextView
-            style="@style/RuleBookHeader"
-            android:text="@string/tie_header"
-            android:textIsSelectable="true" />
-        <TextView
-            style="@style/RuleBookText"
-            android:text="@string/tie"
-            android:textIsSelectable="true" />
-        
-    </LinearLayout>
+        android:orientation="vertical" />
 
 </com.meiste.greg.ptw.ObservableScrollView>

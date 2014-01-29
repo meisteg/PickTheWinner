@@ -28,6 +28,7 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.meiste.greg.ptw.GAE.GaeListener;
+import com.meiste.greg.ptw.tab.RuleBook;
 
 public class MainActivity extends SherlockActivity {
 
@@ -70,6 +71,9 @@ public class MainActivity extends SherlockActivity {
         } else if (races[0].getStartTimestamp() < minTime) {
             Util.log("Race schedule is too old!");
             return true;
+        } else if (!RuleBook.isValid(this, minTime)) {
+            Util.log("Rules missing or are too old");
+            return true;
         }
         return false;
     }
@@ -110,12 +114,33 @@ public class MainActivity extends SherlockActivity {
         public void onGet(final Context context, final String json) {
             Util.log("Schedule init success!");
             Races.update(context, json);
-            startGameActivity();
+            GAE.getInstance(getApplicationContext()).getPage(mRulesListener, "rule_book");
         }
 
         @Override
         public void onFailedConnect(final Context context) {
             Util.log("Schedule init failure!");
+            showError();
+        }
+
+        @Override
+        public void onLaunchIntent(final Intent launch) {}
+
+        @Override
+        public void onConnectSuccess(final Context context, final String json) {}
+    };
+
+    private final GaeListener mRulesListener = new GaeListener() {
+        @Override
+        public void onGet(final Context context, final String json) {
+            Util.log("Rule Book init success!");
+            RuleBook.update(context, json);
+            startGameActivity();
+        }
+
+        @Override
+        public void onFailedConnect(final Context context) {
+            Util.log("Rule Book init failure!");
             showError();
         }
 

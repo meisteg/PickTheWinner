@@ -39,6 +39,7 @@ import com.meiste.greg.ptw.PlayerHistory;
 import com.meiste.greg.ptw.R;
 import com.meiste.greg.ptw.Races;
 import com.meiste.greg.ptw.Util;
+import com.meiste.greg.ptw.tab.RuleBook;
 import com.meiste.greg.ptw.tab.Standings;
 
 public class GcmIntentService extends IntentService {
@@ -51,6 +52,7 @@ public class GcmIntentService extends IntentService {
     private static final String MSG_KEY = "collapse_key";
     private static final String MSG_KEY_SYNC = "ptw_sync";
     private static final String MSG_KEY_HISTORY = "ptw_history";
+    private static final String MSG_KEY_RULES = "ptw_rules";
 
     private final Object mSync = new Object();
     private boolean mGaeSuccess = false;
@@ -81,9 +83,12 @@ public class GcmIntentService extends IntentService {
                     Util.log("Received " + message + " message from GCM");
 
                     if (MSG_KEY_SYNC.equals(message)) {
-                        handleMsgSync();
+                        getFromServer("schedule", scheduleListener, false);
+                        getFromServer("standings", standingsListener, true);
                     } else if (MSG_KEY_HISTORY.equals(message)) {
-                        handleMsgHistory();
+                        getFromServer("history", historyListener, true);
+                    } else if (MSG_KEY_RULES.equals(message)) {
+                        getFromServer("rule_book", rulesListener, false);
                     } else {
                         Util.log("Message type unknown. Ignoring...");
                     }
@@ -95,68 +100,19 @@ public class GcmIntentService extends IntentService {
         GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
 
-    private void handleMsgSync() {
+    private void getFromServer(final String page, final GcmGaeListener l, final boolean accountRequired) {
         long backoff = BACKOFF_MILLI_SECONDS;
-
-        /* First update schedule */
-        for (int i = 1; i <= MAX_ATTEMPTS; i++) {
-            Util.log("Attempt #" + i + " to sync schedule from PTW server");
-            synchronized (mSync) {
-                GAE.getInstance(getApplicationContext()).getPage(scheduleListener, "schedule");
-                try {
-                    mSync.wait(WAIT_TIMEOUT);
-                } catch (final InterruptedException e) {}
-            }
-
-            if (mGaeSuccess || (i == MAX_ATTEMPTS))
-                break;
-            try {
-                Util.log("Sleeping for " + backoff + " ms before retry");
-                Thread.sleep(backoff);
-            } catch (final InterruptedException e) {}
-
-            // increase backoff exponentially
-            backoff *= 2;
-        }
-
-        /* Reset variables */
-        backoff = BACKOFF_MILLI_SECONDS;
         mGaeSuccess = false;
 
-        /* Next update standings */
         for (int i = 1; i <= MAX_ATTEMPTS; i++) {
-            if (GAE.isAccountSetupNeeded(this)) {
-                Util.log("Skipping Standings sync since account not setup");
+            if (accountRequired && GAE.isAccountSetupNeeded(this)) {
+                Util.log("Skipping " + page + " sync since account not setup");
                 break;
             }
 
-            Util.log("Attempt #" + i + " to sync standings from PTW server");
+            Util.log("Attempt #" + i + " to get " + page + " from PTW server");
             synchronized (mSync) {
-                GAE.getInstance(getApplicationContext()).getPage(standingsListener, "standings");
-                try {
-                    mSync.wait(WAIT_TIMEOUT);
-                } catch (final InterruptedException e) {}
-            }
-
-            if (mGaeSuccess || (i == MAX_ATTEMPTS))
-                break;
-            try {
-                Util.log("Sleeping for " + backoff + " ms before retry");
-                Thread.sleep(backoff);
-            } catch (final InterruptedException e) {}
-
-            // increase backoff exponentially
-            backoff *= 2;
-        }
-    }
-
-    private void handleMsgHistory() {
-        long backoff = BACKOFF_MILLI_SECONDS;
-
-        for (int i = 1; i <= MAX_ATTEMPTS; i++) {
-            Util.log("Attempt #" + i + " to get history from PTW server");
-            synchronized (mSync) {
-                GAE.getInstance(getApplicationContext()).getPage(historyListener, "history");
+                GAE.getInstance(getApplicationContext()).getPage(l, page);
                 try {
                     mSync.wait(WAIT_TIMEOUT);
                 } catch (final InterruptedException e) {}
@@ -215,6 +171,16 @@ public class GcmIntentService extends IntentService {
             PlayerHistory.fromJson(json).commit(context);
             sendBroadcast(new Intent(PTW.INTENT_ACTION_HISTORY));
 
+            super.onGet(context, json);
+        }
+    };
+
+    private final GcmGaeListener rulesListener = new GcmGaeListener() {
+        @Override
+        public void onGet(final Context context, final String json) {
+            Util.log("rulesListener: onGet");
+
+            RuleBook.update(context, json);
             super.onGet(context, json);
         }
     };
