@@ -419,6 +419,17 @@ public class IabHelper {
             result = new IabResult(IABHELPER_REMOTE_EXCEPTION, "Remote exception while starting purchase flow");
             if (listener != null) listener.onIabPurchaseFinished(result, null);
         }
+        // START PICK THE WINNER WORKAROUND
+        // Will get a NPE if mService is null due to Play Store disconnect.
+        catch (NullPointerException e) {
+            logError("NullPointerException while launching purchase flow for sku " + sku);
+            e.printStackTrace();
+            flagEndAsync();
+
+            result = new IabResult(IABHELPER_REMOTE_EXCEPTION, "Remote disconnected before starting purchase flow");
+            if (listener != null) listener.onIabPurchaseFinished(result, null);
+        }
+        // END PICK THE WINNER WORKAROUND
     }
 
     /**

@@ -214,16 +214,6 @@ public class GameActivity extends SherlockFragmentActivity implements Eula.OnEul
             trackEvent("onOptionsItemSelected", "ads_remove");
             try {
                 mHelper.launchPurchaseFlow(this, SKU_AD_FREE, IAB_REQUEST, mPurchaseFinishedListener);
-            } catch (final NullPointerException e) {
-                // If the billing service disconnects (for example, when the
-                // Play Store auto-updates itself), then the helper class
-                // will attempt to dereference a null pointer (mService).
-                // Working around issue here instead of fixing Google code.
-                final String msg = "Unable to launch purchase flow: " + e;
-                Util.log(msg);
-                EasyTracker.getTracker().sendException(msg, false);
-                mIabReady = false;
-                invalidateOptionsMenu();
             } catch (final IllegalStateException e) {
                 // Can be caused by user double clicking option item
                 Util.log("Unable to launch purchase flow: " + e);
