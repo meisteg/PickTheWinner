@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     Copyright (C) 2012-2013 Gregory S. Meiste <http://gregmeiste.com>
+     Copyright (C) 2012-2014 Gregory S. Meiste <http://gregmeiste.com>
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -24,4 +24,5 @@
     <dimen name="widget_margin">8dp</dimen>
 
     <dimen name="questions_padding">15dp</dimen>
+    <dimen name="rules_padding">10sp</dimen>
 </resources>

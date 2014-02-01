@@ -27,6 +27,7 @@
         android:id="@+id/rules_container"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" />
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/rules_padding" />
 
 </com.meiste.greg.ptw.ObservableScrollView>

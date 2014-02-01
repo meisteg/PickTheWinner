@@ -28,7 +28,6 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,8 +54,7 @@ public final class RuleBook extends TabFragment implements ScrollViewListener {
 
         final LinearLayout l = (LinearLayout) v.findViewById(R.id.rules_container);
         final Resources res = getActivity().getResources();
-        final int padding = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_SP, 10, res.getDisplayMetrics());
+        final int padding = (int) res.getDimension(R.dimen.rules_padding);
 
         final Rules rules = Rules.get(getActivity());
         if (rules != null) {
