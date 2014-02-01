@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     Copyright (C) 2012-2013 Gregory S. Meiste <http://gregmeiste.com>
+     Copyright (C) 2012-2014 Gregory S. Meiste <http://gregmeiste.com>
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -19,51 +19,52 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical" >
-    
+
     <include layout="@layout/standings_header_common" />
-    
+
     <LinearLayout
-	    android:layout_height="wrap_content" 
-	    android:layout_width="match_parent"
-	    android:paddingLeft="10dp"
-	    android:paddingRight="10dp"
-	    android:paddingTop="3dp"
-	    android:paddingBottom="3dp"
-	    android:background="@color/standings_header">
-	    
-	    <TextView
-			android:text="@string/standings_rank"
-			android:layout_width="0px"
-			android:layout_height="wrap_content"
-			android:layout_weight="0.15" />
-	    
-	    <TextView
-			android:text="@string/standings_player"
-			android:layout_width="0px"
-			android:layout_height="wrap_content"
-			android:layout_weight="0.40" />
-	    
-	    <TextView
-			android:text="@string/standings_points"
-			android:layout_width="0px"
-			android:layout_height="wrap_content"
-			android:layout_weight="0.15"
-			android:gravity="right" />
-	    
-	    <TextView
-			android:text="@string/standings_races"
-			android:layout_width="0px"
-			android:layout_height="wrap_content"
-			android:layout_weight="0.15"
-			android:gravity="right" />
-	    
-	    <TextView
-			android:text="@string/standings_wins"
-			android:layout_width="0px"
-			android:layout_height="wrap_content"
-			android:layout_weight="0.15"
-			android:gravity="right" />
-	    
-	</LinearLayout>
+        android:layout_height="wrap_content" 
+        android:layout_width="match_parent"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
+        android:background="@color/standings_header">
+
+        <TextView
+            android:text="@string/standings_rank"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.13" />
+
+        <TextView
+            android:text="@string/standings_player"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.42"
+            android:paddingLeft="10dp" />
+
+        <TextView
+            android:text="@string/standings_points"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.15"
+            android:gravity="right" />
+
+        <TextView
+            android:text="@string/standings_races"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.15"
+            android:gravity="right" />
+
+        <TextView
+            android:text="@string/standings_wins"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.15"
+            android:gravity="right" />
+
+    </LinearLayout>
 
 </LinearLayout>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -191,8 +191,9 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
         p = getItem(pos);
 
         if (isSelf(p))
-            holder.row.setBackgroundResource(R.drawable.standings_self);
-        else if (p.inChase() || isWildCard(p))
+            holder.name.setBackgroundResource(R.drawable.standings_self);
+
+        if (p.inChase() || isWildCard(p))
             holder.row.setBackgroundResource(R.drawable.standings_chase);
         else
             holder.row.setBackgroundResource(R.drawable.standings_other);
