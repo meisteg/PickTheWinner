@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ public final class Player {
     public int races;
     public int wins;
     public boolean friend;
+    public boolean inChase;
 
     public String getName() {
         return name;
@@ -45,8 +46,8 @@ public final class Player {
         return Integer.toString(wins);
     }
 
-    public boolean inChase() {
-        return ((rank != null) && (rank <= 10)) || (points >= 5000);
+    public boolean isInChase() {
+        return inChase;
     }
 
     public boolean isIdentifiable() {

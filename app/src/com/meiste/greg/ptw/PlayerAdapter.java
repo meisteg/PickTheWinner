@@ -35,7 +35,6 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
         public int race_id;
         public List<Player> standings;
         public Player self;
-        public Player[] wildcards;
     }
 
     private class _ViewHolder {
@@ -67,7 +66,6 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
             in.close();
             mStandings = new Gson().fromJson(buffer.toString(), _Standings.class);
             addSelf();
-            findWildCards();
         } catch (final Exception e) {
             Util.log("Standings file not found");
         }
@@ -98,43 +96,6 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
                 break;
             }
         }
-    }
-
-    private void findWildCards() {
-        mStandings.wildcards = new Player[2];
-
-        // Wild card rule does not apply once in the Chase
-        if (Race.getInstance(mContext, mStandings.race_id).isInChase())
-            return;
-
-        // Verify we have at least 12 players (remember, counting from zero)
-        if (mStandings.standings.size() < 11)
-            return;
-
-        // Start by assuming 11th and 12th in standings are the wild cards
-        if (mStandings.standings.get(10).wins >= mStandings.standings.get(11).wins) {
-            mStandings.wildcards[0] = mStandings.standings.get(10);
-            mStandings.wildcards[1] = mStandings.standings.get(11);
-        } else {
-            mStandings.wildcards[0] = mStandings.standings.get(11);
-            mStandings.wildcards[1] = mStandings.standings.get(10);
-        }
-
-        // Then, check 13th - 20th to see if they have more wins
-        for (int i = 12; i < Math.min(20, mStandings.standings.size()); ++i) {
-            if (mStandings.standings.get(i).wins > mStandings.wildcards[0].wins) {
-                mStandings.wildcards[1] = mStandings.wildcards[0];
-                mStandings.wildcards[0] = mStandings.standings.get(i);
-            } else if (mStandings.standings.get(i).wins > mStandings.wildcards[1].wins) {
-                mStandings.wildcards[1] = mStandings.standings.get(i);
-            }
-        }
-    }
-
-    private boolean isWildCard(final Player p) {
-        if (p.equals(mStandings.wildcards[0]) || p.equals(mStandings.wildcards[1]))
-            return true;
-        return false;
     }
 
     @Override
@@ -192,8 +153,10 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
 
         if (isSelf(p))
             holder.name.setBackgroundResource(R.drawable.standings_self);
+        else
+            holder.name.setBackgroundResource(android.R.color.transparent);
 
-        if (p.inChase() || isWildCard(p))
+        if (p.isInChase())
             holder.row.setBackgroundResource(R.drawable.standings_chase);
         else
             holder.row.setBackgroundResource(R.drawable.standings_other);
