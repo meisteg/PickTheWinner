@@ -177,7 +177,16 @@ public final class Questions extends TabFragment implements GaeListener {
             f = QuestionsNotYet.getInstance(getChildFragmentManager(), mRaceSelected);
         }
 
-        getChildFragmentManager().beginTransaction().replace(R.id.race_questions, f, ftag).commit();
+        try {
+            getChildFragmentManager().beginTransaction().replace(R.id.race_questions, f, ftag).commit();
+        } catch (final IllegalStateException e) {
+            // This can occur if the user presses HOME or BACK during transaction
+            // with server. When server response is received, the asynchronous
+            // callback will try to update the fragment and fail, so set changed
+            // flag so UI is updated on next resume.
+            mChanged = true;
+            Util.log("Questions fragment commit failed. Setting changed flag instead.");
+        }
 
         if (mRaceSpinner != null) {
             mRaceSpinner.setEnabled(selectEnable);
