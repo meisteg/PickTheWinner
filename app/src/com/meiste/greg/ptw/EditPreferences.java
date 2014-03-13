@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import android.preference.PreferenceScreen;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.MapBuilder;
 
 public class EditPreferences extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener {
     public static final String KEY_ACCOUNT_EMAIL = "account.email";
@@ -104,13 +105,13 @@ public class EditPreferences extends SherlockPreferenceActivity implements OnSha
     @Override
     public void onStart() {
         super.onStart();
-        EasyTracker.getInstance().activityStart(this);
+        EasyTracker.getInstance(this).activityStart(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        EasyTracker.getInstance().activityStop(this);
+        EasyTracker.getInstance(this).activityStop(this);
     }
 
     @Override
@@ -164,7 +165,8 @@ public class EditPreferences extends SherlockPreferenceActivity implements OnSha
             }
         } else if (preference instanceof CheckBoxPreference) {
             final String setting = ((CheckBoxPreference)preference).isChecked() ? "enable" : "disable";
-            EasyTracker.getTracker().sendEvent("Preferences", preference.getKey(), setting, (long) 0);
+            EasyTracker.getInstance(this).send(
+                    MapBuilder.createEvent("Preferences", preference.getKey(), setting, null).build());
         }
         return super.onPreferenceTreeClick(preferenceScreen, preference);
     }

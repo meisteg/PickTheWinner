@@ -35,6 +35,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.MapBuilder;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdRequest.Builder;
@@ -101,13 +102,13 @@ public class GameActivity extends SherlockFragmentActivity implements Eula.OnEul
     @Override
     public void onStart() {
         super.onStart();
-        EasyTracker.getInstance().activityStart(this);
+        EasyTracker.getInstance(this).activityStart(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        EasyTracker.getInstance().activityStop(this);
+        EasyTracker.getInstance(this).activityStop(this);
     }
 
     @Override
@@ -158,9 +159,7 @@ public class GameActivity extends SherlockFragmentActivity implements Eula.OnEul
                 // calling dispose will cause an exception when it tries to
                 // unbind from the service it never connected to. Working
                 // around issue here instead of fixing Google code.
-                final String err = "Error when disposing IabHelper: " + e;
-                Util.log(err);
-                EasyTracker.getTracker().sendException(err, false);
+                Util.log("Error when disposing IabHelper: " + e);
             }
             mHelper = null;
         }
@@ -298,7 +297,8 @@ public class GameActivity extends SherlockFragmentActivity implements Eula.OnEul
     }
 
     private void trackEvent(final String action, final String label) {
-        EasyTracker.getTracker().sendEvent("Main", action, label, (long) 0);
+        EasyTracker.getInstance(this).send(
+                MapBuilder.createEvent("Main", action, label, null).build());
     }
 
     private final AdListener mAdListener = new AdListener() {

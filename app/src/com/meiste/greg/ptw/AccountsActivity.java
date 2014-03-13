@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -133,13 +133,13 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
     @Override
     public void onStart() {
         super.onStart();
-        EasyTracker.getInstance().activityStart(this);
+        EasyTracker.getInstance(this).activityStart(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        EasyTracker.getInstance().activityStop(this);
+        EasyTracker.getInstance(this).activityStop(this);
 
         if (mShouldFinish) {
             finish();

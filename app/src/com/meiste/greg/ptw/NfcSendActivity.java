@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2013-2014 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,12 +34,12 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.google.analytics.tracking.android.EasyTracker;
 
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class NfcSendActivity extends SherlockActivity implements OnNdefPushCompleteCallback {
 
     public static final String EXTRA_PLAYER_REQ = "player_req";
     private static final int MESSAGE_SENT = 1;
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,13 +96,13 @@ public class NfcSendActivity extends SherlockActivity implements OnNdefPushCompl
     @Override
     public void onStart() {
         super.onStart();
-        EasyTracker.getInstance().activityStart(this);
+        EasyTracker.getInstance(this).activityStart(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        EasyTracker.getInstance().activityStop(this);
+        EasyTracker.getInstance(this).activityStop(this);
     }
 
     @Override

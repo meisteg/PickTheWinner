@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.MapBuilder;
 import com.google.gson.Gson;
 import com.meiste.greg.ptw.GAE;
 import com.meiste.greg.ptw.GAE.GaeListener;
@@ -111,7 +112,8 @@ public final class Suggest extends TabFragment implements View.OnClickListener, 
         Toast.makeText(getActivity(), R.string.suggest_success, Toast.LENGTH_SHORT).show();
         mQuestion.setText("");
 
-        EasyTracker.getTracker().sendEvent("Suggest", "button", "send", (long) 0);
+        EasyTracker.getInstance(getActivity()).send(
+                MapBuilder.createEvent("Suggest", "button", "send", null).build());
     }
 
     @Override

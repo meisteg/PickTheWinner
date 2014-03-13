@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!--
-     Copyright (C) 2013 Gregory S. Meiste <http://gregmeiste.com>
+     Copyright (C) 2013-2014 Gregory S. Meiste <http://gregmeiste.com>
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -27,8 +27,12 @@
     <!-- The dispatch period in seconds -->
     <integer name="ga_dispatchPeriod">60</integer>
 
-    <!-- Flag to enable or writing of debug information to the log -->
-    <bool name="ga_debug">false</bool>
+    <!-- The verbosity of the SDK logger. Valid values from least to most
+         verbose are: error, warning, info, and verbose. -->
+    <string name="ga_logLevel">warning</string>
+
+    <!-- Prevent data from appearing in reports. Useful for testing. -->
+    <bool name="ga_dryRun">false</bool>
 
     <!-- Screen names for activities -->
     <string name="com.meiste.greg.ptw.MainActivity">Main</string>
