@@ -43,6 +43,7 @@ import com.meiste.greg.ptw.gcm.Gcm;
 public class AccountsActivity extends SherlockActivity implements GaeListener {
 
     private static final int REQUEST_LAUNCH_INTENT = 0;
+    private static final String KEY_ACCOUNT_NAME = "account";
 
     // EXTRA_ACCOUNT_TYPES was added in API 18 (Android 4.3), but works
     // fine on many older versions and is simply ignored by the rest.
@@ -147,6 +148,18 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
     }
 
     @Override
+    protected void onSaveInstanceState(final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(KEY_ACCOUNT_NAME, mAccountName);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(final Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        mAccountName = savedInstanceState.getString(KEY_ACCOUNT_NAME);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         // Add menu item to add account on ICS MR1 or later. Older versions
         // don't support directing user straight to Google account setup.
@@ -179,9 +192,9 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         if (requestCode == REQUEST_LAUNCH_INTENT) {
-            Util.log("onActivityResult: resultCode=" + resultCode);
+            Util.log("onActivityResult: resultCode=" + resultCode + ", mAccountName=" + mAccountName);
 
-            if (resultCode == RESULT_OK)
+            if ((resultCode == RESULT_OK) && (mAccountName != null))
                 mGae.connect(this, mAccountName);
             else
                 onFailedConnect(this);
