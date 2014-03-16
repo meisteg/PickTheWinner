@@ -52,7 +52,9 @@ public class RaceActivity extends SherlockFragmentActivity implements ScrollView
         setContentView(R.layout.race_details);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        doSetContent();
+        if (!doSetContent()) {
+            finish();
+        }
     }
 
     @Override
@@ -60,9 +62,12 @@ public class RaceActivity extends SherlockFragmentActivity implements ScrollView
         setIntent(intent);
 
         final boolean needMoveMap = (mMap != null);
-        doSetContent();
-        if (needMoveMap) {
-            moveMap();
+        if (doSetContent()) {
+            if (needMoveMap) {
+                moveMap();
+            }
+        } else {
+            finish();
         }
     }
 
@@ -78,9 +83,14 @@ public class RaceActivity extends SherlockFragmentActivity implements ScrollView
         EasyTracker.getInstance(this).activityStop(this);
     }
 
-    private void doSetContent() {
+    private boolean doSetContent() {
         Util.log("RaceActivity: " + INTENT_ID + "=" + getIntent().getIntExtra(INTENT_ID, 0));
         mRace = Race.getInstance(this, getIntent().getIntExtra(INTENT_ID, 0));
+
+        if (mRace == null) {
+            Util.log("RaceActivity: Failed to instantiate race!");
+            return false;
+        }
 
         final TextView raceNum = (TextView) findViewById(R.id.race_num);
         final TextView inTheChase = (TextView) findViewById(R.id.race_in_chase);
@@ -93,7 +103,9 @@ public class RaceActivity extends SherlockFragmentActivity implements ScrollView
 
         if (mRace.isExhibition()) {
             raceNum.setVisibility(View.GONE);
+            inTheChase.setVisibility(View.GONE);
         } else {
+            raceNum.setVisibility(View.VISIBLE);
             raceNum.setText(getString(R.string.race_num, mRace.getRaceNum()));
 
             if (mRace.isInChase())
@@ -115,6 +127,7 @@ public class RaceActivity extends SherlockFragmentActivity implements ScrollView
         }
 
         setUpMapIfNeeded();
+        return true;
     }
 
     private boolean isWorkaroundNeeded(final ViewGroup vg) {
@@ -152,7 +165,7 @@ public class RaceActivity extends SherlockFragmentActivity implements ScrollView
         super.onResume();
         setUpMapIfNeeded();
 
-        if (mRace.isRecent()) {
+        if (mRace != null && mRace.isRecent()) {
             RaceAlarm.clearNotification(getApplicationContext());
         }
     }

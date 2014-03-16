@@ -42,7 +42,11 @@ public final class Race {
     private String mCityState;
 
     public static Race getInstance(final Context context, final int id) {
-        return Races.get(context)[id];
+        final Race[] races = Races.get(context);
+        if ((races.length > id) && (id >= 0)) {
+            return races[id];
+        }
+        return null;
     }
 
     public static Race getNext(final Context context, final boolean allowExhibition, final boolean allowInProgress) {
