@@ -1,6 +1,6 @@
 /*
  * Copyright 2012-2013 Google Inc.
- * Copyright (C) 2013 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2013-2014 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -130,14 +130,16 @@ public final class Gcm {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                try {
-                    final GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(context);
-                    final String regId = gcm.register(SENDER_ID);
-                    if (sendRegistrationIdToBackend(context, regId)) {
-                        storeRegistrationId(context, regId);
+                synchronized (Gcm.class) {
+                    try {
+                        final GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(context);
+                        final String regId = gcm.register(SENDER_ID);
+                        if (sendRegistrationIdToBackend(context, regId)) {
+                            storeRegistrationId(context, regId);
+                        }
+                    } catch (final IOException e) {
+                        Util.log("GCM registration failed: " + e);
                     }
-                } catch (final IOException e) {
-                    Util.log("GCM registration failed: " + e);
                 }
             }
         }).start();
