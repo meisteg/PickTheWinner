@@ -30,12 +30,9 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
-import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.MapBuilder;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdRequest.Builder;
@@ -48,7 +45,7 @@ import com.meiste.greg.ptw.iab.IabResult;
 import com.meiste.greg.ptw.iab.Inventory;
 import com.meiste.greg.ptw.iab.Purchase;
 
-public class GameActivity extends SherlockFragmentActivity implements Eula.OnEulaAgreedTo {
+public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo {
 
     private static final String LAST_TAB = "tab.last";
     private static final String SKU_AD_FREE = "ad_free";
@@ -97,18 +94,6 @@ public class GameActivity extends SherlockFragmentActivity implements Eula.OnEul
 
         setIntent(intent);
         mPager.setCurrentItem(getTab(intent));
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        EasyTracker.getInstance(this).activityStart(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EasyTracker.getInstance(this).activityStop(this);
     }
 
     @Override
@@ -297,8 +282,7 @@ public class GameActivity extends SherlockFragmentActivity implements Eula.OnEul
     }
 
     private void trackEvent(final String action, final String label) {
-        EasyTracker.getInstance(this).send(
-                MapBuilder.createEvent("Main", action, label, null).build());
+        Analytics.trackEvent(this, "Main", action, label);
     }
 
     private final AdListener mAdListener = new AdListener() {

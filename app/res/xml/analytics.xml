@@ -24,22 +24,12 @@
     <!-- Enable automatic exception tracking -->
     <bool name="ga_reportUncaughtExceptions">true</bool>
 
-    <!-- The dispatch period in seconds -->
-    <integer name="ga_dispatchPeriod">60</integer>
-
-    <!-- The verbosity of the SDK logger. Valid values from least to most
-         verbose are: error, warning, info, and verbose. -->
-    <string name="ga_logLevel">warning</string>
-
-    <!-- Prevent data from appearing in reports. Useful for testing. -->
-    <bool name="ga_dryRun">false</bool>
-
     <!-- Screen names for activities -->
-    <string name="com.meiste.greg.ptw.MainActivity">Main</string>
-    <string name="com.meiste.greg.ptw.GameActivity">Main</string>
-    <string name="com.meiste.greg.ptw.EditPreferences">Preferences</string>
-    <string name="com.meiste.greg.ptw.RaceActivity">Race Details</string>
-    <string name="com.meiste.greg.ptw.AccountsActivity">Account Setup</string>
-    <string name="com.meiste.greg.ptw.NfcSendActivity">NFC Send</string>
-    <string name="com.meiste.greg.ptw.NfcRecvActivity">NFC Receive</string>
+    <screenName name="com.meiste.greg.ptw.MainActivity">Main</screenName>
+    <screenName name="com.meiste.greg.ptw.GameActivity">Main</screenName>
+    <screenName name="com.meiste.greg.ptw.EditPreferences">Preferences</screenName>
+    <screenName name="com.meiste.greg.ptw.RaceActivity">Race Details</screenName>
+    <screenName name="com.meiste.greg.ptw.AccountsActivity">Account Setup</screenName>
+    <screenName name="com.meiste.greg.ptw.NfcSendActivity">NFC Send</screenName>
+    <screenName name="com.meiste.greg.ptw.NfcRecvActivity">NFC Receive</screenName>
 </resources>

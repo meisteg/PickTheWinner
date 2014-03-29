@@ -29,9 +29,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
-import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -40,7 +38,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.meiste.greg.ptw.ObservableScrollView.ScrollViewListener;
 
-public class RaceActivity extends SherlockFragmentActivity implements ScrollViewListener {
+public class RaceActivity extends BaseActivity implements ScrollViewListener {
     public static final String INTENT_ID = "race_id";
     public static final String INTENT_ALARM = "from_alarm";
     private Race mRace;
@@ -69,18 +67,6 @@ public class RaceActivity extends SherlockFragmentActivity implements ScrollView
         } else {
             finish();
         }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        EasyTracker.getInstance(this).activityStart(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EasyTracker.getInstance(this).activityStop(this);
     }
 
     private boolean doSetContent() {

@@ -35,8 +35,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.MapBuilder;
+import com.meiste.greg.ptw.Analytics;
 import com.meiste.greg.ptw.GAE;
 import com.meiste.greg.ptw.GAE.GaeListener;
 import com.meiste.greg.ptw.PTW;
@@ -355,8 +354,7 @@ public final class Questions extends TabFragment implements GaeListener {
         setSubFragment();
 
         GAE.getInstance(getActivity()).postPage(this, "questions", json);
-        EasyTracker.getInstance(getActivity()).send(
-                MapBuilder.createEvent("Questions", "button", "send", null).build());
+        Analytics.trackEvent(getActivity(), "Questions", "button", "send");
     }
 
     @Override

@@ -30,12 +30,10 @@ import android.os.Message;
 import android.provider.Settings;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.MenuItem;
-import com.google.analytics.tracking.android.EasyTracker;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-public class NfcSendActivity extends SherlockActivity implements OnNdefPushCompleteCallback {
+public class NfcSendActivity extends BaseActivity implements OnNdefPushCompleteCallback {
 
     public static final String EXTRA_PLAYER_REQ = "player_req";
     private static final int MESSAGE_SENT = 1;
@@ -91,18 +89,6 @@ public class NfcSendActivity extends SherlockActivity implements OnNdefPushCompl
 
         setContentView(R.layout.nfc_send);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        EasyTracker.getInstance(this).activityStart(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EasyTracker.getInstance(this).activityStop(this);
     }
 
     @Override

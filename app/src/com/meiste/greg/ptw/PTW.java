@@ -48,6 +48,9 @@ public class PTW extends Application {
          * from a service doesn't work */
         GAE.getInstance(this);
 
+        // Initialize analytics
+        Analytics.init(this);
+
         final File cacheLocation = new File(getCacheDir() + File.separator + "bitmaps");
         cacheLocation.mkdirs();
 

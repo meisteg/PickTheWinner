@@ -33,14 +33,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.google.analytics.tracking.android.EasyTracker;
 import com.meiste.greg.ptw.GAE.GaeListener;
 import com.meiste.greg.ptw.gcm.Gcm;
 
-public class AccountsActivity extends SherlockActivity implements GaeListener {
+public class AccountsActivity extends BaseActivity implements GaeListener {
 
     private static final int REQUEST_LAUNCH_INTENT = 0;
     private static final String KEY_ACCOUNT_NAME = "account";
@@ -132,15 +130,8 @@ public class AccountsActivity extends SherlockActivity implements GaeListener {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        EasyTracker.getInstance(this).activityStart(this);
-    }
-
-    @Override
     public void onStop() {
         super.onStop();
-        EasyTracker.getInstance(this).activityStop(this);
 
         if (mShouldFinish) {
             finish();

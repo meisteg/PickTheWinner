@@ -44,8 +44,6 @@ import android.os.Build;
 import android.text.format.DateUtils;
 import android.widget.RemoteViews;
 
-import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.MapBuilder;
 import com.meiste.greg.ptw.tab.Questions;
 
 public class WidgetProvider extends AppWidgetProvider {
@@ -95,8 +93,7 @@ public class WidgetProvider extends AppWidgetProvider {
          * from being tracked. */
         if (!prevEnabled) {
             Util.getState(context).edit().putBoolean(WIDGET_STATE, true).apply();
-            EasyTracker.getInstance(context).send(
-                    MapBuilder.createEvent("Widget", "state", "enabled", null).build());
+            Analytics.trackEvent(context, "Widget", "state", "enabled");
         }
     }
 
@@ -122,8 +119,7 @@ public class WidgetProvider extends AppWidgetProvider {
         am.cancel(getAlarmIntent(context));
 
         Util.getState(context).edit().putBoolean(WIDGET_STATE, false).apply();
-        EasyTracker.getInstance(context).send(
-                MapBuilder.createEvent("Widget", "state", "disabled", null).build());
+        Analytics.trackEvent(context, "Widget", "state", "disabled");
     }
 
     @SuppressLint("NewApi")

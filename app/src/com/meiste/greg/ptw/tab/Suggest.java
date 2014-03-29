@@ -32,9 +32,8 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
-import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.MapBuilder;
 import com.google.gson.Gson;
+import com.meiste.greg.ptw.Analytics;
 import com.meiste.greg.ptw.GAE;
 import com.meiste.greg.ptw.GAE.GaeListener;
 import com.meiste.greg.ptw.ObservableScrollView;
@@ -112,8 +111,7 @@ public final class Suggest extends TabFragment implements View.OnClickListener, 
         Toast.makeText(getActivity(), R.string.suggest_success, Toast.LENGTH_SHORT).show();
         mQuestion.setText("");
 
-        EasyTracker.getInstance(getActivity()).send(
-                MapBuilder.createEvent("Suggest", "button", "send", null).build());
+        Analytics.trackEvent(getActivity(), "Suggest", "button", "send");
     }
 
     @Override

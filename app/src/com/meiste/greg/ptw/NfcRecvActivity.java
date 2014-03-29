@@ -24,12 +24,10 @@ import android.os.Parcelable;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockActivity;
-import com.google.analytics.tracking.android.EasyTracker;
 import com.meiste.greg.ptw.GAE.GaeListener;
 import com.meiste.greg.ptw.tab.Standings;
 
-public class NfcRecvActivity extends SherlockActivity implements GaeListener {
+public class NfcRecvActivity extends BaseActivity implements GaeListener {
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -38,18 +36,6 @@ public class NfcRecvActivity extends SherlockActivity implements GaeListener {
 
         final TextView tv = (TextView) findViewById(R.id.connecting_text);
         tv.setText(R.string.adding_friend);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        EasyTracker.getInstance(this).activityStart(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EasyTracker.getInstance(this).activityStop(this);
     }
 
     @Override
