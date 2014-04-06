@@ -30,6 +30,8 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdSize;
+
 public final class Util {
 
     private final static String PREFS_STATE = "state";
@@ -80,6 +82,19 @@ public final class Util {
         } catch (final NameNotFoundException e) {
         }
         return false;
+    }
+
+    public static AdSize str2AdSize(final String adSize) {
+        if ("SMART_BANNER".equals(adSize)) {
+            return AdSize.SMART_BANNER;
+        } else if ("LEADERBOARD".equals(adSize)) {
+            return AdSize.LEADERBOARD;
+        } else if ("FULL_BANNER".equals(adSize)) {
+            return AdSize.FULL_BANNER;
+        } else if ("MEDIUM_RECTANGLE".equals(adSize)) {
+            return AdSize.MEDIUM_RECTANGLE;
+        }
+        return AdSize.BANNER;
     }
 
     /* Android's DateUtils.getRelativeTimeSpanString implementation is broken

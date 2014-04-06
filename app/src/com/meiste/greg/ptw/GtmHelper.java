@@ -17,27 +17,36 @@ package com.meiste.greg.ptw;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.text.format.DateUtils;
 
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.tagmanager.Container;
+import com.google.android.gms.tagmanager.Container.FunctionCallMacroCallback;
 import com.google.android.gms.tagmanager.ContainerHolder;
 import com.google.android.gms.tagmanager.TagManager;
 
-public class GtmHelper implements ResultCallback<ContainerHolder>, ContainerHolder.ContainerAvailableListener {
+public class GtmHelper implements ResultCallback<ContainerHolder>, ContainerHolder.ContainerAvailableListener,
+FunctionCallMacroCallback {
 
+    public final static String KEY_AD_ID = "adId";
+    public final static String KEY_AD_SIZE = "adSize";
     public final static String KEY_ALLOW_REMOVE_ADS = "allowRemoveAds";
     public final static String KEY_GAME_ENABLED = "gameEnabled";
+    public final static String KEY_ORIENTATION = "orientation";
+    public final static String KEY_SCREEN_LAYOUT = "screenLayout";
 
     private final static String CONTAINER_ID = "GTM-PHC3RK";
     private final static long RESULT_TIMEOUT = 2 * DateUtils.SECOND_IN_MILLIS;
 
     private static GtmHelper sInstance;
 
+    private final Context mContext;
     private final TagManager mTagManager;
     private final List<OnContainerAvailableListener> mListeners = new ArrayList<OnContainerAvailableListener>();
     private ContainerHolder mContainerHolder;
@@ -54,7 +63,8 @@ public class GtmHelper implements ResultCallback<ContainerHolder>, ContainerHold
     }
 
     private GtmHelper(final Context context) {
-        mTagManager = TagManager.getInstance(context.getApplicationContext());
+        mContext = context.getApplicationContext();
+        mTagManager = TagManager.getInstance(mContext);
         if (BuildConfig.DEBUG) {
             mTagManager.setVerboseLoggingEnabled(true);
         }
@@ -79,6 +89,10 @@ public class GtmHelper implements ResultCallback<ContainerHolder>, ContainerHold
         Util.log("Container loaded successfully");
         mContainerHolder = containerHolder;
 
+        mTagManager.getDataLayer().push(KEY_SCREEN_LAYOUT,
+                mContext.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK);
+        setCallbackFunctions();
+
         for (final OnContainerAvailableListener l : mListeners) {
             l.onContainerAvailable(mContainerHolder.getContainer());
             mListeners.remove(l);
@@ -90,6 +104,19 @@ public class GtmHelper implements ResultCallback<ContainerHolder>, ContainerHold
     public void onContainerAvailable(final ContainerHolder containerHolder, final String containerVersion) {
         // Components will get the new container on next call to getContainer()
         Util.log("New container available: version=" + containerVersion);
+        setCallbackFunctions();
+    }
+
+    private void setCallbackFunctions() {
+        mContainerHolder.getContainer().registerFunctionCallMacroCallback(KEY_ORIENTATION, this);
+    }
+
+    @Override
+    public Object getValue(final String name, final Map<String, Object> parameters) {
+        if (name.equals(KEY_ORIENTATION)) {
+            return mContext.getResources().getConfiguration().orientation;
+        }
+        return null;
     }
 
     public synchronized void getContainer(final OnContainerAvailableListener l) {

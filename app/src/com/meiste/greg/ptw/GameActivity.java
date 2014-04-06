@@ -27,7 +27,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.actionbarsherlock.view.Menu;
@@ -286,10 +288,13 @@ public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo, O
             adReqBuilder.addTestDevice("E64392AEFC7C9A13D2A6A76E9EA034C4"); // RAZR
         }
 
-        mAdView = (AdView)findViewById(R.id.ad);
-        mAdView.setAdListener(mAdListener);
-
-        if (!ActivityManager.isUserAMonkey()) {
+        final String adUnitId = mContainer.getString(GtmHelper.KEY_AD_ID);
+        if (!TextUtils.isEmpty(adUnitId) && !ActivityManager.isUserAMonkey()) {
+            mAdView = new AdView(this);
+            mAdView.setAdListener(mAdListener);
+            mAdView.setAdUnitId(adUnitId);
+            mAdView.setAdSize(Util.str2AdSize(mContainer.getString(GtmHelper.KEY_AD_SIZE)));
+            mAdView.setBackgroundResource(R.color.ad_background);
             mAdView.loadAd(adReqBuilder.build());
         }
     }
@@ -302,8 +307,9 @@ public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo, O
         @Override
         public void onAdLoaded() {
             Util.log("onAdLoaded");
-            if (mAdView != null) {
-                mAdView.setVisibility(View.VISIBLE);
+            final LinearLayout l = (LinearLayout) findViewById(R.id.main_layout);
+            if ((mAdView != null) && (mAdView.getParent() == null)) {
+                l.addView(mAdView);
             }
         }
 
