@@ -26,11 +26,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockActivity;
+import com.google.android.gms.tagmanager.Container;
 import com.meiste.greg.ptw.GAE.GaeListener;
+import com.meiste.greg.ptw.GtmHelper.OnContainerAvailableListener;
 import com.meiste.greg.ptw.tab.RuleBook;
 
-public class MainActivity extends SherlockActivity {
+public class MainActivity extends BaseActivity implements OnContainerAvailableListener {
 
     private boolean isRunning = false;
 
@@ -39,7 +40,16 @@ public class MainActivity extends SherlockActivity {
         super.onCreate(savedInstanceState);
         isRunning = true;
 
-        if (isInitNeeded()) {
+        setContentView(R.layout.connecting);
+        GtmHelper.getInstance(getApplicationContext()).getContainer(this);
+    }
+
+    @Override
+    public void onContainerAvailable(final Container container) {
+        if (!container.getBoolean(GtmHelper.KEY_GAME_ENABLED)) {
+            Util.log("Application has been remotely disabled!");
+            setContentView(R.layout.disabled);
+        } else if (isInitNeeded()) {
             Util.log("Initialization required");
             beginInit();
         } else {

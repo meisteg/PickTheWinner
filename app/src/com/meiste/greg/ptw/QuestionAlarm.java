@@ -17,10 +17,10 @@ package com.meiste.greg.ptw;
 
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
+import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -29,12 +29,23 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 
-public final class QuestionAlarm extends BroadcastReceiver {
+import com.google.android.gms.tagmanager.Container;
+import com.meiste.greg.ptw.GtmHelper.OnContainerAvailableListener;
+
+public final class QuestionAlarm extends IntentService implements OnContainerAvailableListener {
 
     private static final String LAST_REMIND = "question_last_remind";
     private static final String RACE_ID = "question_race_id";
     private static final int PI_REQ_CODE = 146066;
     private static boolean alarm_set = false;
+
+    private final Object mSync = new Object();
+    private Container mContainer;
+
+    public QuestionAlarm() {
+        super(QuestionAlarm.class.getSimpleName());
+        setIntentRedelivery(true);
+    }
 
     @SuppressLint("NewApi")
     public static void set(final Context context) {
@@ -57,7 +68,7 @@ public final class QuestionAlarm extends BroadcastReceiver {
             final AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
             final Intent intent = new Intent(context, QuestionAlarm.class);
             intent.putExtra(RACE_ID, race.getId());
-            final PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent,
+            final PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -73,17 +84,33 @@ public final class QuestionAlarm extends BroadcastReceiver {
     }
 
     @Override
-    public void onReceive(final Context context, final Intent intent) {
+    public void onCreate() {
+        super.onCreate();
+        GtmHelper.getInstance(getApplicationContext()).getContainer(this);
+    }
+
+    @Override
+    protected void onHandleIntent(final Intent intent) {
         alarm_set = false;
-        final Race race = Race.getInstance(context, intent.getIntExtra(RACE_ID, 0));
+        final Race race = Race.getInstance(this, intent.getIntExtra(RACE_ID, 0));
         Util.log("Received question alarm for race " + race.getId());
 
+        synchronized (mSync) {
+            if (mContainer == null) {
+                try {
+                    mSync.wait();
+                } catch (final InterruptedException e) {
+                }
+            }
+        }
+
         // Only show notification if user wants question reminders
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        if (prefs.getBoolean(EditPreferences.KEY_NOTIFY_QUESTIONS, true)) {
-            final Intent notificationIntent = new Intent(context, MainActivity.class);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (prefs.getBoolean(EditPreferences.KEY_NOTIFY_QUESTIONS, true) &&
+                mContainer.getBoolean(GtmHelper.KEY_GAME_ENABLED)) {
+            final Intent notificationIntent = new Intent(this, MainActivity.class);
             notificationIntent.putExtra(PTW.INTENT_EXTRA_TAB, 1);
-            final PendingIntent pi = PendingIntent.getActivity(context, PI_REQ_CODE,
+            final PendingIntent pi = PendingIntent.getActivity(this, PI_REQ_CODE,
                     notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
             int defaults = 0;
@@ -92,10 +119,10 @@ public final class QuestionAlarm extends BroadcastReceiver {
             if (prefs.getBoolean(EditPreferences.KEY_NOTIFY_LED, true))
                 defaults |= Notification.DEFAULT_LIGHTS;
 
-            final NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+            final NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
             .setSmallIcon(R.drawable.ic_stat_steering_wheel)
-            .setTicker(context.getString(R.string.remind_questions_ticker, race.getName()))
-            .setContentTitle(context.getString(R.string.app_name))
+            .setTicker(getString(R.string.remind_questions_ticker, race.getName()))
+            .setContentTitle(getString(R.string.app_name))
             .setContentText(race.getName())
             .setContentIntent(pi)
             .setAutoCancel(true)
@@ -103,17 +130,25 @@ public final class QuestionAlarm extends BroadcastReceiver {
             .setSound(Uri.parse(prefs.getString(EditPreferences.KEY_NOTIFY_RINGTONE,
                     "content://settings/system/notification_sound")));
 
-            getNM(context).notify(R.string.remind_questions_ticker, builder.build());
+            getNM(this).notify(R.string.remind_questions_ticker, builder.build());
         } else {
             Util.log("Ignoring question alarm since option is disabled");
         }
 
         // Remember that user was reminded of this race
-        Util.getState(context).edit().putInt(LAST_REMIND, race.getId()).apply();
+        Util.getState(this).edit().putInt(LAST_REMIND, race.getId()).apply();
 
         // Reset alarm for the next race
-        set(context);
-        context.sendBroadcast(new Intent(PTW.INTENT_ACTION_RACE_ALARM));
+        set(this);
+        sendBroadcast(new Intent(PTW.INTENT_ACTION_RACE_ALARM));
+    }
+
+    @Override
+    public void onContainerAvailable(final Container container) {
+        synchronized (mSync) {
+            mContainer = container;
+            mSync.notify();
+        }
     }
 
     public static void clearNotification(final Context context) {

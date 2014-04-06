@@ -25,7 +25,7 @@
     <bool name="ga_reportUncaughtExceptions">true</bool>
 
     <!-- Screen names for activities -->
-    <screenName name="com.meiste.greg.ptw.MainActivity">Main</screenName>
+    <screenName name="com.meiste.greg.ptw.MainActivity">Init</screenName>
     <screenName name="com.meiste.greg.ptw.GameActivity">Main</screenName>
     <screenName name="com.meiste.greg.ptw.EditPreferences">Preferences</screenName>
     <screenName name="com.meiste.greg.ptw.RaceActivity">Race Details</screenName>

@@ -102,8 +102,8 @@
                 <data android:mimeType="application/com.meiste.greg.ptw" />
             </intent-filter>
         </activity>
-        <receiver android:name=".RaceAlarm" />
-        <receiver android:name=".QuestionAlarm" />
+        <service android:name=".RaceAlarm" android:exported="false" />
+        <service android:name=".QuestionAlarm" android:exported="false" />
         <receiver android:name=".BootSetup">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -137,6 +137,7 @@
             <meta-data android:name="android.appwidget.provider"
                        android:resource="@xml/widget_info" />
         </receiver>
+
         <!-- Used for Google Play Store Campaign Measurement -->
         <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
         <receiver
@@ -146,6 +147,19 @@
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
         </receiver>
+
+        <!-- Add GTM container preview activity -->
+        <activity
+            android:name="com.google.android.gms.tagmanager.PreviewActivity"
+            android:label="@string/app_name"
+            android:noHistory="true">
+            <intent-filter>
+                <data android:scheme="tagmanager.c.com.meiste.greg.ptw" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE"/>
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

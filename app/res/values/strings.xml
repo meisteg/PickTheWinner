@@ -33,6 +33,7 @@
     <string name="connect_text">This application requests permission to connect your mobile device to the cloud.</string>
     <string name="contacting_server">Contacting server&#8230;</string>
     <string name="debug_build">(debug)</string>
+    <string name="disabled">This version has been disabled. Please update to the latest version.</string>
     <string name="enable_beam">Please enable Android Beam to perform this task.</string>
     <string name="enable_nfc">Please enable NFC to perform this task.</string>
     <string name="eula_title">License</string>

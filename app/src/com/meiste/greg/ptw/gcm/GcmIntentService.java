@@ -29,9 +29,12 @@ import android.support.v4.app.NotificationCompat;
 import android.text.format.DateUtils;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.tagmanager.Container;
 import com.meiste.greg.ptw.EditPreferences;
 import com.meiste.greg.ptw.GAE;
 import com.meiste.greg.ptw.GAE.GaeListener;
+import com.meiste.greg.ptw.GtmHelper;
+import com.meiste.greg.ptw.GtmHelper.OnContainerAvailableListener;
 import com.meiste.greg.ptw.MainActivity;
 import com.meiste.greg.ptw.PTW;
 import com.meiste.greg.ptw.PlayerAdapter;
@@ -42,7 +45,7 @@ import com.meiste.greg.ptw.Util;
 import com.meiste.greg.ptw.tab.RuleBook;
 import com.meiste.greg.ptw.tab.Standings;
 
-public class GcmIntentService extends IntentService {
+public class GcmIntentService extends IntentService implements OnContainerAvailableListener {
 
     private static final int MAX_ATTEMPTS = 5;
     private static final int PI_REQ_CODE = 426801;
@@ -56,9 +59,16 @@ public class GcmIntentService extends IntentService {
 
     private final Object mSync = new Object();
     private boolean mGaeSuccess = false;
+    private Container mContainer;
 
     public GcmIntentService() {
         super(GcmIntentService.class.getSimpleName());
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        GtmHelper.getInstance(getApplicationContext()).getContainer(this);
     }
 
     @Override
@@ -66,6 +76,15 @@ public class GcmIntentService extends IntentService {
         final Bundle extras = intent.getExtras();
         final GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
         final String messageType = gcm.getMessageType(intent);
+
+        synchronized (mSync) {
+            if (mContainer == null) {
+                try {
+                    mSync.wait();
+                } catch (final InterruptedException e) {
+                }
+            }
+        }
 
         if (!extras.isEmpty()) {
             /*
@@ -98,6 +117,14 @@ public class GcmIntentService extends IntentService {
 
         // Release the wake lock provided by the WakefulBroadcastReceiver.
         GcmBroadcastReceiver.completeWakefulIntent(intent);
+    }
+
+    @Override
+    public void onContainerAvailable(final Container container) {
+        synchronized (mSync) {
+            mContainer = container;
+            mSync.notify();
+        }
     }
 
     private void getFromServer(final String page, final GcmGaeListener l, final boolean accountRequired) {
@@ -222,10 +249,11 @@ public class GcmIntentService extends IntentService {
         }
     }
 
-    private static void showResultsNotification(final Context context, final String race) {
+    private void showResultsNotification(final Context context, final String race) {
         // Only show notification if user wants results notifications
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        if (prefs.getBoolean(EditPreferences.KEY_NOTIFY_RESULTS, true)) {
+        if (prefs.getBoolean(EditPreferences.KEY_NOTIFY_RESULTS, true) &&
+                mContainer.getBoolean(GtmHelper.KEY_GAME_ENABLED)) {
             final Intent notificationIntent = new Intent(context, MainActivity.class);
             notificationIntent.putExtra(PTW.INTENT_EXTRA_TAB, 2);
             final PendingIntent pi = PendingIntent.getActivity(context, PI_REQ_CODE,

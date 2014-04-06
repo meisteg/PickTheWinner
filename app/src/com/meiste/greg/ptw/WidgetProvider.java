@@ -39,17 +39,18 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.text.format.DateUtils;
 import android.widget.RemoteViews;
 
+import com.google.android.gms.tagmanager.Container;
+import com.meiste.greg.ptw.GtmHelper.OnContainerAvailableListener;
 import com.meiste.greg.ptw.tab.Questions;
 
 public class WidgetProvider extends AppWidgetProvider {
 
     private static final long UPDATE_INTERVAL = DateUtils.MINUTE_IN_MILLIS;
-    private static final long UPDATE_FUDGE = 50; /* milliseconds */
+    private static final long UPDATE_FUDGE = 75; /* milliseconds */
     private static final long UPDATE_WARNING = (DateUtils.HOUR_IN_MILLIS * 2) + UPDATE_FUDGE;
 
     private static final String WIDGET_STATE = "widget.enabled";
@@ -60,7 +61,7 @@ public class WidgetProvider extends AppWidgetProvider {
     public void onReceive (final Context context, final Intent intent) {
         if (intent.hasExtra(Intent.EXTRA_ALARM_COUNT)) {
             Util.log("WidgetProvider.onReceive: Widget alarm");
-            new UpdateWidgetTask().execute(context);
+            new UpdateWidgetThread(context).start();
             setAlarm(context);
         } else if (intent.getAction().equals(Intent.ACTION_TIME_CHANGED)) {
             Util.log("WidgetProvider.onReceive: Time change");
@@ -78,7 +79,7 @@ public class WidgetProvider extends AppWidgetProvider {
             Util.log("WidgetProvider.onReceive: Answers submitted");
             final int[] appWidgetIds = getInstalledWidgets(context);
             if (appWidgetIds.length > 0) {
-                new UpdateWidgetTask().execute(context);
+                new UpdateWidgetThread(context).start();
             }
         } else
             super.onReceive(context, intent);
@@ -104,10 +105,9 @@ public class WidgetProvider extends AppWidgetProvider {
         final RemoteViews rViews = new RemoteViews(context.getPackageName(), R.layout.widget_loading);
         appWidgetManager.updateAppWidget(appWidgetIds, rViews);
 
-        new UpdateWidgetTask().execute(context);
+        new UpdateWidgetThread(context).start();
 
-        /* Set alarm to update widget when device is awake. This should really
-         * be done in onEnabled, but Android doesn't always call onEnabled. */
+        /* Set alarm to update widget when device is awake. */
         setAlarm(context);
     }
 
@@ -153,15 +153,33 @@ public class WidgetProvider extends AppWidgetProvider {
         return appWidgetManager.getAppWidgetIds(thisWidget);
     }
 
-    private class UpdateWidgetTask extends AsyncTask<Context, Integer, Integer> {
+    private class UpdateWidgetThread extends Thread implements OnContainerAvailableListener {
         private static final int RESULT_SUCCESS = 0;
-        private static final int RESULT_FAILURE = -1;
-        private static final int RESULT_NO_RACE = 1;
+        private static final int RESULT_FAILURE = 1;
+        private static final int RESULT_NO_RACE = 2;
+        private static final int RESULT_DISABLE = 3;
 
         private static final int PI_REQ_CODE = 810647;
 
-        private Context mContext;
+        private final Context mContext;
         private CacheableBitmapDrawable mBitmapDrawable;
+
+        private final Object mSync = new Object();
+        private Container mContainer;
+
+        public UpdateWidgetThread(final Context context) {
+            super(UpdateWidgetThread.class.getSimpleName());
+            mContext = context;
+            GtmHelper.getInstance(context).getContainer(this);
+        }
+
+        @Override
+        public void onContainerAvailable(final Container container) {
+            synchronized (mSync) {
+                mContainer = container;
+                mSync.notify();
+            }
+        }
 
         private String getURL(final Race race, final boolean addYear) {
             final StringBuilder sb = new StringBuilder();
@@ -178,8 +196,24 @@ public class WidgetProvider extends AppWidgetProvider {
         }
 
         @Override
-        protected Integer doInBackground(final Context... context) {
-            mContext = context[0];
+        public void run() {
+            synchronized (mSync) {
+                if (mContainer == null) {
+                    try {
+                        mSync.wait();
+                    } catch (final InterruptedException e) {
+                    }
+                }
+            }
+
+            if (mContainer.getBoolean(GtmHelper.KEY_GAME_ENABLED)) {
+                setUi(getRaceLogo());
+            } else {
+                setUi(RESULT_DISABLE);
+            }
+        }
+
+        private int getRaceLogo() {
             final BitmapLruCache bitmapCache = PTW.getApplication(mContext).getBitmapCache();
 
             // First handle recent race scenario
@@ -243,9 +277,8 @@ public class WidgetProvider extends AppWidgetProvider {
             return RESULT_SUCCESS;
         }
 
-        @Override
-        protected void onPostExecute(final Integer result) {
-            Util.log("UpdateWidgetTask.onPostExecute: result=" + result);
+        private void setUi(final int result) {
+            Util.log("UpdateWidgetThread.setUi: result=" + result);
             RemoteViews rViews;
 
             switch (result) {
@@ -307,6 +340,9 @@ public class WidgetProvider extends AppWidgetProvider {
                 pi = PendingIntent.getActivity(mContext, PI_REQ_CODE,
                         intent, PendingIntent.FLAG_UPDATE_CURRENT);
                 rViews.setOnClickPendingIntent(R.id.widget_full_layout, pi);
+                break;
+            case RESULT_DISABLE:
+                rViews = new RemoteViews(mContext.getPackageName(), R.layout.widget_disabled);
                 break;
             case RESULT_FAILURE:
             default:

@@ -39,19 +39,22 @@ import com.google.android.gms.ads.AdRequest.Builder;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.tagmanager.Container;
+import com.meiste.greg.ptw.GtmHelper.OnContainerAvailableListener;
 import com.meiste.greg.ptw.gcm.Gcm;
 import com.meiste.greg.ptw.iab.IabHelper;
 import com.meiste.greg.ptw.iab.IabResult;
 import com.meiste.greg.ptw.iab.Inventory;
 import com.meiste.greg.ptw.iab.Purchase;
 
-public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo {
+public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo, OnContainerAvailableListener {
 
     private static final String LAST_TAB = "tab.last";
     private static final String SKU_AD_FREE = "ad_free";
     private static final int IAB_REQUEST = 10001;
     private static final int GPS_REQUEST = 9000;
 
+    private Container mContainer;
     private IabHelper mHelper;
     private ViewPager mPager;
     private AdView mAdView;
@@ -62,6 +65,16 @@ public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // This activity is always started via the MainActivity, which ensures
+        // the container is loaded before starting this activity. So the call
+        // to getContainer() here should immediately call onContainerAvailable().
+        GtmHelper.getInstance(getApplicationContext()).getContainer(this);
+    }
+
+    @Override
+    public void onContainerAvailable(final Container container) {
+        mContainer = container;
 
         mHelper = new IabHelper(this, PTW.PUB_KEY);
         mHelper.enableDebugLogging(BuildConfig.DEBUG, PTW.TAG);
@@ -156,7 +169,7 @@ public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo {
     public boolean onCreateOptionsMenu(final Menu menu) {
         getSupportMenuInflater().inflate(R.menu.menu, menu);
 
-        if (!mIsAdFree && mIabReady) {
+        if (!mIsAdFree && mIabReady && mContainer.getBoolean(GtmHelper.KEY_ALLOW_REMOVE_ADS)) {
             menu.add(Menu.NONE, R.string.ads_remove, Menu.NONE, R.string.ads_remove)
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         }

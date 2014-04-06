@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@ package com.meiste.greg.ptw;
 
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
+import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -29,11 +29,22 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 
-public final class RaceAlarm extends BroadcastReceiver {
+import com.google.android.gms.tagmanager.Container;
+import com.meiste.greg.ptw.GtmHelper.OnContainerAvailableListener;
+
+public final class RaceAlarm extends IntentService implements OnContainerAvailableListener {
 
     private static final String RACE_ID = "race_id";
     private static final int PI_REQ_CODE = 693033;
     private static boolean alarm_set = false;
+
+    private final Object mSync = new Object();
+    private Container mContainer;
+
+    public RaceAlarm() {
+        super(RaceAlarm.class.getSimpleName());
+        setIntentRedelivery(true);
+    }
 
     @SuppressLint("NewApi")
     public static void set(final Context context) {
@@ -45,7 +56,7 @@ public final class RaceAlarm extends BroadcastReceiver {
             final AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
             final Intent intent = new Intent(context, RaceAlarm.class);
             intent.putExtra(RACE_ID, race.getId());
-            final PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent,
+            final PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -66,18 +77,34 @@ public final class RaceAlarm extends BroadcastReceiver {
     }
 
     @Override
-    public void onReceive(final Context context, final Intent intent) {
+    public void onCreate() {
+        super.onCreate();
+        GtmHelper.getInstance(getApplicationContext()).getContainer(this);
+    }
+
+    @Override
+    protected void onHandleIntent(final Intent intent) {
         alarm_set = false;
-        final Race race = Race.getInstance(context, intent.getIntExtra(RACE_ID, 0));
+        final Race race = Race.getInstance(this, intent.getIntExtra(RACE_ID, 0));
         Util.log("Received race alarm for race " + race.getId());
 
+        synchronized (mSync) {
+            if (mContainer == null) {
+                try {
+                    mSync.wait();
+                } catch (final InterruptedException e) {
+                }
+            }
+        }
+
         // Only show notification if user wants race reminders
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        if (prefs.getBoolean(EditPreferences.KEY_NOTIFY_RACE, true)) {
-            final Intent notificationIntent = new Intent(context, RaceActivity.class);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (prefs.getBoolean(EditPreferences.KEY_NOTIFY_RACE, true) &&
+                mContainer.getBoolean(GtmHelper.KEY_GAME_ENABLED)) {
+            final Intent notificationIntent = new Intent(this, RaceActivity.class);
             notificationIntent.putExtra(RaceActivity.INTENT_ID, race.getId());
             notificationIntent.putExtra(RaceActivity.INTENT_ALARM, true);
-            final PendingIntent pi = PendingIntent.getActivity(context, PI_REQ_CODE,
+            final PendingIntent pi = PendingIntent.getActivity(this, PI_REQ_CODE,
                     notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
             int defaults = 0;
@@ -86,10 +113,10 @@ public final class RaceAlarm extends BroadcastReceiver {
             if (prefs.getBoolean(EditPreferences.KEY_NOTIFY_LED, true))
                 defaults |= Notification.DEFAULT_LIGHTS;
 
-            final NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+            final NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
             .setSmallIcon(R.drawable.ic_stat_steering_wheel)
-            .setTicker(context.getString(R.string.remind_race_ticker, race.getName()))
-            .setContentTitle(context.getString(R.string.remind_race_notify))
+            .setTicker(getString(R.string.remind_race_ticker, race.getName()))
+            .setContentTitle(getString(R.string.remind_race_notify))
             .setContentText(race.getName())
             .setContentIntent(pi)
             .setAutoCancel(true)
@@ -97,14 +124,22 @@ public final class RaceAlarm extends BroadcastReceiver {
             .setSound(Uri.parse(prefs.getString(EditPreferences.KEY_NOTIFY_RINGTONE,
                     "content://settings/system/notification_sound")));
 
-            getNM(context).notify(R.string.remind_race_ticker, builder.build());
+            getNM(this).notify(R.string.remind_race_ticker, builder.build());
         } else {
             Util.log("Ignoring race alarm since option is disabled");
         }
 
         // Reset alarm for the next race
-        set(context);
-        context.sendBroadcast(new Intent(PTW.INTENT_ACTION_RACE_ALARM));
+        set(this);
+        sendBroadcast(new Intent(PTW.INTENT_ACTION_RACE_ALARM));
+    }
+
+    @Override
+    public void onContainerAvailable(final Container container) {
+        synchronized (mSync) {
+            mContainer = container;
+            mSync.notify();
+        }
     }
 
     public static void clearNotification(final Context context) {
