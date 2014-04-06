@@ -210,9 +210,9 @@ public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo, O
             return true;
 
         case R.string.ads_remove:
-            trackEvent("onOptionsItemSelected", "ads_remove");
             try {
                 mHelper.launchPurchaseFlow(this, SKU_AD_FREE, IAB_REQUEST, mPurchaseFinishedListener);
+                trackEvent("onOptionsItemSelected", "ads_remove");
             } catch (final IllegalStateException e) {
                 // Can be caused by user double clicking option item
                 Util.log("Unable to launch purchase flow: " + e);
@@ -234,7 +234,14 @@ public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo, O
     public void onEulaAgreedTo() {
         RaceAlarm.set(this);
         QuestionAlarm.set(this);
-        mHelper.startSetup(mIabSetupListener);
+
+        try {
+            mHelper.startSetup(mIabSetupListener);
+        } catch (final NullPointerException e) {
+            // Happens when the Play Store updates at this exact moment.
+            // IabHelper cannot handle that use case. For now, do nothing.
+            Util.log("Unable to start IAB setup!");
+        }
     }
 
     /**
