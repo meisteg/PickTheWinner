@@ -25,6 +25,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,12 +79,8 @@ public final class Questions extends TabFragment implements GaeListener {
         mAccountSetupTime = Util.getAccountSetupTime(getActivity());
         setRetainInstance(true);
 
-        if (mRaceSelected == null) {
-            if (mRaceNext != null) {
-                mRaceSelected = mRaceNext;
-            } else if (mRaceAdapter.getCount() > 0) {
-                mRaceSelected = mRaceAdapter.getItem(mRaceAdapter.getCount()-1);
-            }
+        if ((mRaceSelected == null) && (mRaceAdapter.getCount() > 0)) {
+            mRaceSelected = mRaceAdapter.getItem(mRaceAdapter.getCount() - 1);
         }
 
         if (mSetupNeeded) {
@@ -114,6 +111,11 @@ public final class Questions extends TabFragment implements GaeListener {
         return v;
     }
 
+    private String getJson(final String from) {
+        final SharedPreferences cache = getActivity().getSharedPreferences(from, Activity.MODE_PRIVATE);
+        return cache.getString(cachePrefix() + mRaceSelected.getId(), null);
+    }
+
     public void setSubFragment() {
         mSubFragmentTime = System.currentTimeMillis();
 
@@ -137,23 +139,23 @@ public final class Questions extends TabFragment implements GaeListener {
             mFailedConnect = false;
             ftag = QuestionsConnectFail.class.getName();
             f = QuestionsConnectFail.getInstance(getChildFragmentManager(), ftag);
+        } else if (mRaceSelected.isRecent() && getJson(QCACHE) != null && getJson(ACACHE) == null) {
+            ftag = QuestionsLate.class.getName();
+            f = QuestionsLate.getInstance(getChildFragmentManager(), ftag);
         } else if (mRaceSelected.inProgress() || !mRaceSelected.isFuture()) {
-            SharedPreferences cache = getActivity().getSharedPreferences(QCACHE, Activity.MODE_PRIVATE);
-            final String qjson = cache.getString(cachePrefix() + mRaceSelected.getId(), null);
+            final String qjson = getJson(QCACHE);
             if (qjson == null) {
                 selectEnable = false;
                 ftag = QuestionsConnecting.class.getName();
                 f = QuestionsConnecting.getInstance(getChildFragmentManager(), ftag);
                 GAE.getInstance(getActivity()).getPage(this, "questions");
             } else {
-                cache = getActivity().getSharedPreferences(ACACHE, Activity.MODE_PRIVATE);
-                final String ajson = cache.getString(cachePrefix() + mRaceSelected.getId(), null);
+                final String ajson = getJson(ACACHE);
                 if (ajson == null) {
                     ftag = qjson;
                     f = QuestionsForm.getInstance(getChildFragmentManager(), qjson);
                 } else {
-                    cache = getActivity().getSharedPreferences(CACACHE, Activity.MODE_PRIVATE);
-                    final String cajson = cache.getString(cachePrefix() + mRaceSelected.getId(), null);
+                    final String cajson = getJson(CACACHE);
                     if (cajson == null) {
                         final int raceAfterNum = new PlayerAdapter(getActivity()).getRaceAfterNum();
                         if (raceAfterNum >= mRaceSelected.getId()) {
@@ -212,9 +214,12 @@ public final class Questions extends TabFragment implements GaeListener {
         mChanged |= mSetupNeeded != GAE.isAccountSetupNeeded(getActivity());
         // Check if user has switched accounts
         mChanged |= mAccountSetupTime != Util.getAccountSetupTime(getActivity());
-        // Check if user submitted answers on a different device
+
         if (mSubFragmentTime > 0) {
+            // Check if user submitted answers on a different device
             mChanged |= mSubFragmentTime < PlayerHistory.getTime(getActivity());
+            // Check if app has been running for awhile and should be refreshed
+            mChanged |= (System.currentTimeMillis() - mSubFragmentTime) > DateUtils.HOUR_IN_MILLIS;
         }
         if (mRaceNext != null) {
             if (mSubFragmentTime > 0) {
@@ -388,7 +393,7 @@ public final class Questions extends TabFragment implements GaeListener {
         Toast.makeText(context, R.string.questions_success, Toast.LENGTH_SHORT).show();
 
         final SharedPreferences cache = context.getSharedPreferences(ACACHE, Activity.MODE_PRIVATE);
-        cache.edit().putString(cachePrefix() + mRaceNext.getId(), json).apply();
+        cache.edit().putString(cachePrefix() + mRaceSelected.getId(), json).apply();
 
         context.sendBroadcast(new Intent(PTW.INTENT_ACTION_ANSWERS));
 

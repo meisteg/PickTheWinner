@@ -114,6 +114,7 @@
     <string name="questions_3">%s (35 points)</string>
     <string name="questions_4">Which driver will lead the most laps? (10 points)</string>
     <string name="questions_5">How many drivers will lead a lap? (5 points)</string>
+    <string name="questions_late">The deadline to submit your answers has passed. Enjoy the race!</string>
     <string name="questions_no_race">Thanks for playing Pick The Winner this season. See you
         next year!</string>
     <string name="questions_prompt_drivers">Choose a driver</string>

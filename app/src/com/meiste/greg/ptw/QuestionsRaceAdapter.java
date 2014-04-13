@@ -49,17 +49,21 @@ public final class QuestionsRaceAdapter extends ArrayAdapter<Race> {
         final SharedPreferences acache = context.getSharedPreferences(Questions.ACACHE, Activity.MODE_PRIVATE);
 
         for (final Race race : allRaces) {
-            if (qcache.contains(Questions.cachePrefix() + race.getId()) &&
-                    acache.contains(Questions.cachePrefix() + race.getId())) {
-                mRaces.add(race);
+            if (qcache.contains(Questions.cachePrefix() + race.getId())) {
+                if (acache.contains(Questions.cachePrefix() + race.getId()) ||
+                        race.isRecent()) {
+                    mRaces.add(race);
+                }
             }
         }
 
-        // Always make sure next race is in list
-        final Race next = Race.getNext(context, false, true);
-        if (next != null) {
-            if ((getCount() <= 0) || mRaces.get(getCount()-1).getId() != next.getId()) {
-                mRaces.add(next);
+        if (getCount() > 0 && !getItem(getCount() - 1).isRecent()) {
+            // Add next race to the list if not already
+            final Race next = Race.getNext(context, false, true);
+            if (next != null) {
+                if ((getCount() <= 0) || mRaces.get(getCount() - 1).getId() != next.getId()) {
+                    mRaces.add(next);
+                }
             }
         }
 
