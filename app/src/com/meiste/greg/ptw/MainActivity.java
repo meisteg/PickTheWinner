@@ -91,6 +91,7 @@ public class MainActivity extends BaseActivity implements OnContainerAvailableLi
     private void startGameActivity() {
         if (isRunning) {
             startActivity(getIntent().setClass(this, GameActivity.class));
+            overridePendingTransition(0,0);
             finish();
         }
     }
