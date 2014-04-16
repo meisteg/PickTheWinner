@@ -95,12 +95,11 @@
 
         </RelativeLayout>
 
-        <fragment
-            android:id="@+id/map"
+        <FrameLayout
+            android:id="@+id/map_fragment_holder"
             android:layout_width="0px"
             android:layout_height="fill_parent"
-            android:layout_weight="0.5"
-            class="com.google.android.gms.maps.SupportMapFragment" />
+            android:layout_weight="0.5" />
 
     </LinearLayout>
 

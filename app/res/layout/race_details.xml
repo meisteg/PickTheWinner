@@ -80,19 +80,18 @@
             android:layout_below="@id/race_time"
             android:textIsSelectable="true" />
 
-        <fragment
-            android:id="@+id/map"
+        <FrameLayout
+            android:id="@+id/map_fragment_holder"
             android:layout_width="match_parent"
             android:layout_height="@dimen/DetailsMapSize"
             android:layout_marginTop="20sp"
             android:layout_marginBottom="20sp"
-            class="com.google.android.gms.maps.SupportMapFragment"
             android:layout_below="@id/race_tv" />
 
         <TextView
             android:id="@+id/race_track_size"
             style="@style/RaceDetailsText"
-            android:layout_below="@id/map"
+            android:layout_below="@id/map_fragment_holder"
             android:textIsSelectable="true" />
 
     </RelativeLayout>
