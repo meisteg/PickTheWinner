@@ -15,7 +15,7 @@
      limitations under the License.
 -->
 
-<com.meiste.greg.ptw.ObservableScrollView
+<com.meiste.greg.ptw.view.ObservableScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/scroll"
     android:layout_width="fill_parent"
@@ -96,4 +96,4 @@
 
     </RelativeLayout>
 
-</com.meiste.greg.ptw.ObservableScrollView>
+</com.meiste.greg.ptw.view.ObservableScrollView>

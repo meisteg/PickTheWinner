@@ -36,8 +36,8 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.meiste.greg.ptw.ObservableScrollView;
-import com.meiste.greg.ptw.ObservableScrollView.ScrollViewListener;
+import com.meiste.greg.ptw.view.ObservableScrollView;
+import com.meiste.greg.ptw.view.ObservableScrollView.ScrollViewListener;
 import com.meiste.greg.ptw.R;
 import com.meiste.greg.ptw.Util;
 

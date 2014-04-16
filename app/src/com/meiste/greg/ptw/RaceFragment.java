@@ -37,7 +37,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.meiste.greg.ptw.ObservableScrollView.ScrollViewListener;
+import com.meiste.greg.ptw.view.ObservableScrollView;
+import com.meiste.greg.ptw.view.ObservableScrollView.ScrollViewListener;
 
 public class RaceFragment extends SherlockFragment implements ScrollViewListener {
     private static final String ARG_RACE_ID = "race_id";
