@@ -296,7 +296,7 @@ public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo, O
         }
 
         final String adUnitId = mContainer.getString(GtmHelper.KEY_AD_ID);
-        if (!TextUtils.isEmpty(adUnitId) && !ActivityManager.isUserAMonkey()) {
+        if (!TextUtils.isEmpty(adUnitId) && (mAdView == null) && !ActivityManager.isUserAMonkey()) {
             mAdView = new AdView(this);
             mAdView.setAdListener(mAdListener);
             mAdView.setAdUnitId(adUnitId);
