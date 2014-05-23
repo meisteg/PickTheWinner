@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     Copyright (C) 2012-2013 Gregory S. Meiste <http://gregmeiste.com>
+     Copyright (C) 2012-2014 Gregory S. Meiste <http://gregmeiste.com>
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -19,30 +19,35 @@
     <color name="tab_bg">#18FF0000</color>
     <color name="tab_footer">#FFAA2222</color>
     <color name="tab_selected">#FF000000</color>
-    
+
     <color name="answer_right">#FF1A8800</color>
     <color name="answer_wrong">#FFFF0000</color>
-    
+
     <color name="standings_btn_selected">#FF82D0ED</color>
     <color name="standings_header">#FFCCCCCC</color>
     <color name="standings_chase">#88FFFF00</color>
     <color name="standings_self">#8800FF00</color>
     <color name="standings_other">#FFFFFFFF</color>
     <color name="standings_footer">#FFCCCCCC</color>
-    
+
     <color name="schedule_past">#FFCCCCCC</color>
     <color name="schedule_future">#FFFFFFFF</color>
     <color name="schedule_chase">#88FFFF00</color>
-    
+
     <color name="ad_background">#FF222222</color>
-    
+
     <color name="widget_bg_normal_start">#00000000</color>
     <color name="widget_bg_normal_end">#BB000000</color>
     <color name="widget_bg_good_start">#0000AA00</color>
     <color name="widget_bg_good_end">#BB00AA00</color>
     <color name="widget_bg_warning_start">#00AA0000</color>
     <color name="widget_bg_warning_end">#BBAA0000</color>
-    
+
     <color name="friend_method_selected">#FF82D0ED</color>
     <color name="friend_method_separator">#FFCCCCCC</color>
+
+    <color name="refresh1">#ff0f9d58</color>
+    <color name="refresh2">#ffdb4437</color>
+    <color name="refresh3">#ff4285f4</color>
+    <color name="refresh4">#fff4b400</color>
 </resources>

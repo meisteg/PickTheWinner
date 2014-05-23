@@ -20,6 +20,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,10 +30,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.handmark.pulltorefresh.library.PullToRefreshBase;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
-import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.meiste.greg.ptw.BuildConfig;
 import com.meiste.greg.ptw.GAE;
 import com.meiste.greg.ptw.GAE.GaeListener;
@@ -43,9 +41,9 @@ import com.meiste.greg.ptw.RaceItemAdapter;
 import com.meiste.greg.ptw.Races;
 import com.meiste.greg.ptw.Util;
 
-public final class Schedule extends TabFragment implements OnRefreshListener<ListView>, GaeListener  {
+public final class Schedule extends TabFragment implements OnRefreshListener, GaeListener  {
 
-    private PullToRefreshListView mPullToRefresh;
+    private SwipeRefreshLayout mSwipeRefreshWidget;
     private RaceItemAdapter mAdapter;
     private boolean mNeedScroll = true;
 
@@ -53,13 +51,15 @@ public final class Schedule extends TabFragment implements OnRefreshListener<Lis
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
             final Bundle savedInstanceState) {
         setRetainInstance(true);
-        final View v = inflater.inflate(R.layout.schedule, container, false);
+        final View v = inflater.inflate(R.layout.list, container, false);
 
-        mPullToRefresh = (PullToRefreshListView) v.findViewById(R.id.schedule);
-        mPullToRefresh.setOnRefreshListener(this);
-        mPullToRefresh.setMode(BuildConfig.DEBUG ? Mode.PULL_DOWN_TO_REFRESH : Mode.DISABLED);
+        mSwipeRefreshWidget = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_widget);
+        mSwipeRefreshWidget.setOnRefreshListener(this);
+        mSwipeRefreshWidget.setColorScheme(R.color.refresh1, R.color.refresh2, R.color.refresh3,
+                R.color.refresh4);
+        mSwipeRefreshWidget.setEnabled(BuildConfig.DEBUG);
 
-        final ListView lv = mPullToRefresh.getRefreshableView();
+        final ListView lv = (ListView) v.findViewById(R.id.content);
         mAdapter = new RaceItemAdapter(getActivity(), R.layout.schedule_row);
         lv.setAdapter(mAdapter);
 
@@ -95,20 +95,25 @@ public final class Schedule extends TabFragment implements OnRefreshListener<Lis
     }
 
     @Override
-    public void onRefresh(final PullToRefreshBase<ListView> refreshView) {
+    public void onRefresh() {
+        // Prevent multiple refresh attempts
+        mSwipeRefreshWidget.setEnabled(false);
+
         GAE.getInstance(getActivity()).getPage(this, "schedule");
     }
 
     @Override
     public void onFailedConnect(final Context context) {
-        mPullToRefresh.onRefreshComplete();
+        mSwipeRefreshWidget.setRefreshing(false);
+        mSwipeRefreshWidget.setEnabled(BuildConfig.DEBUG);
         Toast.makeText(context, R.string.failed_connect, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onGet(final Context context, final String json) {
         Races.update(context, json);
-        mPullToRefresh.onRefreshComplete();
+        mSwipeRefreshWidget.setRefreshing(false);
+        mSwipeRefreshWidget.setEnabled(BuildConfig.DEBUG);
     }
 
     @Override

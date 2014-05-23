@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,8 @@ import android.content.IntentFilter;
 import android.nfc.NfcAdapter;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -40,9 +42,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.handmark.pulltorefresh.library.PullToRefreshBase;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
-import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.meiste.greg.ptw.FriendRequest;
 import com.meiste.greg.ptw.GAE;
 import com.meiste.greg.ptw.GAE.GaeListener;
@@ -59,7 +58,7 @@ import com.meiste.greg.ptw.dialog.PrivacyDialog;
 import com.meiste.greg.ptw.gcm.Gcm;
 import com.meiste.greg.ptw.gcm.GcmIntentService;
 
-public final class Standings extends TabFragment implements OnRefreshListener<ListView>, GaeListener, DialogInterface.OnClickListener {
+public final class Standings extends TabFragment implements OnRefreshListener, GaeListener, DialogInterface.OnClickListener {
     public static final String FILENAME = "standings";
 
     private boolean mSetupNeeded;
@@ -67,7 +66,7 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
     private boolean mFailedConnect = false;
     private boolean mConnecting = false;
     private boolean mCheckName = false;
-    private PullToRefreshListView mPullToRefresh;
+    private SwipeRefreshLayout mSwipeRefreshWidget;
     private PlayerAdapter mAdapter;
     private TextView mAfterRace;
     private TextView mFooter;
@@ -112,11 +111,13 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
             return inflater.inflate(R.layout.connecting, container, false);
         }
 
-        final View v = inflater.inflate(R.layout.standings, container, false);
-        mPullToRefresh = (PullToRefreshListView) v.findViewById(R.id.standings);
-        mPullToRefresh.setOnRefreshListener(this);
+        final View v = inflater.inflate(R.layout.list, container, false);
+        mSwipeRefreshWidget = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_widget);
+        mSwipeRefreshWidget.setOnRefreshListener(this);
+        mSwipeRefreshWidget.setColorScheme(R.color.refresh1, R.color.refresh2, R.color.refresh3,
+                R.color.refresh4);
 
-        final ListView lv = mPullToRefresh.getRefreshableView();
+        final ListView lv = (ListView) v.findViewById(R.id.content);
         final View header = inflater.inflate(R.layout.standings_header, lv, false);
         mAdapter = new PlayerAdapter(getActivity());
         mAfterRace = (TextView) header.findViewById(R.id.after);
@@ -252,7 +253,10 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
     }
 
     @Override
-    public void onRefresh(final PullToRefreshBase<ListView> refreshView) {
+    public void onRefresh() {
+        // Prevent multiple refresh attempts
+        mSwipeRefreshWidget.setEnabled(false);
+
         GAE.getInstance(getActivity()).getPage(this, "standings");
     }
 
@@ -276,7 +280,8 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
 
         // mConnecting not set for pull to refresh case
         if (!mConnecting) {
-            mPullToRefresh.onRefreshComplete();
+            mSwipeRefreshWidget.setRefreshing(false);
+            mSwipeRefreshWidget.setEnabled(true);
             Toast.makeText(context, R.string.failed_connect, Toast.LENGTH_SHORT).show();
         }
         // Verify application wasn't closed before callback returned
@@ -294,7 +299,8 @@ public final class Standings extends TabFragment implements OnRefreshListener<Li
 
         // mConnecting not set for pull to refresh case
         if (!mConnecting) {
-            mPullToRefresh.onRefreshComplete();
+            mSwipeRefreshWidget.setRefreshing(false);
+            mSwipeRefreshWidget.setEnabled(true);
             context.sendBroadcast(new Intent(PTW.INTENT_ACTION_STANDINGS));
         }
         // Verify application wasn't closed before callback returned

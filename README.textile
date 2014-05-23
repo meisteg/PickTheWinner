@@ -4,9 +4,9 @@ Pick The Winner is an "Android":http://android.com game that allows "NASCAR":htt
 
 h2. Getting Started
 
-This is the source code to the game. If you are interested in playing the game, you'll need to "download it from the Android Market":https://play.google.com/store/apps/details?id=com.meiste.greg.ptw (it's free).
+This is the source code to the game. If you are interested in playing the game, you'll need to "download it from Google Play":https://play.google.com/store/apps/details?id=com.meiste.greg.ptw (it's free).
 
-Pick The Winner is built using four "Eclipse":http://eclipse.org projects, which are all included in this repo. You should be able to point the Eclipse project import tool to this directory, and Eclipse will prompt you to import all four projects. Once imported, simply build the PickTheWinner project, which will automatically build and include the other three library projects.
+Pick The Winner is built using three "Eclipse":http://eclipse.org projects, which are all included in this repo. You should be able to point the Eclipse project import tool to this directory, and Eclipse will prompt you to import all three projects. Once imported, simply build the PickTheWinner project, which will automatically build and include the other two library projects.
 
 h2. License
 
