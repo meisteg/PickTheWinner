@@ -41,6 +41,7 @@ public class Analytics {
         GoogleAnalytics.getInstance(context).setLocalDispatchPeriod(60);
 
         if (BuildConfig.DEBUG) {
+            GoogleAnalytics.getInstance(context).setDryRun(true);
             GoogleAnalytics.getInstance(context).getLogger().setLogLevel(LogLevel.VERBOSE);
         }
 
