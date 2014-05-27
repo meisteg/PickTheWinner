@@ -76,12 +76,7 @@ public class EditPreferences extends SherlockPreferenceActivity implements OnSha
 
         try {
             final PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-            final Preference build = findPreference(KEY_BUILD);
-            if (BuildConfig.DEBUG) {
-                build.setSummary(pInfo.versionName + " " + getString(R.string.debug_build));
-            } else {
-                build.setSummary(pInfo.versionName);
-            }
+            findPreference(KEY_BUILD).setSummary(pInfo.versionName);
         } catch (final NameNotFoundException e) {}
     }
 
