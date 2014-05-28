@@ -11,6 +11,11 @@ android {
         versionName "3.4.0-" + gitSha()
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
     buildTypes {
         release {
             runProguard true
