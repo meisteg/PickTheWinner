@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,7 +62,7 @@ public final class RaceItemAdapter extends ArrayAdapter<Race> {
 
         if (v == null) {
             final LayoutInflater vi = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = vi.inflate(R.layout.schedule_row, null);
+            v = vi.inflate(R.layout.schedule_row, parent, false);
 
             holder = new ViewHolder();
             holder.row = (LinearLayout) v.findViewById(R.id.row);

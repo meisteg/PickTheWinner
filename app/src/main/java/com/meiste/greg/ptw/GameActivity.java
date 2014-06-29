@@ -301,7 +301,7 @@ public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo, O
             mAdView.setAdListener(mAdListener);
             mAdView.setAdUnitId(adUnitId);
             mAdView.setAdSize(Util.str2AdSize(mContainer.getString(GtmHelper.KEY_AD_SIZE)));
-            mAdView.setBackgroundResource(R.color.ad_background);
+            mAdView.setBackgroundColor(getResources().getColor(R.color.ad_background));
             mAdView.loadAd(adReqBuilder.build());
         }
     }

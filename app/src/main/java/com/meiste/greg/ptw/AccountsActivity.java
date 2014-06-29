@@ -157,7 +157,7 @@ public class AccountsActivity extends BaseActivity implements GaeListener {
         if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) &&
                 (mAccountIntent.resolveActivity(getPackageManager()) != null)) {
             menu.add(Menu.NONE, R.string.add_account, Menu.NONE, R.string.add_account)
-            .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+            .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
             return true;
         }
 

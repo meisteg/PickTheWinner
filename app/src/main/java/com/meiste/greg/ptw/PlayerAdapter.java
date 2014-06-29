@@ -135,7 +135,7 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
 
         if (v == null) {
             final LayoutInflater vi = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = vi.inflate(R.layout.standings_row, null);
+            v = vi.inflate(R.layout.standings_row, parent, false);
 
             holder = new _ViewHolder();
             holder.row = (LinearLayout) v.findViewById(R.id.player_row);
@@ -154,7 +154,7 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
         if (isSelf(p))
             holder.name.setBackgroundResource(R.drawable.standings_self);
         else
-            holder.name.setBackgroundResource(android.R.color.transparent);
+            holder.name.setBackgroundColor(mContext.getResources().getColor(android.R.color.transparent));
 
         if (p.isInChase())
             holder.row.setBackgroundResource(R.drawable.standings_chase);
