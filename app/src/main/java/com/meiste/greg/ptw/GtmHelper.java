@@ -95,8 +95,10 @@ FunctionCallMacroCallback {
 
         for (final OnContainerAvailableListener l : mListeners) {
             l.onContainerAvailable(mContainerHolder.getContainer());
-            mListeners.remove(l);
         }
+        // Avoid ConcurrentModificationException by clearing all listeners after the loop
+        mListeners.clear();
+
         containerHolder.setContainerAvailableListener(this);
     }
 
