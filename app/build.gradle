@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion "19.1.0"
+    compileSdkVersion 20
+    buildToolsVersion "20.0.0"
 
     defaultConfig {
         minSdkVersion 10
-        targetSdkVersion 19
+        targetSdkVersion 20
         versionCode 340
         versionName "3.4.0-" + gitSha()
     }
@@ -36,7 +36,7 @@ def gitSha() {
 
 dependencies {
     compile 'com.google.code.gson:gson:2.2.4'
-    compile 'com.android.support:support-v4:19.1.0'
+    compile 'com.android.support:support-v4:20.0.0'
     compile 'com.google.android.gms:play-services:4.4.52'
     compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
     compile 'com.jakewharton:disklrucache:2.0.2'
