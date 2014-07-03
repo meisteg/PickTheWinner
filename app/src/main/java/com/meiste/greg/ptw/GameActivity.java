@@ -352,7 +352,8 @@ public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo, O
                 return;
             }
 
-            mIsAdFree = inventory.hasPurchase(SKU_AD_FREE);
+            mIsAdFree = inventory.hasPurchase(SKU_AD_FREE) ||
+                    getResources().getBoolean(R.bool.adfree_default);
             mIabReady = true;
             invalidateOptionsMenu();
             if (!mIsAdFree) loadAd();

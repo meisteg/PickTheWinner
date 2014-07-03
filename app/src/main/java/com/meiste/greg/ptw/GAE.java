@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,8 +68,6 @@ public final class GAE {
     private static final int TIMEOUT_CONNECTION = 10000;
     // Timeout in milliseconds to wait for data.
     private static final int TIMEOUT_SOCKET = 15000;
-    // Force the auth cookie to be always expired (FOR DEBUG ONLY).
-    private static final boolean DEBUG_FORCE_COOKIE_EXPIRED = false;
 
     private static final Object sInstanceSync = new Object();
     private static GAE sInstance;
@@ -168,7 +166,7 @@ public final class GAE {
         if ((listener == null) || (page == null))
             throw new IllegalArgumentException("No null arguments allowed");
 
-        if (DEBUG_FORCE_COOKIE_EXPIRED) {
+        if (mContext.getResources().getBoolean(R.bool.gae_force_cookie_expired)) {
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
             prefs.edit().putString(EditPreferences.KEY_ACCOUNT_COOKIE, "ExpiredCookie").apply();
         }
@@ -193,7 +191,7 @@ public final class GAE {
         if ((listener == null) || (page == null) || (json == null))
             throw new IllegalArgumentException("No null arguments allowed");
 
-        if (DEBUG_FORCE_COOKIE_EXPIRED) {
+        if (mContext.getResources().getBoolean(R.bool.gae_force_cookie_expired)) {
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
             prefs.edit().putString(EditPreferences.KEY_ACCOUNT_COOKIE, "ExpiredCookie").apply();
         }

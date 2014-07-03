@@ -16,6 +16,15 @@ android {
         targetCompatibility JavaVersion.VERSION_1_7
     }
 
+    productFlavors {
+        free {
+            // No config changes from default
+        }
+        internal {
+            versionName defaultConfig.versionName + "-internal"
+        }
+    }
+
     buildTypes {
         release {
             runProguard true
