@@ -1,7 +1,15 @@
+# Gradle
 .gradle
-/local.properties
-/build
-/.idea/workspace.xml
-/.idea/dictionaries
-/.idea/libraries
+build
+
+# Local configuration files (sdk path, etc)
+local.properties
+
+# OS generated files
 .DS_Store
+
+# IntelliJ
+*.iml
+*.ipr
+*.iws
+.idea
