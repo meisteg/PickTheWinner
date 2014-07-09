@@ -1,9 +1,13 @@
+# Specific files to exclude
+*.keystore
+
 # Gradle
 .gradle
 build
 
 # Local configuration files (sdk path, etc)
 local.properties
+gradle.properties
 
 # OS generated files
 .DS_Store

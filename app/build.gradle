@@ -25,8 +25,16 @@ android {
         }
     }
 
+    signingConfigs {
+        release {
+            storeFile file('release.keystore')
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig signingConfigs.release
+
             runProguard true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
@@ -50,4 +58,15 @@ dependencies {
     compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
     compile 'com.jakewharton:disklrucache:2.0.2'
     compile fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+// get signing config from gradle.properties file
+if (project.hasProperty('storePassword')
+        && project.hasProperty('keyAlias')
+        && project.hasProperty('keyPassword')) {
+    android.signingConfigs.release.storePassword = storePassword
+    android.signingConfigs.release.keyAlias = keyAlias
+    android.signingConfigs.release.keyPassword = keyPassword
+} else {
+    android.buildTypes.release.signingConfig = null
 }
