@@ -55,8 +55,8 @@ public final class Schedule extends TabFragment implements OnRefreshListener, Ga
 
         mSwipeRefreshWidget = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_widget);
         mSwipeRefreshWidget.setOnRefreshListener(this);
-        mSwipeRefreshWidget.setColorScheme(R.color.refresh1, R.color.refresh2, R.color.refresh3,
-                R.color.refresh4);
+        mSwipeRefreshWidget.setColorSchemeResources(R.color.refresh1, R.color.refresh2,
+                R.color.refresh3, R.color.refresh4);
         mSwipeRefreshWidget.setEnabled(BuildConfig.DEBUG);
 
         final ListView lv = (ListView) v.findViewById(R.id.content);

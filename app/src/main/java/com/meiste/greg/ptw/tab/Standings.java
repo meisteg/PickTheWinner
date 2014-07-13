@@ -114,8 +114,8 @@ public final class Standings extends TabFragment implements OnRefreshListener, G
         final View v = inflater.inflate(R.layout.list, container, false);
         mSwipeRefreshWidget = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_widget);
         mSwipeRefreshWidget.setOnRefreshListener(this);
-        mSwipeRefreshWidget.setColorScheme(R.color.refresh1, R.color.refresh2, R.color.refresh3,
-                R.color.refresh4);
+        mSwipeRefreshWidget.setColorSchemeResources(R.color.refresh1, R.color.refresh2,
+                R.color.refresh3, R.color.refresh4);
 
         final ListView lv = (ListView) v.findViewById(R.id.content);
         final View header = inflater.inflate(R.layout.standings_header, lv, false);
