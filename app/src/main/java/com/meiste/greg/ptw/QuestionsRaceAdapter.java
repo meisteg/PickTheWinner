@@ -57,8 +57,8 @@ public final class QuestionsRaceAdapter extends ArrayAdapter<Race> {
             }
         }
 
-        if (getCount() > 0 && !getItem(getCount() - 1).isRecent()) {
-            // Add next race to the list if not already
+        if (getCount() == 0 || !getItem(getCount() - 1).isRecent()) {
+            // Add next race to the list
             final Race next = Race.getNext(context, false, true);
             if (next != null) {
                 if ((getCount() <= 0) || mRaces.get(getCount() - 1).getId() != next.getId()) {
