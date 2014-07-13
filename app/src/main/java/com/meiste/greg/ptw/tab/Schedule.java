@@ -78,7 +78,9 @@ public final class Schedule extends TabFragment implements OnRefreshListener, Ga
         if (mNeedScroll) {
             final Race race = Race.getNext(getActivity(), true, true);
             if (race != null) {
-                lv.setSelection(race.getId());
+                // If possible set previous race so "recent" race is shown (if applicable)
+                final int id = race.getId();
+                lv.setSelection(id > 0 ? id - 1 : id);
             }
             mNeedScroll = false;
         }
