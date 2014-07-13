@@ -26,12 +26,11 @@ import java.sql.Timestamp;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.meiste.greg.ptw.BuildConfig;
 import com.meiste.greg.ptw.EditPreferences;
 import com.meiste.greg.ptw.GAE;
 import com.meiste.greg.ptw.Util;
@@ -103,9 +102,8 @@ public final class Gcm {
         // since the existing regID is not guaranteed to work with the new
         // app version.
         final int registeredVersion = prefs.getInt(PROPERTY_APP_VERSION, Integer.MIN_VALUE);
-        final int currentVersion = getAppVersion(context);
-        if (registeredVersion != currentVersion) {
-            Util.log("App version changed from " + registeredVersion + " to " + currentVersion);
+        if (registeredVersion != BuildConfig.VERSION_CODE) {
+            Util.log("App version changed from " + registeredVersion + " to " + BuildConfig.VERSION_CODE);
             return "";
         }
         return registrationId;
@@ -153,20 +151,6 @@ public final class Gcm {
     }
 
     /**
-     * @return Application's version code from the {@code PackageManager}.
-     */
-    private static int getAppVersion(final Context context) {
-        try {
-            final PackageInfo packageInfo = context.getPackageManager()
-                    .getPackageInfo(context.getPackageName(), 0);
-            return packageInfo.versionCode;
-        } catch (final NameNotFoundException e) {
-            // should never happen
-            throw new RuntimeException("Could not get package name: " + e);
-        }
-    }
-
-    /**
      * Stores the registration ID and app versionCode in the application's
      * {@code SharedPreferences}.
      *
@@ -175,11 +159,10 @@ public final class Gcm {
      */
     private static void storeRegistrationId(final Context context, final String regId) {
         final SharedPreferences prefs = getGcmPrefs(context);
-        final int appVersion = getAppVersion(context);
-        Util.log("Saving regId on app version " + appVersion);
+        Util.log("Saving regId on app version " + BuildConfig.VERSION_CODE);
         final SharedPreferences.Editor editor = prefs.edit();
         editor.putString(PROPERTY_REG_ID, regId);
-        editor.putInt(PROPERTY_APP_VERSION, appVersion);
+        editor.putInt(PROPERTY_APP_VERSION, BuildConfig.VERSION_CODE);
         editor.apply();
     }
 

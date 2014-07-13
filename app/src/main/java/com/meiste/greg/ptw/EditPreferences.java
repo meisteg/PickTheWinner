@@ -20,8 +20,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -74,10 +72,7 @@ public class EditPreferences extends SherlockPreferenceActivity implements OnSha
             mVibrate = null;
         }
 
-        try {
-            final PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-            findPreference(KEY_BUILD).setSummary(pInfo.versionName);
-        } catch (final NameNotFoundException e) {}
+        findPreference(KEY_BUILD).setSummary(BuildConfig.VERSION_NAME);
     }
 
     @SuppressWarnings("deprecation")
