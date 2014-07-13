@@ -36,6 +36,8 @@ public class PTW extends Application {
 
     public final static String INTENT_EXTRA_TAB = "tab_select";
 
+    public final static String DEFAULT_NOTIFY_SND = "content://settings/system/notification_sound";
+
     private BitmapLruCache mCache;
 
     @Override

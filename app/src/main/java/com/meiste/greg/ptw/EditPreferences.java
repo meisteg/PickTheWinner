@@ -20,6 +20,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -28,6 +31,7 @@ import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
+import android.text.TextUtils;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
@@ -84,6 +88,7 @@ public class EditPreferences extends SherlockPreferenceActivity implements OnSha
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.registerOnSharedPreferenceChangeListener(this);
         reminderCheck(prefs);
+        setRingtoneSummary(prefs);
 
         final Preference account = findPreference(KEY_ACCOUNT_SCREEN);
         account.setSummary(prefs.getString(KEY_ACCOUNT_EMAIL, getString(R.string.account_needed)));
@@ -113,6 +118,9 @@ public class EditPreferences extends SherlockPreferenceActivity implements OnSha
     @Override
     public void onSharedPreferenceChanged(final SharedPreferences prefs, final String key) {
         reminderCheck(prefs);
+        if (key.equals(KEY_NOTIFY_RINGTONE)) {
+            setRingtoneSummary(prefs);
+        }
     }
 
     @SuppressWarnings("deprecation")
@@ -129,6 +137,28 @@ public class EditPreferences extends SherlockPreferenceActivity implements OnSha
             findPreference(KEY_NOTIFY_RINGTONE).setEnabled(false);
             if (mVibrate != null)
                 mVibrate.setEnabled(false);
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private void setRingtoneSummary(final SharedPreferences prefs) {
+        String tone = prefs.getString(KEY_NOTIFY_RINGTONE, PTW.DEFAULT_NOTIFY_SND);
+        Preference preference = findPreference(KEY_NOTIFY_RINGTONE);
+
+        if (TextUtils.isEmpty(tone)) {
+            // Empty values correspond to 'silent' (no ringtone).
+            preference.setSummary(R.string.ringtone_silent);
+        } else {
+            Ringtone ringtone = RingtoneManager.getRingtone(
+                    preference.getContext(), Uri.parse(tone));
+
+            if (ringtone == null) {
+                // Set generic summary if there was a lookup error.
+                preference.setSummary(R.string.ringtone_summary);
+            } else {
+                // Set the summary to reflect the new ringtone display name.
+                preference.setSummary(ringtone.getTitle(preference.getContext()));
+            }
         }
     }
 

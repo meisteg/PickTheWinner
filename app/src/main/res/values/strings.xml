@@ -93,6 +93,7 @@
     <string name="remove_friend_confirm">Remove %s as a friend?</string>
     <string name="retry">Retry</string>
     <string name="ringtone">Ringtone</string>
+    <string name="ringtone_silent">Silent</string>
     <string name="ringtone_summary">Set a ringtone for notifications</string>
     <string name="select_account">Select the account you wish to authorize:</string>
     <string name="send">Send</string>

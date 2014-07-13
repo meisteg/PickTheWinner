@@ -128,7 +128,7 @@ public final class QuestionAlarm extends IntentService implements OnContainerAva
             .setAutoCancel(true)
             .setDefaults(defaults)
             .setSound(Uri.parse(prefs.getString(EditPreferences.KEY_NOTIFY_RINGTONE,
-                    "content://settings/system/notification_sound")));
+                    PTW.DEFAULT_NOTIFY_SND)));
 
             getNM(this).notify(R.string.remind_questions_ticker, builder.build());
         } else {

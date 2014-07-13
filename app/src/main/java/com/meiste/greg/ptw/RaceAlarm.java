@@ -122,7 +122,7 @@ public final class RaceAlarm extends IntentService implements OnContainerAvailab
             .setAutoCancel(true)
             .setDefaults(defaults)
             .setSound(Uri.parse(prefs.getString(EditPreferences.KEY_NOTIFY_RINGTONE,
-                    "content://settings/system/notification_sound")));
+                    PTW.DEFAULT_NOTIFY_SND)));
 
             getNM(this).notify(R.string.remind_race_ticker, builder.build());
         } else {
