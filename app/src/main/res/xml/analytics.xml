@@ -22,7 +22,7 @@
     <bool name="ga_autoActivityTracking">true</bool>
 
     <!-- Enable automatic exception tracking -->
-    <bool name="ga_reportUncaughtExceptions">true</bool>
+    <bool name="ga_reportUncaughtExceptions">false</bool>
 
     <!-- Screen names for activities -->
     <screenName name="com.meiste.greg.ptw.MainActivity">Init</screenName>

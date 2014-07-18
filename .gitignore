@@ -1,4 +1,6 @@
 # Specific files to exclude
+crashlytics.properties
+com_crashlytics_export_strings.xml
 *.keystore
 
 # Gradle
