@@ -22,7 +22,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.Menu;
@@ -64,12 +63,6 @@ public class AccountsActivity extends BaseActivity implements GaeListener {
 
         int connectId = R.id.right_button;
         int exitId = R.id.left_button;
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            // Android versions prior to ICS have the affirmative on the left
-            connectId = R.id.left_button;
-            exitId = R.id.right_button;
-        }
-
         final Button connectButton = (Button) findViewById(connectId);
         connectButton.setText(R.string.connect);
 
@@ -152,10 +145,7 @@ public class AccountsActivity extends BaseActivity implements GaeListener {
 
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
-        // Add menu item to add account on ICS MR1 or later. Older versions
-        // don't support directing user straight to Google account setup.
-        if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) &&
-                (mAccountIntent.resolveActivity(getPackageManager()) != null)) {
+        if (mAccountIntent.resolveActivity(getPackageManager()) != null) {
             menu.add(Menu.NONE, R.string.add_account, Menu.NONE, R.string.add_account)
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
             return true;

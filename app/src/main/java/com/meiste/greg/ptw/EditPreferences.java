@@ -15,7 +15,6 @@
  */
 package com.meiste.greg.ptw;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,7 +22,6 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.preference.CheckBoxPreference;
@@ -57,7 +55,6 @@ public class EditPreferences extends PreferenceActivity implements OnSharedPrefe
     private int mLogHitCountdown;
     private Preference mVibrate;
 
-    @TargetApi(11)
     @SuppressWarnings("deprecation")
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -67,9 +64,8 @@ public class EditPreferences extends PreferenceActivity implements OnSharedPrefe
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
         mVibrate = findPreference(KEY_NOTIFY_VIBRATE);
-        final boolean methodAvailable = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
         final Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        if (methodAvailable && (vibrator == null || !vibrator.hasVibrator())) {
+        if (vibrator == null || !vibrator.hasVibrator()) {
             Util.log("Remove vibrator option since vibrator not present");
             final PreferenceCategory pc = (PreferenceCategory)findPreference(KEY_REMINDER_SETTINGS);
             pc.removePreference(mVibrate);

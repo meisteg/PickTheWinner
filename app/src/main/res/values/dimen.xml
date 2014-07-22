@@ -21,8 +21,6 @@
     <dimen name="DetailsName">22dp</dimen>
     <dimen name="DetailsMapSize">250dp</dimen>
 
-    <dimen name="widget_margin">8dp</dimen>
-
     <dimen name="questions_padding">15dp</dimen>
     <dimen name="rules_padding">10sp</dimen>
 </resources>

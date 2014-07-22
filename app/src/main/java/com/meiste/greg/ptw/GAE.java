@@ -45,7 +45,6 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -53,7 +52,6 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -132,7 +130,7 @@ public final class GAE {
     }
 
     public List<String> getGoogleAccounts() {
-        final ArrayList<String> result = new ArrayList<String>();
+        final ArrayList<String> result = new ArrayList<>();
         final Account[] accounts = AccountManager.get(mContext).getAccountsByType(ACCOUNT_TYPE);
         for (final Account account : accounts) {
             result.add(account.name);
@@ -237,18 +235,12 @@ public final class GAE {
         reconnect();
     }
 
-    @SuppressLint("NewApi")
-    @SuppressWarnings("deprecation")
     private boolean reconnect() {
         final AccountManager mgr = AccountManager.get(mContext);
         final Account[] accts = mgr.getAccountsByType(ACCOUNT_TYPE);
         for (final Account acct : accts) {
             if (acct.name.equals(mAccountName)) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                    mgr.getAuthToken(acct, "ah", null, false, new AuthTokenCallback(), null);
-                } else {
-                    mgr.getAuthToken(acct, "ah", false, new AuthTokenCallback(), null);
-                }
+                mgr.getAuthToken(acct, "ah", null, false, new AuthTokenCallback(), null);
                 return true;
             }
         }

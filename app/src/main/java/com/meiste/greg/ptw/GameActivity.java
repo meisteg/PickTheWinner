@@ -15,7 +15,6 @@
  */
 package com.meiste.greg.ptw;
 
-import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -23,7 +22,6 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
@@ -175,8 +173,7 @@ public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo, O
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         }
 
-        if (Util.isGooglePlusInstalled(this) &&
-                (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)) {
+        if (Util.isGooglePlusInstalled(this)) {
             menu.add(Menu.NONE, R.string.google_plus, Menu.NONE, R.string.google_plus)
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
         }
@@ -184,7 +181,6 @@ public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo, O
         return true;
     }
 
-    @SuppressLint("NewApi")
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
@@ -342,7 +338,6 @@ public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo, O
 
     private final IabHelper.QueryInventoryFinishedListener mGotInventoryListener =
             new IabHelper.QueryInventoryFinishedListener() {
-        @SuppressLint("NewApi")
         @Override
         public void onQueryInventoryFinished(final IabResult result, final Inventory inventory) {
             if (result.isFailure()) {
@@ -361,7 +356,6 @@ public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo, O
 
     private final IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener =
             new IabHelper.OnIabPurchaseFinishedListener() {
-        @SuppressLint("NewApi")
         @Override
         public void onIabPurchaseFinished(final IabResult result, final Purchase purchase) {
             if (result.isFailure()) {
