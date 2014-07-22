@@ -18,7 +18,6 @@ package com.meiste.greg.ptw;
 import java.util.HashMap;
 import java.util.Map;
 
-import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -112,11 +111,11 @@ public class RaceFragment extends Fragment implements ScrollViewListener {
     }
 
     private boolean isWorkaroundNeeded(final ViewGroup vg) {
-        boolean isNeeded = true;
-
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-            return isNeeded;
+            return true;
         }
+
+        boolean isNeeded = true;
 
         for (int i = 0; (i < vg.getChildCount()) && isNeeded; ++i) {
             final View v = vg.getChildAt(i);
@@ -180,7 +179,6 @@ public class RaceFragment extends Fragment implements ScrollViewListener {
         final View mapView = mMapFragment.getView();
         if (mapView.getViewTreeObserver().isAlive()) {
             mapView.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
-                @SuppressLint("NewApi")
                 @SuppressWarnings("deprecation")
                 @Override
                 public void onGlobalLayout() {
@@ -286,7 +284,7 @@ public class RaceFragment extends Fragment implements ScrollViewListener {
     .include(new LatLng(42.344430, -76.926061)).include(new LatLng(42.337230, -76.920397))
     .include(new LatLng(42.328505, -76.923959)).include(new LatLng(42.337420, -76.929151)).build();
 
-    private static final Map<String, LatLngBounds> mBounds = new HashMap<String, LatLngBounds>();
+    private static final Map<String, LatLngBounds> mBounds = new HashMap<>();
     static {
         mBounds.put("ams", ATLANTA);
         mBounds.put("bms", BRISTOL);

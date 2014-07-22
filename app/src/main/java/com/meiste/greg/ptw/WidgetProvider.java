@@ -29,7 +29,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import uk.co.senab.bitmapcache.BitmapLruCache;
 import uk.co.senab.bitmapcache.CacheableBitmapDrawable;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -122,7 +121,6 @@ public class WidgetProvider extends AppWidgetProvider {
         Analytics.trackEvent(context, "Widget", "state", "disabled");
     }
 
-    @SuppressLint("NewApi")
     private void setAlarm(final Context context) {
         /* No point setting alarm if no widgets */
         if (getInstalledWidgets(context).length == 0)
@@ -224,7 +222,9 @@ public class WidgetProvider extends AppWidgetProvider {
                     try {
                         /* Need to fudge the time the other way */
                         Thread.sleep(UPDATE_FUDGE * 2);
-                    } catch (final InterruptedException e) {}
+                    } catch (final InterruptedException e) {
+                        // Continue anyway
+                    }
 
                     if (sRace.isRecent()) {
                         return RESULT_SUCCESS;

@@ -15,7 +15,6 @@
  */
 package com.meiste.greg.ptw;
 
-import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.Notification;
@@ -47,7 +46,6 @@ public final class QuestionAlarm extends IntentService implements OnContainerAva
         setIntentRedelivery(true);
     }
 
-    @SuppressLint("NewApi")
     public static void set(final Context context) {
         // Get next points race: allow in progress
         Race race = Race.getNext(context, false, true);
@@ -79,7 +77,7 @@ public final class QuestionAlarm extends IntentService implements OnContainerAva
 
             alarm_set = true;
         } else {
-            Util.log("Not setting question alarm: alarm_set=" + alarm_set);
+            Util.log("Not setting question alarm: alarm_set=true");
         }
     }
 
@@ -100,6 +98,7 @@ public final class QuestionAlarm extends IntentService implements OnContainerAva
                 try {
                     mSync.wait();
                 } catch (final InterruptedException e) {
+                    // Continue anyway
                 }
             }
         }

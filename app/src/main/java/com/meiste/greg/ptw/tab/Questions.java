@@ -66,7 +66,7 @@ public final class Questions extends TabFragment implements GaeListener {
     private ListView mRaceList = null;
     private QuestionsRaceAdapter mRaceAdapter;
 
-    public final static String cachePrefix() {
+    public static String cachePrefix() {
         return Calendar.getInstance().get(Calendar.YEAR) + "_race";
     }
 

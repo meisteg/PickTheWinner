@@ -80,19 +80,21 @@ public final class Util {
                     .getApplicationInfo("com.google.android.apps.plus", 0);
             return ai.enabled;
         } catch (final NameNotFoundException e) {
+            // Google+ not installed
         }
         return false;
     }
 
     public static AdSize str2AdSize(final String adSize) {
-        if ("SMART_BANNER".equals(adSize)) {
-            return AdSize.SMART_BANNER;
-        } else if ("LEADERBOARD".equals(adSize)) {
-            return AdSize.LEADERBOARD;
-        } else if ("FULL_BANNER".equals(adSize)) {
-            return AdSize.FULL_BANNER;
-        } else if ("MEDIUM_RECTANGLE".equals(adSize)) {
-            return AdSize.MEDIUM_RECTANGLE;
+        switch (adSize) {
+            case "SMART_BANNER":
+                return AdSize.SMART_BANNER;
+            case "LEADERBOARD":
+                return AdSize.LEADERBOARD;
+            case "FULL_BANNER":
+                return AdSize.FULL_BANNER;
+            case "MEDIUM_RECTANGLE":
+                return AdSize.MEDIUM_RECTANGLE;
         }
         return AdSize.BANNER;
     }

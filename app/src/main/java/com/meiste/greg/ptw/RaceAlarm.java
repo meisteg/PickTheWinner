@@ -15,7 +15,6 @@
  */
 package com.meiste.greg.ptw;
 
-import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.Notification;
@@ -46,7 +45,6 @@ public final class RaceAlarm extends IntentService implements OnContainerAvailab
         setIntentRedelivery(true);
     }
 
-    @SuppressLint("NewApi")
     public static void set(final Context context) {
         final Race race = Race.getNext(context, true, true);
 
@@ -93,6 +91,7 @@ public final class RaceAlarm extends IntentService implements OnContainerAvailab
                 try {
                     mSync.wait();
                 } catch (final InterruptedException e) {
+                    // Continue anyway
                 }
             }
         }
