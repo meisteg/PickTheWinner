@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     Copyright (C) 2012-2013 Gregory S. Meiste <http://gregmeiste.com>
+     Copyright (C) 2012-2014 Gregory S. Meiste <http://gregmeiste.com>
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -15,63 +15,67 @@
      limitations under the License.
 -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
 
     <TextView
-        android:id="@+id/connect_text"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:padding="10dip"
-        android:textColor="#ffffff"
+        android:textColor="@android:color/white"
         android:text="@string/connect_text"
         android:textSize="16sp"/>
 
     <TextView
-        android:id="@+id/select_text"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/connect_text"
         android:text="@string/select_account"
-        android:textColor="#ffffff"
+        android:textColor="@android:color/white"
         android:layout_margin="10dip"/>
 
     <View
-        android:id="@+id/divider"
         android:layout_width="fill_parent"
         android:layout_height="1dip"
-        android:layout_below="@id/select_text"
         android:background="#808080" />
 
     <ListView
         android:id="@+id/select_account"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/divider"
+        android:layout_height="0dip"
+        android:layout_weight="1"
         android:textSize="16sp"
         android:background="@android:color/transparent"
-        android:cacheColorHint="@android:color/transparent">
-    </ListView>
+        android:cacheColorHint="@android:color/transparent"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"
+        android:background="?android:attr/dividerVertical"/>
 
     <LinearLayout
+        style="?android:attr/buttonBarStyle"
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="50dip"
-        android:layout_alignParentBottom="true">
+        android:layout_height="wrap_content">
 
         <Button
-            android:id="@+id/left_button"
-            android:layout_marginTop="5dp"
+            style="?android:attr/buttonBarButtonStyle"
+            android:id="@+id/close_button"
+            android:text="@string/exit"
             android:layout_weight="1"
             android:layout_width="0dip"
             android:layout_height="wrap_content"/>
 
         <Button
-            android:id="@+id/right_button"
-            android:layout_marginTop="5dp"
+            style="?android:attr/buttonBarButtonStyle"
+            android:id="@+id/connect_button"
+            android:text="@string/connect"
             android:layout_weight="1"
             android:layout_width="0dip"
             android:layout_height="wrap_content"/>
     </LinearLayout>
-</RelativeLayout>
+</LinearLayout>

@@ -61,13 +61,7 @@ public class AccountsActivity extends BaseActivity implements GaeListener {
         setContentView(R.layout.connect);
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        int connectId = R.id.right_button;
-        int exitId = R.id.left_button;
-        final Button connectButton = (Button) findViewById(connectId);
-        connectButton.setText(R.string.connect);
-
-        final Button exitButton = (Button) findViewById(exitId);
-        exitButton.setText(R.string.exit);
+        final Button exitButton = (Button) findViewById(R.id.close_button);
         exitButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(final View v) {
@@ -105,10 +99,11 @@ public class AccountsActivity extends BaseActivity implements GaeListener {
             builder.show();
         } else {
             final ListView listView = (ListView) findViewById(R.id.select_account);
-            listView.setAdapter(new ArrayAdapter<String>(this, R.layout.account, accounts));
+            listView.setAdapter(new ArrayAdapter<>(this, R.layout.account, accounts));
             listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
             listView.setItemChecked(mAccountSelectedPosition, true);
 
+            final Button connectButton = (Button) findViewById(R.id.connect_button);
             connectButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(final View v) {
