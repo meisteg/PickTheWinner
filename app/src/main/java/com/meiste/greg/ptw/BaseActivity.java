@@ -15,10 +15,11 @@
  */
 package com.meiste.greg.ptw;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
+import android.support.v4.app.FragmentActivity;
+
 import com.google.android.gms.analytics.GoogleAnalytics;
 
-public abstract class BaseActivity extends SherlockFragmentActivity {
+public abstract class BaseActivity extends FragmentActivity {
 
     @Override
     public void onStart() {

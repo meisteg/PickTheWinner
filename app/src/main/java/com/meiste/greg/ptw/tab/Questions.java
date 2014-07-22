@@ -161,7 +161,7 @@ public final class Questions extends TabFragment implements GaeListener {
                         if (raceAfterNum >= mRaceSelected.getId()) {
                             // Standings are available for race, so correct answers
                             // should be available for download.
-                            getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
+                            getActivity().setProgressBarIndeterminateVisibility(true);
                             selectEnable = false;
                             GAE.getInstance(getActivity()).getPage(
                                     new CorrectAnswersListener(mRaceSelected.getId()),
@@ -322,8 +322,8 @@ public final class Questions extends TabFragment implements GaeListener {
             }
 
             // Verify application wasn't closed before callback returned
-            if (getSherlockActivity() != null) {
-                getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
+            if (getActivity() != null) {
+                getActivity().setProgressBarIndeterminateVisibility(false);
             }
         }
 
@@ -341,8 +341,8 @@ public final class Questions extends TabFragment implements GaeListener {
             }
 
             // Verify application wasn't closed before callback returned
-            if (getSherlockActivity() != null) {
-                getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
+            if (getActivity() != null) {
+                getActivity().setProgressBarIndeterminateVisibility(false);
                 setSubFragment();
             }
         }

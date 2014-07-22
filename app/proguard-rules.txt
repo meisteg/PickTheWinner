@@ -1,12 +1,6 @@
 # No need to obfuscate - this application is open source!
 -dontobfuscate
 
-# Workaround for issue in ABS 4.4.0
--dontwarn com.actionbarsherlock.internal.ActionBarSherlockCompat
-
-# ActionBarSherlock rule
--keepclassmembers class * extends com.actionbarsherlock.ActionBarSherlock { public <init>(...); }
-
 # Google Play Services rules
 
 -keep class * extends java.util.ListResourceBundle {

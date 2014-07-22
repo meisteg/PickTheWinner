@@ -25,6 +25,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -33,8 +35,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import com.meiste.greg.ptw.GAE.GaeListener;
 import com.meiste.greg.ptw.gcm.Gcm;
 
@@ -60,7 +60,7 @@ public class AccountsActivity extends BaseActivity implements GaeListener {
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.connect);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 
         int connectId = R.id.right_button;
         int exitId = R.id.left_button;

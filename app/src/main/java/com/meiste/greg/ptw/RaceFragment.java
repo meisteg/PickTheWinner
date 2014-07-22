@@ -22,6 +22,7 @@ import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.TextureView;
@@ -30,7 +31,6 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -40,7 +40,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.meiste.greg.ptw.view.ObservableScrollView;
 import com.meiste.greg.ptw.view.ObservableScrollView.ScrollViewListener;
 
-public class RaceFragment extends SherlockFragment implements ScrollViewListener {
+public class RaceFragment extends Fragment implements ScrollViewListener {
     private static final String ARG_RACE_ID = "race_id";
     private static final String MAP_FRAGMENT_TAG = "map";
 

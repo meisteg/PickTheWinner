@@ -28,13 +28,13 @@ import android.os.Bundle;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.Window;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdRequest.Builder;
@@ -86,9 +86,8 @@ public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo, O
 
         setContentView(R.layout.main);
 
-        // Need to explicitly set to false else it will incorrectly appear on
-        // older Android versions. Must be after setContentView.
-        setSupportProgressBarIndeterminateVisibility(false);
+        // Must be after setContentView.
+        setProgressBarIndeterminateVisibility(false);
 
         if (Eula.show(this))
             onEulaAgreedTo();
@@ -169,7 +168,7 @@ public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo, O
 
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
-        getSupportMenuInflater().inflate(R.menu.menu, menu);
+        getMenuInflater().inflate(R.menu.menu, menu);
 
         if (!mIsAdFree && mIabReady && mContainer.getBoolean(GtmHelper.KEY_ALLOW_REMOVE_ADS)) {
             menu.add(Menu.NONE, R.string.ads_remove, Menu.NONE, R.string.ads_remove)

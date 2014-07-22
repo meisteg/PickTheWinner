@@ -28,16 +28,16 @@ import android.os.Bundle;
 import android.os.Vibrator;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
+import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.text.TextUtils;
+import android.view.MenuItem;
 
-import com.actionbarsherlock.app.SherlockPreferenceActivity;
-import com.actionbarsherlock.view.MenuItem;
 import com.google.android.gms.analytics.GoogleAnalytics;
 
-public class EditPreferences extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener {
+public class EditPreferences extends PreferenceActivity implements OnSharedPreferenceChangeListener {
     public static final String KEY_ACCOUNT_EMAIL = "account.email";
     public static final String KEY_ACCOUNT_COOKIE = "account.cookie";
 
@@ -64,7 +64,7 @@ public class EditPreferences extends SherlockPreferenceActivity implements OnSha
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 
         mVibrate = findPreference(KEY_NOTIFY_VIBRATE);
         final boolean methodAvailable = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;

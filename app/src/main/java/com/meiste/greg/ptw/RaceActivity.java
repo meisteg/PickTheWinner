@@ -19,8 +19,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.view.MenuItem;
 
-import com.actionbarsherlock.view.MenuItem;
 import com.meiste.greg.ptw.view.ControllableViewPager;
 
 public class RaceActivity extends BaseActivity {
@@ -38,7 +38,7 @@ public class RaceActivity extends BaseActivity {
         mViewPager.setAdapter(new RaceFragmentPagerAdapter());
         mViewPager.setCurrentItem(getIntent().getExtras().getInt(INTENT_ID));
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

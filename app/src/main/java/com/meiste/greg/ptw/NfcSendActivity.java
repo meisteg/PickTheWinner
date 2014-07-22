@@ -28,9 +28,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
+import android.view.MenuItem;
 import android.widget.Toast;
-
-import com.actionbarsherlock.view.MenuItem;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class NfcSendActivity extends BaseActivity implements OnNdefPushCompleteCallback {
@@ -88,7 +87,7 @@ public class NfcSendActivity extends BaseActivity implements OnNdefPushCompleteC
         nfcAdapter.setOnNdefPushCompleteCallback(this, this);
 
         setContentView(R.layout.nfc_send);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
