@@ -43,6 +43,7 @@
         android:name=".PTW"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
+        android:theme="@style/AppTheme"
         android:allowBackup="false"
         android:requiredAccountType="com.google" >
         <meta-data
@@ -57,8 +58,7 @@
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:noHistory="true"
-            android:configChanges="orientation|screenSize"
-            android:theme="@android:style/Theme.Holo.Light.DarkActionBar" >
+            android:configChanges="orientation|screenSize" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -68,13 +68,10 @@
         <activity
             android:name=".GameActivity"
             android:label="@string/app_name"
-            android:launchMode="singleTask"
-            android:theme="@android:style/Theme.Holo.Light.DarkActionBar" >
-        </activity>
+            android:launchMode="singleTask" />
         <activity
             android:label="@string/app_name"
-            android:name=".EditPreferences"
-            android:theme="@android:style/Theme.Holo.Light.DarkActionBar">
+            android:name=".EditPreferences">
             <intent-filter>
                 <action android:name="android.intent.action.MANAGE_NETWORK_USAGE" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -83,23 +80,19 @@
         <activity
             android:label="@string/race_details"
             android:name=".RaceActivity"
-            android:launchMode="singleTask"
-            android:theme="@android:style/Theme.Holo.Light.DarkActionBar" />
+            android:launchMode="singleTask" />
         <activity
             android:label="@string/app_name"
             android:name=".AccountsActivity"
-            android:theme="@android:style/Theme.Holo.Light.DarkActionBar"
             android:configChanges="orientation|screenSize" />
         <activity
             android:label="@string/app_name"
             android:name=".NfcSendActivity"
-            android:launchMode="singleTop"
-            android:theme="@android:style/Theme.Holo.Light.DarkActionBar" />
+            android:launchMode="singleTop" />
         <activity
             android:label="@string/app_name"
             android:name=".NfcRecvActivity"
-            android:launchMode="singleTop"
-            android:theme="@android:style/Theme.Holo.Light.DarkActionBar">
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.nfc.action.NDEF_DISCOVERED" />
                 <category android:name="android.intent.category.DEFAULT" />

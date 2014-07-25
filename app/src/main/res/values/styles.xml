@@ -17,6 +17,10 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <style name="AppTheme" parent="@android:style/Theme.Holo.Light.DarkActionBar">
+        <!-- No theme customizations at this time. -->
+    </style>
+
     <style name="RuleBookHeader">
         <item name="android:textSize">26sp</item>
         <item name="android:textStyle">bold</item>
