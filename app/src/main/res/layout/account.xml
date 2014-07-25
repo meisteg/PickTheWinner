@@ -20,5 +20,4 @@
     android:layout_height="wrap_content"
     android:padding="10dp"
     android:checkMark="?android:attr/listChoiceIndicatorSingle"
-    android:gravity="center_vertical"
-    android:textColor="@android:color/white"/>
+    android:gravity="center_vertical" />
