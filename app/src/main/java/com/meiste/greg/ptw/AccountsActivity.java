@@ -22,8 +22,11 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -50,7 +53,6 @@ public class AccountsActivity extends BaseActivity implements GaeListener {
             GAE.ACCOUNT_TYPE
     });
 
-    private int mAccountSelectedPosition = 0;
     private String mAccountName;
     private GAE mGae;
     private boolean mShouldFinish;
@@ -98,17 +100,30 @@ public class AccountsActivity extends BaseActivity implements GaeListener {
             builder.setCancelable(false);
             builder.show();
         } else {
+            int selectPosition = 0;
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            final String currAccount = prefs.getString(EditPreferences.KEY_ACCOUNT_EMAIL, null);
+            if (!TextUtils.isEmpty(currAccount)) {
+                for (int i = 0; i < accounts.size(); i++) {
+                    if (accounts.get(i).equals(currAccount)) {
+                        Util.log("Defaulting to current account: " + currAccount);
+                        selectPosition = i;
+                        break;
+                    }
+                }
+            }
+
             final ListView listView = (ListView) findViewById(R.id.select_account);
             listView.setAdapter(new ArrayAdapter<>(this,
                     android.R.layout.simple_list_item_single_choice, accounts));
-            listView.setItemChecked(mAccountSelectedPosition, true);
+            listView.setItemChecked(selectPosition, true);
 
             final Button connectButton = (Button) findViewById(R.id.connect_button);
             connectButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-                    mAccountSelectedPosition = listView.getCheckedItemPosition();
-                    final TextView account = (TextView) listView.getChildAt(mAccountSelectedPosition);
+                    final int selectedPos = listView.getCheckedItemPosition();
+                    final TextView account = (TextView) listView.getChildAt(selectedPos);
                     mAccountName = (String) account.getText();
                     setContentView(R.layout.connecting);
                     mGae.connect(AccountsActivity.this, mAccountName);
