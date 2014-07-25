@@ -99,8 +99,8 @@ public class AccountsActivity extends BaseActivity implements GaeListener {
             builder.show();
         } else {
             final ListView listView = (ListView) findViewById(R.id.select_account);
-            listView.setAdapter(new ArrayAdapter<>(this, R.layout.account, accounts));
-            listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+            listView.setAdapter(new ArrayAdapter<>(this,
+                    android.R.layout.simple_list_item_single_choice, accounts));
             listView.setItemChecked(mAccountSelectedPosition, true);
 
             final Button connectButton = (Button) findViewById(R.id.connect_button);
