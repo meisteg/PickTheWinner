@@ -16,7 +16,9 @@
 -->
 
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     style="@style/NoRaceText"
     android:paddingLeft="20sp"
     android:paddingRight="20sp"
-    android:text="@string/disabled" />
+    android:text="@string/disabled"
+    tools:context=".MainActivity" />

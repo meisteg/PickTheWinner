@@ -17,11 +17,13 @@
 
 <com.meiste.greg.ptw.view.ObservableScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scroll"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:scrollbars="vertical"
-    android:fillViewport="true" >
+    android:fillViewport="true"
+    tools:context=".RaceActivity">
 
     <RelativeLayout
         android:layout_width="fill_parent"
