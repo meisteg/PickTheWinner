@@ -56,12 +56,16 @@ public class PTW extends Application {
         Analytics.init(this);
         Crashlytics.start(this);
 
+        enableCache();
+    }
+
+    private void enableCache() {
         final File cacheLocation = new File(getCacheDir() + File.separator + "bitmaps");
-        cacheLocation.mkdirs();
+        final boolean diskEnable = cacheLocation.exists() || cacheLocation.mkdirs();
 
         final BitmapLruCache.Builder builder = new BitmapLruCache.Builder(this);
         builder.setMemoryCacheEnabled(true).setMemoryCacheMaxSizeUsingHeapSize();
-        builder.setDiskCacheEnabled(true).setDiskCacheLocation(cacheLocation);
+        builder.setDiskCacheEnabled(diskEnable).setDiskCacheLocation(cacheLocation);
 
         mCache = builder.build();
     }
