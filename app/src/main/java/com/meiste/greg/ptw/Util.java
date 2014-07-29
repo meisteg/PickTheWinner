@@ -30,6 +30,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdSize;
 
 public final class Util {
@@ -44,7 +45,11 @@ public final class Util {
     }
 
     public static void log(final String msg) {
-        if (LOGGING_ENABLED) Log.d(PTW.TAG, msg);
+        if (LOGGING_ENABLED) {
+            Crashlytics.log(Log.DEBUG, PTW.TAG, msg);
+        } else {
+            Crashlytics.log(msg);
+        }
     }
 
     public static SharedPreferences getState(final Context context) {
