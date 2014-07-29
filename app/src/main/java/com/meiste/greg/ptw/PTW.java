@@ -45,16 +45,15 @@ public class PTW extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Util.log("Application onCreate");
+
+        // Initialize analytics
+        Analytics.init(this);
+        Crashlytics.start(this);
 
         /* HACK: Instantiate GAE class here so it can be used by activities and
          * services. For some reason, passing getApplicationContext() to GAE
          * from a service doesn't work */
         GAE.getInstance(this);
-
-        // Initialize analytics
-        Analytics.init(this);
-        Crashlytics.start(this);
 
         enableCache();
     }
