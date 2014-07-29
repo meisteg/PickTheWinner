@@ -87,7 +87,7 @@ public class GcmIntentService extends IntentService implements OnContainerAvaila
             }
         }
 
-        if (!extras.isEmpty()) {
+        if ((extras != null) && !extras.isEmpty()) {
             /*
              * Filter messages based on message type. Since it is likely that GCM will be
              * extended in the future with new message types, just ignore any message types
