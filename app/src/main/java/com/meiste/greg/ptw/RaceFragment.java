@@ -30,6 +30,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -206,7 +207,12 @@ public class RaceFragment extends Fragment implements ScrollViewListener {
                     public void run() {
                         if (mMap != null) {
                             Util.log("Trying moveCamera again...");
-                            mMap.moveCamera(cameraUpdate);
+                            try {
+                                mMap.moveCamera(cameraUpdate);
+                            } catch (final IllegalStateException e) {
+                                Util.log("Failed again to move camera. Aborting.");
+                                Crashlytics.logException(e);
+                            }
                         }
                     }
                 }, 500);
