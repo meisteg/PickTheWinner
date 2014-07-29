@@ -23,6 +23,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
@@ -118,18 +119,20 @@ public final class QuestionAlarm extends IntentService implements OnContainerAva
             if (prefs.getBoolean(EditPreferences.KEY_NOTIFY_LED, true))
                 defaults |= Notification.DEFAULT_LIGHTS;
 
-            final NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-            .setSmallIcon(R.drawable.ic_stat_steering_wheel)
-            .setTicker(getString(R.string.remind_questions_ticker, race.getName()))
-            .setContentTitle(getString(R.string.app_name))
-            .setContentText(race.getName())
-            .setContentIntent(pi)
-            .setAutoCancel(true)
-            .setDefaults(defaults)
-            .setSound(Uri.parse(prefs.getString(EditPreferences.KEY_NOTIFY_RINGTONE,
+            final NotificationCompat.Builder b = new NotificationCompat.Builder(this);
+            b.setSmallIcon(R.drawable.ic_stat_steering_wheel);
+            b.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher));
+            b.setTicker(getString(R.string.remind_questions_ticker, race.getName()));
+            b.setContentTitle(getString(R.string.app_name));
+            b.setContentText(race.getName());
+            b.setStyle(new NotificationCompat.BigTextStyle().bigText(race.getName()));
+            b.setContentIntent(pi);
+            b.setAutoCancel(true);
+            b.setDefaults(defaults);
+            b.setSound(Uri.parse(prefs.getString(EditPreferences.KEY_NOTIFY_RINGTONE,
                     PTW.DEFAULT_NOTIFY_SND)));
 
-            getNM(this).notify(R.string.remind_questions_ticker, builder.build());
+            getNM(this).notify(R.string.remind_questions_ticker, b.build());
         } else {
             Util.log("Ignoring question alarm since option is disabled");
         }

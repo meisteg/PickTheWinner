@@ -82,6 +82,7 @@
     <string name="remind_questions_summary">Show when new questions are available</string>
     <string name="remind_questions_ticker">Questions available for the %s</string>
     <string name="remind_race">Race reminders</string>
+    <string name="remind_race_action">Check submitted answers</string>
     <string name="remind_race_notify">Race reminder</string>
     <string name="remind_race_summary">Show when it is time to watch the race</string>
     <string name="remind_race_ticker">Time to watch the %s</string>

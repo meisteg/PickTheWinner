@@ -22,6 +22,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -279,18 +280,21 @@ public class GcmIntentService extends IntentService implements OnContainerAvaila
             if (prefs.getBoolean(EditPreferences.KEY_NOTIFY_LED, true))
                 defaults |= Notification.DEFAULT_LIGHTS;
 
-            final NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
-            .setSmallIcon(R.drawable.ic_stat_steering_wheel)
-            .setTicker(context.getString(R.string.remind_results_notify, race))
-            .setContentTitle(context.getString(R.string.app_name))
-            .setContentText(context.getString(R.string.remind_results_notify, race))
-            .setContentIntent(pi)
-            .setAutoCancel(true)
-            .setDefaults(defaults)
-            .setSound(Uri.parse(prefs.getString(EditPreferences.KEY_NOTIFY_RINGTONE,
+            final String contextText = context.getString(R.string.remind_results_notify, race);
+            final NotificationCompat.Builder b = new NotificationCompat.Builder(context);
+            b.setSmallIcon(R.drawable.ic_stat_steering_wheel);
+            b.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher));
+            b.setTicker(context.getString(R.string.remind_results_notify, race));
+            b.setContentTitle(context.getString(R.string.app_name));
+            b.setContentText(contextText);
+            b.setStyle(new NotificationCompat.BigTextStyle().bigText(contextText));
+            b.setContentIntent(pi);
+            b.setAutoCancel(true);
+            b.setDefaults(defaults);
+            b.setSound(Uri.parse(prefs.getString(EditPreferences.KEY_NOTIFY_RINGTONE,
                     PTW.DEFAULT_NOTIFY_SND)));
 
-            getNM(context).notify(R.string.remind_results_notify, builder.build());
+            getNM(context).notify(R.string.remind_results_notify, b.build());
         }
     }
 
