@@ -82,6 +82,7 @@ public class GcmIntentService extends IntentService implements OnContainerAvaila
                 try {
                     mSync.wait();
                 } catch (final InterruptedException e) {
+                    // Continue anyway
                 }
             }
         }
@@ -92,26 +93,35 @@ public class GcmIntentService extends IntentService implements OnContainerAvaila
              * extended in the future with new message types, just ignore any message types
              * not recognized.
              */
-            if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
-                Util.log("GCM send error: " + extras.toString());
-            } else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED.equals(messageType)) {
-                Util.log("GCM deleted messages on server: " + extras.toString());
-            } else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
-                if (intent.hasExtra(MSG_KEY)) {
-                    final String message = intent.getStringExtra(MSG_KEY);
-                    Util.log("Received " + message + " message from GCM");
+            switch (messageType) {
+                case GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR:
+                    Util.log("GCM send error: " + extras.toString());
+                    break;
+                case GoogleCloudMessaging.MESSAGE_TYPE_DELETED:
+                    Util.log("GCM deleted messages on server: " + extras.toString());
+                    break;
+                case GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE:
+                    if (intent.hasExtra(MSG_KEY)) {
+                        final String message = intent.getStringExtra(MSG_KEY);
+                        Util.log("Received " + message + " message from GCM");
 
-                    if (MSG_KEY_SYNC.equals(message)) {
-                        getFromServer("schedule", scheduleListener, false);
-                        getFromServer("standings", standingsListener, true);
-                    } else if (MSG_KEY_HISTORY.equals(message)) {
-                        getFromServer("history", historyListener, true);
-                    } else if (MSG_KEY_RULES.equals(message)) {
-                        getFromServer("rule_book", rulesListener, false);
-                    } else {
-                        Util.log("Message type unknown. Ignoring...");
+                        switch (message) {
+                            case MSG_KEY_SYNC:
+                                getFromServer("schedule", scheduleListener, false);
+                                getFromServer("standings", standingsListener, true);
+                                break;
+                            case MSG_KEY_HISTORY:
+                                getFromServer("history", historyListener, true);
+                                break;
+                            case MSG_KEY_RULES:
+                                getFromServer("rule_book", rulesListener, false);
+                                break;
+                            default:
+                                Util.log("Message type unknown. Ignoring...");
+                                break;
+                        }
                     }
-                }
+                    break;
             }
         }
 
@@ -142,7 +152,9 @@ public class GcmIntentService extends IntentService implements OnContainerAvaila
                 GAE.getInstance(getApplicationContext()).getPage(l, page);
                 try {
                     mSync.wait(WAIT_TIMEOUT);
-                } catch (final InterruptedException e) {}
+                } catch (final InterruptedException e) {
+                    // Continue anyway
+                }
             }
 
             if (mGaeSuccess || (i == MAX_ATTEMPTS))
@@ -150,7 +162,9 @@ public class GcmIntentService extends IntentService implements OnContainerAvaila
             try {
                 Util.log("Sleeping for " + backoff + " ms before retry");
                 Thread.sleep(backoff);
-            } catch (final InterruptedException e) {}
+            } catch (final InterruptedException e) {
+                // Continue anyway
+            }
 
             // increase backoff exponentially
             backoff *= 2;
