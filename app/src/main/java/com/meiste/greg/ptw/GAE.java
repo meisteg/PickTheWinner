@@ -38,6 +38,7 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 
+import com.google.android.gms.auth.GoogleAuthUtil;
 import com.meiste.greg.ptw.tab.Questions;
 import com.meiste.greg.ptw.tab.Standings;
 
@@ -59,7 +60,7 @@ import android.preference.PreferenceManager;
 public final class GAE {
 
     public static final String PROD_URL = "https://ptwgame.appspot.com";
-    public static final String ACCOUNT_TYPE = "com.google";
+    public static final String ACCOUNT_TYPE = GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE;
 
     private static final String AUTH_COOKIE_NAME = "SACSID";
     // Timeout in milliseconds until a connection is established.
