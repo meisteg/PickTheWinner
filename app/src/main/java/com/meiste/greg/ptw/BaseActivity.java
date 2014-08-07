@@ -15,11 +15,15 @@
  */
 package com.meiste.greg.ptw;
 
+import android.accounts.AccountManager;
+import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 
 public abstract class BaseActivity extends FragmentActivity {
+
+    public static final int REQUEST_ACCOUNT_CODE = 1316;
 
     @Override
     public void onStart() {
@@ -31,5 +35,18 @@ public abstract class BaseActivity extends FragmentActivity {
     public void onStop() {
         super.onStop();
         GoogleAnalytics.getInstance(this).reportActivityStop(this);
+    }
+
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        if (requestCode == REQUEST_ACCOUNT_CODE && resultCode == RESULT_OK) {
+            final String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+            final Intent intent = new Intent(this, AccountsActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+            intent.putExtra(AccountsActivity.EXTRA_ACCOUNT_NAME, accountName);
+            startActivity(intent);
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 }

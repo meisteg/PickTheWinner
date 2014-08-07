@@ -16,11 +16,10 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="@string/personal">
-        <PreferenceScreen android:key="account_screen" android:title="@string/account">
-            <intent
-                android:targetPackage="com.meiste.greg.ptw"
-                android:targetClass="com.meiste.greg.ptw.AccountsActivity" />
-        </PreferenceScreen>
+        <Preference
+            android:key="account_screen"
+            android:title="@string/account"
+            android:summary="@string/account_needed"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/notifications">
         <CheckBoxPreference

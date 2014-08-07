@@ -20,17 +20,13 @@
     <string name="account">Account</string>
     <string name="account_needed">Please select an account</string>
     <string name="account_setup_needed"><b>Account setup required</b>\nTap to select account</string>
-    <string name="add_account">Add account</string>
     <string name="add_friend">Add Friend</string>
     <string name="add_friend_confirm">Add %s as a friend? Friending a player ensures they will
         always appear in the standings regardless of their rank.</string>
     <string name="adding_friend">Adding friend&#8230;</string>
     <string name="app_name">Pick The Winner</string>
-    <string name="attention">Attention</string>
     <string name="build_version">Build version</string>
     <string name="cancel">Cancel</string>
-    <string name="connect">Connect</string>
-    <string name="connect_text">This application requests permission to connect your mobile device to the cloud.</string>
     <string name="contacting_server">Contacting server&#8230;</string>
     <string name="disabled">This version has been disabled. Please update to the latest version.</string>
     <string name="enable_beam">Please enable Android Beam to perform this task.</string>
@@ -38,7 +34,6 @@
     <string name="eula_title">License</string>
     <string name="eula_accept">Accept</string>
     <string name="eula_refuse">Refuse</string>
-    <string name="exit">Close</string>
     <string name="failed_connect">Failed to connect. Please try again.</string>
     <string name="failed_get">Unable to connect to server.</string>
     <string name="friend_by_player_name">Enter your friend\'s Player Name</string>
@@ -60,7 +55,6 @@
         NASCAR® and Sprint Cup® are registered trademarks of the National Association for Stock
         Car Auto Racing, Inc. All other trademarks, names or logos in this application are the
         property of their respective owners.</string>
-    <string name="needs_account">To play Pick The Winner, you must first create a Google account.</string>
     <string name="name_taken">Name already taken. Please pick a different name.</string>
     <string name="nfc_instructions"><b>Add friend using Android Beam</b>\n\nPlease bring this
         device close to another NFC-capable device (typically back to back) and then touch your
@@ -96,10 +90,8 @@
     <string name="ringtone">Ringtone</string>
     <string name="ringtone_silent">Silent</string>
     <string name="ringtone_summary">Set a ringtone for notifications</string>
-    <string name="select_account">Select the account you wish to authorize:</string>
     <string name="send">Send</string>
     <string name="settings">Settings</string>
-    <string name="skip">Skip</string>
     <string name="tab_questions">QUESTIONS</string>
     <string name="tab_rule_book">RULE BOOK</string>
     <string name="tab_schedule">SCHEDULE</string>

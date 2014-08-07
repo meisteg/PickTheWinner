@@ -32,6 +32,8 @@ import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.auth.GoogleAuthUtil;
+import com.google.android.gms.common.AccountPicker;
 
 public final class Util {
 
@@ -64,16 +66,17 @@ public final class Util {
         getState(context).edit().putLong(PREFS_SETUP, System.currentTimeMillis()).apply();
     }
 
-    public static View getAccountSetupView(final Context context,
+    public static View getAccountSetupView(final Activity activity,
             final LayoutInflater inflater, final ViewGroup container) {
         final View v = inflater.inflate(R.layout.no_account, container, false);
         final TextView textView = (TextView) v.findViewById(R.id.setup_text);
         textView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(final View v) {
-                final Intent intent = new Intent(context, AccountsActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-                context.startActivity(intent);
+                final Intent intent = AccountPicker.newChooseAccountIntent(null, null,
+                        new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE},
+                        true, null, "ah", null, null);
+                activity.startActivityForResult(intent, BaseActivity.REQUEST_ACCOUNT_CODE);
             }
         });
         return v;

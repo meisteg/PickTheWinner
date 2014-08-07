@@ -20,8 +20,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -60,7 +58,6 @@ import android.preference.PreferenceManager;
 public final class GAE {
 
     public static final String PROD_URL = "https://ptwgame.appspot.com";
-    public static final String ACCOUNT_TYPE = GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE;
 
     private static final String AUTH_COOKIE_NAME = "SACSID";
     // Timeout in milliseconds until a connection is established.
@@ -98,7 +95,7 @@ public final class GAE {
         }
 
         final AccountManager mgr = AccountManager.get(context);
-        final Account[] accts = mgr.getAccountsByType(ACCOUNT_TYPE);
+        final Account[] accts = mgr.getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
         for (final Account acct : accts) {
             if (acct.name.equals(account)) {
                 // Account setup and found on system
@@ -128,16 +125,6 @@ public final class GAE {
     private GAE(final Context context) {
         mContext = context;
         mHandler = new Handler();
-    }
-
-    public List<String> getGoogleAccounts() {
-        final ArrayList<String> result = new ArrayList<>();
-        final Account[] accounts = AccountManager.get(mContext).getAccountsByType(ACCOUNT_TYPE);
-        for (final Account account : accounts) {
-            result.add(account.name);
-        }
-
-        return result;
     }
 
     public void connect(final GaeListener listener, final String account) {
@@ -238,7 +225,7 @@ public final class GAE {
 
     private boolean reconnect() {
         final AccountManager mgr = AccountManager.get(mContext);
-        final Account[] accts = mgr.getAccountsByType(ACCOUNT_TYPE);
+        final Account[] accts = mgr.getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
         for (final Account acct : accts) {
             if (acct.name.equals(mAccountName)) {
                 mgr.getAuthToken(acct, "ah", null, false, new AuthTokenCallback(), null);
@@ -270,7 +257,7 @@ public final class GAE {
                     mNeedInvalidate = false;
 
                     final AccountManager mgr = AccountManager.get(mContext);
-                    mgr.invalidateAuthToken(ACCOUNT_TYPE, authToken);
+                    mgr.invalidateAuthToken(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE, authToken);
                     reconnect();
                 } else {
                     Util.log("authToken=" + authToken);

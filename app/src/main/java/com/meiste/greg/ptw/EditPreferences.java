@@ -15,6 +15,8 @@
  */
 package com.meiste.greg.ptw;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -31,8 +33,12 @@ import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.MenuItem;
+
+import com.google.android.gms.auth.GoogleAuthUtil;
+import com.google.android.gms.common.AccountPicker;
 
 public class EditPreferences extends BaseActivity {
     public static final String KEY_ACCOUNT_EMAIL = "account.email";
@@ -79,6 +85,7 @@ public class EditPreferences extends BaseActivity {
 
         private int mLogHitCountdown;
         private Preference mVibrate;
+        private Preference mAccount;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -96,6 +103,7 @@ public class EditPreferences extends BaseActivity {
                 mVibrate = null;
             }
 
+            mAccount = findPreference(KEY_ACCOUNT_SCREEN);
             findPreference(KEY_BUILD).setSummary(BuildConfig.VERSION_NAME);
         }
 
@@ -109,8 +117,7 @@ public class EditPreferences extends BaseActivity {
             reminderCheck(prefs);
             setRingtoneSummary(prefs);
 
-            final Preference account = findPreference(KEY_ACCOUNT_SCREEN);
-            account.setSummary(prefs.getString(KEY_ACCOUNT_EMAIL, getString(R.string.account_needed)));
+            mAccount.setSummary(prefs.getString(KEY_ACCOUNT_EMAIL, getString(R.string.account_needed)));
 
             mLogHitCountdown = TAPS_TO_ENABLE_LOGGING;
         }
@@ -172,7 +179,7 @@ public class EditPreferences extends BaseActivity {
 
         @Override
         public boolean onPreferenceTreeClick(final PreferenceScreen preferenceScreen,
-                                             final Preference preference) {
+                                             @NonNull final Preference preference) {
             if (preference.getKey().equals(KEY_BUILD) && (mLogHitCountdown > 0)) {
                 mLogHitCountdown--;
                 if ((mLogHitCountdown == 0) && !Util.LOGGING_ENABLED) {
@@ -182,6 +189,26 @@ public class EditPreferences extends BaseActivity {
             } else if (preference instanceof CheckBoxPreference) {
                 final String setting = ((CheckBoxPreference)preference).isChecked() ? "enable" : "disable";
                 Analytics.trackEvent(getActivity(), "Preferences", preference.getKey(), setting);
+            } else if (preference.getKey().equals(KEY_ACCOUNT_SCREEN)) {
+                final SharedPreferences prefs =
+                        PreferenceManager.getDefaultSharedPreferences(getActivity());
+                final String currAccount = prefs.getString(EditPreferences.KEY_ACCOUNT_EMAIL, null);
+                Account selAccount = null;
+                if (!TextUtils.isEmpty(currAccount)) {
+                    final Account[] accounts = AccountManager.get(getActivity())
+                            .getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
+                    for (Account account : accounts) {
+                        if (account.name.equals(currAccount)) {
+                            Util.log("Defaulting to current account: " + currAccount);
+                            selAccount = account;
+                            break;
+                        }
+                    }
+                }
+                Intent intent = AccountPicker.newChooseAccountIntent(selAccount, null,
+                        new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE},
+                        true, null, "ah", null, null);
+                getActivity().startActivityForResult(intent, REQUEST_ACCOUNT_CODE);
             }
             return super.onPreferenceTreeClick(preferenceScreen, preference);
         }
