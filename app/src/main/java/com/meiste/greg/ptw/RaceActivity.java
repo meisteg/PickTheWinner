@@ -38,7 +38,7 @@ public class RaceActivity extends BaseActivity {
         mViewPager.setAdapter(new RaceFragmentPagerAdapter());
         mViewPager.setCurrentItem(getIntent().getExtras().getInt(INTENT_ID));
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

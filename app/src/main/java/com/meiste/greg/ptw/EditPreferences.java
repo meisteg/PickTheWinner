@@ -60,7 +60,7 @@ public class EditPreferences extends BaseActivity {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        setDisplayHomeAsUpEnabled(true);
 
         Fragment f = getFragmentManager().findFragmentById(android.R.id.content);
         if (f == null || !(f instanceof SettingsFragment)) {

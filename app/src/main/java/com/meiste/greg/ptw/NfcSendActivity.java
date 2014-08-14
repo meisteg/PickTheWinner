@@ -60,6 +60,7 @@ public class NfcSendActivity extends BaseActivity implements OnNdefPushCompleteC
             try {
                 startActivity(new Intent(Settings.ACTION_NFC_SETTINGS));
             } catch (final ActivityNotFoundException e) {
+                // Ignore
             }
             finish();
             return;
@@ -70,6 +71,7 @@ public class NfcSendActivity extends BaseActivity implements OnNdefPushCompleteC
             try {
                 startActivity(new Intent(Settings.ACTION_NFCSHARING_SETTINGS));
             } catch (final ActivityNotFoundException e) {
+                // Ignore
             }
             finish();
             return;
@@ -87,7 +89,7 @@ public class NfcSendActivity extends BaseActivity implements OnNdefPushCompleteC
         nfcAdapter.setOnNdefPushCompleteCallback(this, this);
 
         setContentView(R.layout.nfc_send);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

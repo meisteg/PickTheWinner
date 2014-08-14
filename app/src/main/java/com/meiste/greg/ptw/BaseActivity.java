@@ -16,6 +16,7 @@
 package com.meiste.greg.ptw;
 
 import android.accounts.AccountManager;
+import android.app.ActionBar;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 
@@ -47,6 +48,13 @@ public abstract class BaseActivity extends FragmentActivity {
             startActivity(intent);
         } else {
             super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    protected void setDisplayHomeAsUpEnabled(final boolean showHomeAsUp) {
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(showHomeAsUp);
         }
     }
 }
