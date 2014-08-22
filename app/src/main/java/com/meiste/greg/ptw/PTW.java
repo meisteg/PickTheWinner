@@ -15,11 +15,7 @@
  */
 package com.meiste.greg.ptw;
 
-import java.io.File;
-
-import uk.co.senab.bitmapcache.BitmapLruCache;
 import android.app.Application;
-import android.content.Context;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -40,8 +36,6 @@ public class PTW extends Application {
 
     public final static String DEFAULT_NOTIFY_SND = "content://settings/system/notification_sound";
 
-    private BitmapLruCache mCache;
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -54,26 +48,5 @@ public class PTW extends Application {
          * services. For some reason, passing getApplicationContext() to GAE
          * from a service doesn't work */
         GAE.getInstance(this);
-
-        enableCache();
-    }
-
-    private void enableCache() {
-        final File cacheLocation = new File(getCacheDir() + File.separator + "bitmaps");
-        final boolean diskEnable = cacheLocation.exists() || cacheLocation.mkdirs();
-
-        final BitmapLruCache.Builder builder = new BitmapLruCache.Builder(this);
-        builder.setMemoryCacheEnabled(true).setMemoryCacheMaxSizeUsingHeapSize();
-        builder.setDiskCacheEnabled(diskEnable).setDiskCacheLocation(cacheLocation);
-
-        mCache = builder.build();
-    }
-
-    public BitmapLruCache getBitmapCache() {
-        return mCache;
-    }
-
-    public static PTW getApplication(final Context context) {
-        return (PTW) context.getApplicationContext();
     }
 }

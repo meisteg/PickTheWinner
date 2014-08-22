@@ -153,7 +153,7 @@ public final class RaceAlarm extends IntentService implements OnContainerAvailab
     }
 
     @Override
-    public void onContainerAvailable(final Container container) {
+    public void onContainerAvailable(final Context context, final Container container) {
         synchronized (mSync) {
             mContainer = container;
             mSync.notify();

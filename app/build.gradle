@@ -56,9 +56,8 @@ dependencies {
     compile 'com.google.code.gson:gson:2.2.4'
     compile 'com.android.support:support-v4:20.0.0'
     compile 'com.google.android.gms:play-services:5.0.89'
-    compile 'com.jakewharton:disklrucache:2.0.2'
+    compile 'com.squareup.picasso:picasso:2.3.3'
     compile 'com.crashlytics.android:crashlytics:1.1.11'
-    compile fileTree(dir: 'libs', include: ['*.jar'])
 }
 
 // get signing config from gradle.properties file

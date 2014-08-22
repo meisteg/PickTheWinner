@@ -18,6 +18,7 @@ package com.meiste.greg.ptw;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
@@ -73,7 +74,7 @@ public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo, O
     }
 
     @Override
-    public void onContainerAvailable(final Container container) {
+    public void onContainerAvailable(final Context context, final Container container) {
         mContainer = container;
 
         mHelper = new IabHelper(this, PTW.PUB_KEY);

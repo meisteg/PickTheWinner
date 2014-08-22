@@ -133,8 +133,8 @@ public final class Race {
         return yearFormat.format(new Timestamp(mStart));
     }
 
-    public CharSequence getStartRelative(final Context context) {
-        return Util.getRelativeTimeSpanString(context, mStart);
+    public CharSequence getStartRelative(final Context context, final long fudge) {
+        return Util.getRelativeTimeSpanString(context, mStart + fudge);
     }
 
     public String getQuestionDateTime(final Context context) {

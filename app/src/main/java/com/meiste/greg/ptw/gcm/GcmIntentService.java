@@ -131,7 +131,7 @@ public class GcmIntentService extends IntentService implements OnContainerAvaila
     }
 
     @Override
-    public void onContainerAvailable(final Container container) {
+    public void onContainerAvailable(final Context context, final Container container) {
         synchronized (mSync) {
             mContainer = container;
             mSync.notify();

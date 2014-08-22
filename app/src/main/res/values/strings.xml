@@ -147,8 +147,6 @@
     
     <!-- Widget Strings: Must be very short! -->
     <string name="widget_current_race">Race started %s.</string>
-    <string name="widget_error_network">Problem with the network.</string>
-    <string name="widget_error_retry">Touch to retry.</string>
     <string name="widget_exhibition">Exhibition event</string>
     <string name="widget_next_race">Next race is %s.</string>
     <string name="widget_no_answers">Answers not submitted!</string>

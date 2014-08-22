@@ -45,7 +45,7 @@ public class MainActivity extends BaseActivity implements OnContainerAvailableLi
     }
 
     @Override
-    public void onContainerAvailable(final Container container) {
+    public void onContainerAvailable(final Context context, final Container container) {
         if (!container.getBoolean(GtmHelper.KEY_GAME_ENABLED)) {
             Util.log("Application has been remotely disabled!");
             setContentView(R.layout.disabled);

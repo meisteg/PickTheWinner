@@ -52,7 +52,7 @@ FunctionCallMacroCallback {
     private ContainerHolder mContainerHolder;
 
     public interface OnContainerAvailableListener {
-        public void onContainerAvailable(Container container);
+        public void onContainerAvailable(Context context, Container container);
     }
 
     public static synchronized GtmHelper getInstance(final Context context) {
@@ -94,7 +94,7 @@ FunctionCallMacroCallback {
         setCallbackFunctions();
 
         for (final OnContainerAvailableListener l : mListeners) {
-            l.onContainerAvailable(mContainerHolder.getContainer());
+            l.onContainerAvailable(mContext, mContainerHolder.getContainer());
         }
         // Avoid ConcurrentModificationException by clearing all listeners after the loop
         mListeners.clear();
@@ -123,7 +123,7 @@ FunctionCallMacroCallback {
 
     public synchronized void getContainer(final OnContainerAvailableListener l) {
         if (mContainerHolder != null) {
-            l.onContainerAvailable(mContainerHolder.getContainer());
+            l.onContainerAvailable(mContext, mContainerHolder.getContainer());
         } else {
             mListeners.add(l);
         }

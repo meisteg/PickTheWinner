@@ -1,6 +1,9 @@
 # No need to obfuscate - this application is open source!
 -dontobfuscate
 
+# Piccaso rule
+-dontwarn com.squareup.okhttp.**
+
 # Google Play Services rules
 
 -keep class * extends java.util.ListResourceBundle {

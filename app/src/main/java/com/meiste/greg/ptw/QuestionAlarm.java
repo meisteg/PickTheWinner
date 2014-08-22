@@ -146,7 +146,7 @@ public final class QuestionAlarm extends IntentService implements OnContainerAva
     }
 
     @Override
-    public void onContainerAvailable(final Container container) {
+    public void onContainerAvailable(final Context context, final Container container) {
         synchronized (mSync) {
             mContainer = container;
             mSync.notify();
