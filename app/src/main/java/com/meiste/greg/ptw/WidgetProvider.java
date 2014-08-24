@@ -108,6 +108,11 @@ public class WidgetProvider extends AppWidgetProvider implements OnContainerAvai
 
     @Override
     public void onContainerAvailable(final Context context, final Container container) {
+        if (container == null) {
+            // Skip widget update until we have a container
+            return;
+        }
+
         final AppWidgetManager appWM = AppWidgetManager.getInstance(context);
         if (container.getBoolean(GtmHelper.KEY_GAME_ENABLED)) {
             if ((sRace == null) || (!sRace.isFuture() && !sRace.isRecent())) {
