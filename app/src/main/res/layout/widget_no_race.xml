@@ -26,6 +26,7 @@
         android:adjustViewBounds="true"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:maxWidth="@dimen/widget_logo_maxWidth"
         android:contentDescription="@string/app_name"
         android:src="@drawable/logo" />
 
