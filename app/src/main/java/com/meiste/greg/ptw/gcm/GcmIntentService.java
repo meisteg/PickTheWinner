@@ -43,6 +43,7 @@ import com.meiste.greg.ptw.PlayerHistory;
 import com.meiste.greg.ptw.R;
 import com.meiste.greg.ptw.Races;
 import com.meiste.greg.ptw.Util;
+import com.meiste.greg.ptw.sync.AccountUtils;
 import com.meiste.greg.ptw.tab.RuleBook;
 import com.meiste.greg.ptw.tab.Standings;
 
@@ -143,7 +144,7 @@ public class GcmIntentService extends IntentService implements OnContainerAvaila
         mGaeSuccess = false;
 
         for (int i = 1; i <= MAX_ATTEMPTS; i++) {
-            if (accountRequired && GAE.isAccountSetupNeeded(this)) {
+            if (accountRequired && AccountUtils.isAccountSetupNeeded(this)) {
                 Util.log("Skipping " + page + " sync since account not setup");
                 break;
             }

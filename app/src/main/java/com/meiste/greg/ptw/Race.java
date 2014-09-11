@@ -20,7 +20,10 @@ import java.text.SimpleDateFormat;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.database.Cursor;
 import android.text.format.DateUtils;
+
+import com.meiste.greg.ptw.provider.PtwContract;
 
 public final class Race {
     public static final int NAME_SHORT = 0;
@@ -63,6 +66,20 @@ public final class Race {
         }
 
         return null;
+    }
+
+    public Race(final Cursor c) {
+        mId = c.getInt(PtwContract.Race.COLUMN_RACE_ID);
+        mRaceNum = c.getInt(PtwContract.Race.COLUMN_RACE_NUM);
+        mTrackLong = c.getString(PtwContract.Race.COLUMN_TRACK_LONG);
+        mTrackShort = c.getString(PtwContract.Race.COLUMN_TRACK_SHORT);
+        mName = c.getString(PtwContract.Race.COLUMN_NAME);
+        mTv = c.getString(PtwContract.Race.COLUMN_TV);
+        mSize = c.getString(PtwContract.Race.COLUMN_SIZE);
+        mStart = c.getLong(PtwContract.Race.COLUMN_START);
+        mQuestion = c.getLong(PtwContract.Race.COLUMN_QUESTION);
+        mLayout = c.getString(PtwContract.Race.COLUMN_LAYOUT);
+        mCityState = c.getString(PtwContract.Race.COLUMN_CITY_STATE);
     }
 
     public boolean isFuture() {
@@ -155,7 +172,24 @@ public final class Race {
         return context.getString(R.string.details_size, mSize);
     }
 
+    public String getTrackSize() {
+        return mSize;
+    }
+
     public String getCityState() {
         return mCityState;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o instanceof Race) {
+            final Race r = (Race) o;
+
+            return (mId == r.mId) && (mRaceNum == r.mRaceNum) && mTrackLong.equals(r.mTrackLong) &&
+                    mTrackShort.equals(r.mTrackShort) && mName.equals(r.mName) && mTv.equals(r.mTv) &&
+                    mSize.equals(r.mSize) && (mStart == r.mStart) && (mQuestion == r.mQuestion) &&
+                    mLayout.equals(r.mLayout) && mCityState.equals(r.mCityState);
+        }
+        return false;
     }
 }

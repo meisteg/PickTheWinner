@@ -57,6 +57,7 @@ import com.meiste.greg.ptw.dialog.FriendPlayerDialog;
 import com.meiste.greg.ptw.dialog.PrivacyDialog;
 import com.meiste.greg.ptw.gcm.Gcm;
 import com.meiste.greg.ptw.gcm.GcmIntentService;
+import com.meiste.greg.ptw.sync.AccountUtils;
 
 public final class Standings extends TabFragment implements OnRefreshListener, GaeListener, DialogInterface.OnClickListener {
     public static final String FILENAME = "standings";
@@ -79,7 +80,7 @@ public final class Standings extends TabFragment implements OnRefreshListener, G
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-        mSetupNeeded = GAE.isAccountSetupNeeded(getActivity());
+        mSetupNeeded = AccountUtils.isAccountSetupNeeded(getActivity());
         mChanged = false;
         mAccountSetupTime = Util.getAccountSetupTime(getActivity());
         setRetainInstance(true);
@@ -185,7 +186,7 @@ public final class Standings extends TabFragment implements OnRefreshListener, G
     public void onResume() {
         super.onResume();
 
-        if ((mSetupNeeded != GAE.isAccountSetupNeeded(getActivity())) ||
+        if ((mSetupNeeded != AccountUtils.isAccountSetupNeeded(getActivity())) ||
                 (mAccountSetupTime != Util.getAccountSetupTime(getActivity()))) {
             Util.log("Standings: onResume: notifyChanged");
             notifyChanged();
@@ -233,7 +234,7 @@ public final class Standings extends TabFragment implements OnRefreshListener, G
     public boolean isChanged() {
         // Must check for account status change or account setup separately in
         // case another tab noticed the change and already called notifyChanged().
-        return mChanged || (mSetupNeeded != GAE.isAccountSetupNeeded(getActivity())) ||
+        return mChanged || (mSetupNeeded != AccountUtils.isAccountSetupNeeded(getActivity())) ||
                 (mAccountSetupTime != Util.getAccountSetupTime(getActivity()));
     }
 

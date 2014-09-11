@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.meiste.greg.ptw.GAE.GaeListener;
 import com.meiste.greg.ptw.gcm.Gcm;
+import com.meiste.greg.ptw.sync.AccountUtils;
 
 public class AccountsActivity extends BaseActivity implements GaeListener {
 
@@ -63,7 +64,7 @@ public class AccountsActivity extends BaseActivity implements GaeListener {
     @Override
     public void onFailedConnect(final Context context) {
         // If the connect succeeds but the get history fails, don't show error toast
-        if (GAE.isAccountSetupNeeded(context))
+        if (AccountUtils.isAccountSetupNeeded(context))
             Toast.makeText(this, R.string.failed_connect, Toast.LENGTH_SHORT).show();
         finish();
     }

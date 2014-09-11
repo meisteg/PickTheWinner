@@ -15,10 +15,13 @@
  */
 package com.meiste.greg.ptw.tab;
 
+import android.accounts.Account;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SyncStatusObserver;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
@@ -31,21 +34,22 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.meiste.greg.ptw.BuildConfig;
-import com.meiste.greg.ptw.GAE;
-import com.meiste.greg.ptw.GAE.GaeListener;
 import com.meiste.greg.ptw.PTW;
 import com.meiste.greg.ptw.R;
 import com.meiste.greg.ptw.Race;
 import com.meiste.greg.ptw.RaceActivity;
 import com.meiste.greg.ptw.RaceItemAdapter;
-import com.meiste.greg.ptw.Races;
 import com.meiste.greg.ptw.Util;
+import com.meiste.greg.ptw.provider.PtwContract;
+import com.meiste.greg.ptw.sync.SyncAdapter;
 
-public final class Schedule extends TabFragment implements OnRefreshListener, GaeListener  {
+public final class Schedule extends TabFragment implements OnRefreshListener  {
 
     private SwipeRefreshLayout mSwipeRefreshWidget;
     private RaceItemAdapter mAdapter;
     private boolean mNeedScroll = true;
+    private Account mSyncAccount;
+    private Object mSyncObserverHandle;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
@@ -97,32 +101,37 @@ public final class Schedule extends TabFragment implements OnRefreshListener, Ga
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        mSyncStatusObserver.onStatusChanged(0);
+
+        // Watch for sync state changes
+        final int mask = ContentResolver.SYNC_OBSERVER_TYPE_PENDING |
+                ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE;
+        mSyncObserverHandle = ContentResolver.addStatusChangeListener(mask, mSyncStatusObserver);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mSyncObserverHandle != null) {
+            ContentResolver.removeStatusChangeListener(mSyncObserverHandle);
+            mSyncObserverHandle = null;
+        }
+    }
+
+    @Override
     public void onRefresh() {
-        // Prevent multiple refresh attempts
-        mSwipeRefreshWidget.setEnabled(false);
-
-        GAE.getInstance(getActivity()).getPage(this, "schedule");
+        mSyncAccount = SyncAdapter.requestSync(getActivity(), SyncAdapter.FLAG_SCHEDULE, true);
+        if (mSyncAccount != null) {
+            // Prevent multiple refresh attempts
+            mSwipeRefreshWidget.setEnabled(false);
+        } else {
+            mSwipeRefreshWidget.setRefreshing(false);
+            mSwipeRefreshWidget.setEnabled(BuildConfig.DEBUG);
+            Toast.makeText(getActivity(), R.string.failed_connect, Toast.LENGTH_SHORT).show();
+        }
     }
-
-    @Override
-    public void onFailedConnect(final Context context) {
-        mSwipeRefreshWidget.setRefreshing(false);
-        mSwipeRefreshWidget.setEnabled(BuildConfig.DEBUG);
-        Toast.makeText(context, R.string.failed_connect, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onGet(final Context context, final String json) {
-        Races.update(context, json);
-        mSwipeRefreshWidget.setRefreshing(false);
-        mSwipeRefreshWidget.setEnabled(BuildConfig.DEBUG);
-    }
-
-    @Override
-    public void onLaunchIntent(final Intent launch) {}
-
-    @Override
-    public void onConnectSuccess(final Context context, final String json) {}
 
     private final BroadcastReceiver mScheduleUpdateReceiver = new BroadcastReceiver() {
         @Override
@@ -131,6 +140,34 @@ public final class Schedule extends TabFragment implements OnRefreshListener, Ga
                 Util.log("Schedule.onReceive: Schedule Updated");
                 mAdapter.notifyDataSetChanged();
             }
+        }
+    };
+
+    private final SyncStatusObserver mSyncStatusObserver = new SyncStatusObserver() {
+        @Override
+        public void onStatusChanged(final int which) {
+            getActivity().runOnUiThread(new Runnable() {
+                // The SyncAdapter runs on a background thread. To update the
+                // UI, onStatusChanged() runs on the UI thread.
+                @Override
+                public void run() {
+                    if (mSyncAccount == null) {
+                        mSwipeRefreshWidget.setRefreshing(false);
+                        mSwipeRefreshWidget.setEnabled(BuildConfig.DEBUG);
+                    } else {
+                        // Test the ContentResolver to see if the sync adapter is active.
+                        final boolean syncActive = ContentResolver.isSyncActive(
+                                mSyncAccount, PtwContract.CONTENT_AUTHORITY);
+                        final boolean syncPending = ContentResolver.isSyncPending(
+                                mSyncAccount, PtwContract.CONTENT_AUTHORITY);
+                        if (!syncActive && !syncPending) {
+                            mSwipeRefreshWidget.setRefreshing(false);
+                            mSwipeRefreshWidget.setEnabled(BuildConfig.DEBUG);
+                            mSyncAccount = null;
+                        }
+                    }
+                }
+            });
         }
     };
 }

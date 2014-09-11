@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.meiste.greg.ptw.GAE.GaeListener;
+import com.meiste.greg.ptw.sync.AccountUtils;
 import com.meiste.greg.ptw.tab.Standings;
 
 public class NfcRecvActivity extends BaseActivity implements GaeListener {
@@ -64,7 +65,7 @@ public class NfcRecvActivity extends BaseActivity implements GaeListener {
         final String json = new String(msg.getRecords()[0].getPayload());
         Util.log("NFC received: " + json);
 
-        if (GAE.isAccountSetupNeeded(getApplicationContext())) {
+        if (AccountUtils.isAccountSetupNeeded(getApplicationContext())) {
             Toast.makeText(this, R.string.friend_fail_no_account, Toast.LENGTH_LONG).show();
             finish();
             return;

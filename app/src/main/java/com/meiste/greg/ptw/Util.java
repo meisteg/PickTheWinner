@@ -21,6 +21,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.text.format.DateUtils;
 import android.text.format.Time;
 import android.util.Log;
@@ -105,6 +107,19 @@ public final class Util {
                 return AdSize.MEDIUM_RECTANGLE;
         }
         return AdSize.BANNER;
+    }
+
+    /**
+     * Whether there is any network connected.
+     */
+    public static boolean isNetworkConnected(final Context context) {
+        final ConnectivityManager connectivityManager = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager == null) {
+            return false;
+        }
+        final NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return (activeNetworkInfo != null) && activeNetworkInfo.isConnected();
     }
 
     /* Android's DateUtils.getRelativeTimeSpanString implementation is broken

@@ -48,8 +48,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -83,33 +81,6 @@ public final class GAE {
         void onLaunchIntent(Intent launch);
         void onConnectSuccess(Context context, String json);
         void onGet(Context context, String json);
-    }
-
-    public static boolean isAccountSetupNeeded(final Context context) {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        final String account = prefs.getString(EditPreferences.KEY_ACCOUNT_EMAIL, "");
-
-        if (account.length() == 0) {
-            // Account not setup at all
-            return true;
-        }
-
-        final AccountManager mgr = AccountManager.get(context);
-        final Account[] accts = mgr.getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
-        for (final Account acct : accts) {
-            if (acct.name.equals(account)) {
-                // Account setup and found on system
-                return false;
-            }
-        }
-
-        // Account setup, but no longer present on system
-        final SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(EditPreferences.KEY_ACCOUNT_EMAIL, null);
-        editor.putString(EditPreferences.KEY_ACCOUNT_COOKIE, null);
-        editor.apply();
-
-        return true;
     }
 
     public static GAE getInstance(final Context context) {
@@ -198,14 +169,6 @@ public final class GAE {
         mHandler.post(r);
     }
 
-    private boolean isOnline() {
-        final ConnectivityManager cm =
-                (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        final NetworkInfo netInfo = cm.getActiveNetworkInfo();
-
-        return (netInfo != null) && (netInfo.isConnected());
-    }
-
     private void doConnect() {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         final SharedPreferences.Editor editor = prefs.edit();
@@ -267,9 +230,10 @@ public final class GAE {
                     new GetCookieTask().execute(authToken);
                 }
             } catch (final IOException e) {
-                Util.log("Get auth token failed with IOException: online=" + isOnline());
+                final boolean isOnline = Util.isNetworkConnected(mContext);
+                Util.log("Get auth token failed with IOException: online=" + isOnline);
 
-                if (isOnline() && (mRemainingRetries > 0)) {
+                if (isOnline && (mRemainingRetries > 0)) {
                     mRemainingRetries--;
                     reconnect();
                 } else

@@ -47,6 +47,7 @@ import com.meiste.greg.ptw.QuestionsRaceAdapter;
 import com.meiste.greg.ptw.R;
 import com.meiste.greg.ptw.Race;
 import com.meiste.greg.ptw.Util;
+import com.meiste.greg.ptw.sync.AccountUtils;
 
 public final class Questions extends TabFragment implements GaeListener {
 
@@ -73,7 +74,7 @@ public final class Questions extends TabFragment implements GaeListener {
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         mRaceNext = Race.getNext(getActivity(), false, true);
-        mSetupNeeded = GAE.isAccountSetupNeeded(getActivity());
+        mSetupNeeded = AccountUtils.isAccountSetupNeeded(getActivity());
         mChanged = false;
         mRaceAdapter = new QuestionsRaceAdapter(getActivity());
         mAccountSetupTime = Util.getAccountSetupTime(getActivity());
@@ -211,7 +212,7 @@ public final class Questions extends TabFragment implements GaeListener {
         }
 
         // Check if user changed their account status
-        mChanged |= mSetupNeeded != GAE.isAccountSetupNeeded(getActivity());
+        mChanged |= mSetupNeeded != AccountUtils.isAccountSetupNeeded(getActivity());
         // Check if user has switched accounts
         mChanged |= mAccountSetupTime != Util.getAccountSetupTime(getActivity());
 
