@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.res.Resources;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -85,6 +86,7 @@ public class EditPreferences extends BaseActivity {
 
         private int mLogHitCountdown;
         private Preference mVibrate;
+        private Preference mLed;
         private Preference mAccount;
 
         @Override
@@ -94,13 +96,27 @@ public class EditPreferences extends BaseActivity {
 
             addPreferencesFromResource(R.xml.preferences);
 
+            final PreferenceCategory pc = (PreferenceCategory) findPreference(KEY_REMINDER_SETTINGS);
             mVibrate = findPreference(KEY_NOTIFY_VIBRATE);
+            mLed = findPreference(KEY_NOTIFY_LED);
+
             final Vibrator vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
             if (vibrator == null || !vibrator.hasVibrator()) {
                 Util.log("Remove vibrator option since vibrator not present");
-                final PreferenceCategory pc = (PreferenceCategory)findPreference(KEY_REMINDER_SETTINGS);
                 pc.removePreference(mVibrate);
                 mVibrate = null;
+            }
+
+            try {
+                final int intrusiveNotificationLedId = Resources.getSystem().getIdentifier(
+                        "config_intrusiveNotificationLed", "bool", "android");
+                if (!getResources().getBoolean(intrusiveNotificationLedId)) {
+                    Util.log("Remove LED option since it is not intrusive");
+                    pc.removePreference(mLed);
+                    mLed = null;
+                }
+            } catch (final Resources.NotFoundException e) {
+                Util.log("Failed to check for intrusive notification LED");
             }
 
             mAccount = findPreference(KEY_ACCOUNT_SCREEN);
@@ -149,11 +165,13 @@ public class EditPreferences extends BaseActivity {
             boolean enabled = prefs.getBoolean(KEY_NOTIFY_QUESTIONS, true) ||
                     prefs.getBoolean(KEY_NOTIFY_RACE, true) ||
                     prefs.getBoolean(KEY_NOTIFY_RESULTS, true);
-            findPreference(KEY_NOTIFY_LED).setEnabled(enabled);
-            findPreference(KEY_NOTIFY_RINGTONE).setEnabled(enabled);
+            if (mLed != null) {
+                mLed.setEnabled(enabled);
+            }
             if (mVibrate != null) {
                 mVibrate.setEnabled(enabled);
             }
+            findPreference(KEY_NOTIFY_RINGTONE).setEnabled(enabled);
         }
 
         private void setRingtoneSummary(final SharedPreferences prefs) {
