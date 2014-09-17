@@ -67,6 +67,13 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             account = AccountUtils.getPtwAccount(context);
         }
 
+        // Inform the system that this account supports sync
+        ContentResolver.setIsSyncable(account, PtwContract.CONTENT_AUTHORITY, 1);
+        // Inform the system that this account is eligible for auto sync when the network is up
+        ContentResolver.setSyncAutomatically(account, PtwContract.CONTENT_AUTHORITY, true);
+
+        Util.log("Requesting network synchronization");
+
         final Bundle b = new Bundle();
         b.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, isUserRequested);
         b.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, isUserRequested);
