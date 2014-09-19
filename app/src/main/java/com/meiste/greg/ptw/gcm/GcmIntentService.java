@@ -44,6 +44,7 @@ import com.meiste.greg.ptw.R;
 import com.meiste.greg.ptw.Races;
 import com.meiste.greg.ptw.Util;
 import com.meiste.greg.ptw.sync.AccountUtils;
+import com.meiste.greg.ptw.sync.SyncAdapter;
 import com.meiste.greg.ptw.tab.RuleBook;
 import com.meiste.greg.ptw.tab.Standings;
 
@@ -109,6 +110,7 @@ public class GcmIntentService extends IntentService implements OnContainerAvaila
 
                         switch (message) {
                             case MSG_KEY_SYNC:
+                                SyncAdapter.requestSync(this, SyncAdapter.FLAG_SCHEDULE, false);
                                 getFromServer("schedule", scheduleListener, false);
                                 getFromServer("standings", standingsListener, true);
                                 break;

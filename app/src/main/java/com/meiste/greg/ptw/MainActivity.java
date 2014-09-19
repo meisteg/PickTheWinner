@@ -19,8 +19,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+import android.accounts.Account;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SyncStatusObserver;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -29,11 +33,15 @@ import android.widget.TextView;
 import com.google.android.gms.tagmanager.Container;
 import com.meiste.greg.ptw.GAE.GaeListener;
 import com.meiste.greg.ptw.GtmHelper.OnContainerAvailableListener;
+import com.meiste.greg.ptw.provider.PtwContract;
+import com.meiste.greg.ptw.sync.SyncAdapter;
 import com.meiste.greg.ptw.tab.RuleBook;
 
 public class MainActivity extends BaseActivity implements OnContainerAvailableListener {
 
     private boolean isRunning = false;
+    private Account mSyncAccount;
+    private Object mSyncObserverHandle;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -68,6 +76,11 @@ public class MainActivity extends BaseActivity implements OnContainerAvailableLi
     }
 
     private boolean isInitNeeded() {
+        final ContentResolver cr = getContentResolver();
+        final Cursor c = cr.query(PtwContract.Race.CONTENT_URI, null, null, null, null);
+        final int racesFound = c.getCount();
+        c.close();
+
         long minTime = 0;
         try {
             minTime = new SimpleDateFormat("yyyy", Locale.US).parse("2014").getTime();
@@ -76,13 +89,16 @@ public class MainActivity extends BaseActivity implements OnContainerAvailableLi
 
         final Race[] races = Races.get(this);
         if (races.length <= 0) {
-            Util.log("No valid schedule found");
+            Util.log("No valid (deprecated) schedule found");
             return true;
         } else if (races[0].getStartTimestamp() < minTime) {
             Util.log("Race schedule is too old!");
             return true;
         } else if (!RuleBook.isValid(this, minTime)) {
             Util.log("Rules missing or are too old");
+            return true;
+        } else if (racesFound <= 0) {
+            Util.log("No valid schedule found");
             return true;
         }
         return false;
@@ -146,7 +162,16 @@ public class MainActivity extends BaseActivity implements OnContainerAvailableLi
         public void onGet(final Context context, final String json) {
             Util.log("Rule Book init success!");
             RuleBook.update(context, json);
-            startGameActivity();
+
+            mSyncAccount = SyncAdapter.requestSync(context, SyncAdapter.FLAG_SCHEDULE, true);
+            if (mSyncAccount != null) {
+                // Watch for sync state changes
+                mSyncObserverHandle = ContentResolver.addStatusChangeListener(
+                        ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE, mSyncStatusObserver);
+            } else {
+                Util.log("Failed to request network sync");
+                showError();
+            }
         }
 
         @Override
@@ -160,5 +185,35 @@ public class MainActivity extends BaseActivity implements OnContainerAvailableLi
 
         @Override
         public void onConnectSuccess(final Context context, final String json) {}
+    };
+
+    private final SyncStatusObserver mSyncStatusObserver = new SyncStatusObserver() {
+        @Override
+        public void onStatusChanged(final int which) {
+            // Test the ContentResolver to see if the sync adapter is active.
+            final boolean syncActive = ContentResolver.isSyncActive(
+                    mSyncAccount, PtwContract.CONTENT_AUTHORITY);
+            final boolean syncPending = ContentResolver.isSyncPending(
+                    mSyncAccount, PtwContract.CONTENT_AUTHORITY);
+
+            if (!syncActive && !syncPending) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mSyncObserverHandle != null) {
+                            ContentResolver.removeStatusChangeListener(mSyncObserverHandle);
+                            mSyncObserverHandle = null;
+                        }
+                        mSyncAccount = null;
+
+                        if (isInitNeeded()) {
+                            showError();
+                        } else {
+                            startGameActivity();
+                        }
+                    }
+                });
+            }
+        }
     };
 }
