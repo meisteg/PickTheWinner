@@ -77,7 +77,8 @@ public class MainActivity extends BaseActivity implements OnContainerAvailableLi
 
     private boolean isInitNeeded() {
         final ContentResolver cr = getContentResolver();
-        final Cursor c = cr.query(PtwContract.Race.CONTENT_URI, null, null, null, null);
+        final Cursor c = cr.query(PtwContract.Race.CONTENT_SINGLE_URI, null, null, null,
+                PtwContract.Race.DEFAULT_SORT);
         final int racesFound = c.getCount();
         c.close();
 

@@ -29,6 +29,7 @@ public class PtwContract {
 
     public static final String CONTENT_AUTHORITY = "com.meiste.greg.ptw";
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
+    public static final String QUERY_PARAMETER_LIMIT = "limit";
 
     public static class Race implements BaseColumns {
 
@@ -40,6 +41,9 @@ public class PtwContract {
 
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath("races").build();
+
+        public static final Uri CONTENT_SINGLE_URI =
+                CONTENT_URI.buildUpon().appendQueryParameter(QUERY_PARAMETER_LIMIT, "1").build();
 
         public static final String TABLE_NAME = "schedule";
 
@@ -81,5 +85,7 @@ public class PtwContract {
                 COLUMN_NAME_QUESTION,
                 COLUMN_NAME_LAYOUT,
                 COLUMN_NAME_CITY_STATE};
+
+        public static final String DEFAULT_SORT = COLUMN_NAME_RACE_ID + " ASC";
     }
 }

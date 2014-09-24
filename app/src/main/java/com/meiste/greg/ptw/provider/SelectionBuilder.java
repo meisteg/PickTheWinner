@@ -101,8 +101,8 @@ public class SelectionBuilder {
     /**
      * Execute query using the current internal state as {@code WHERE} clause.
      */
-    public Cursor query(SQLiteDatabase db, String[] columns, String orderBy) {
-        return query(db, columns, null, null, orderBy, null);
+    public Cursor query(SQLiteDatabase db, String[] columns, String orderBy, String limit) {
+        return query(db, columns, null, null, orderBy, limit);
     }
 
     /**

@@ -67,6 +67,7 @@ public class PtwProvider extends ContentProvider {
     @Override
     public Cursor query(final Uri uri, final String[] projection, final String selection,
                         final String[] selectionArgs, final String sortOrder) {
+        final String limit = uri.getQueryParameter(PtwContract.QUERY_PARAMETER_LIMIT);
         final SQLiteDatabase db = mDatabaseHelper.getReadableDatabase();
         final SelectionBuilder builder = new SelectionBuilder();
         final int uriMatch = sUriMatcher.match(uri);
@@ -77,7 +78,7 @@ public class PtwProvider extends ContentProvider {
             case ROUTE_RACES:
                 builder.table(PtwContract.Race.TABLE_NAME)
                        .where(selection, selectionArgs);
-                final Cursor c = builder.query(db, projection, sortOrder);
+                final Cursor c = builder.query(db, projection, sortOrder, limit);
                 // Note: Notification URI must be manually set here for loaders to correctly
                 // register ContentObservers.
                 c.setNotificationUri(getContext().getContentResolver(), uri);
