@@ -21,16 +21,20 @@ import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.ContentObserver;
 import android.os.Build;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.text.format.DateUtils;
 import android.widget.RemoteViews;
 
 import com.google.android.gms.tagmanager.Container;
 import com.meiste.greg.ptw.GtmHelper.OnContainerAvailableListener;
+import com.meiste.greg.ptw.provider.PtwContract;
 import com.meiste.greg.ptw.tab.Questions;
 import com.squareup.picasso.Picasso;
 
@@ -44,7 +48,25 @@ public class WidgetProvider extends AppWidgetProvider implements OnContainerAvai
 
     private static final String WIDGET_STATE = "widget.enabled";
 
+    private static WidgetProviderObserver sDataObserver;
     private static Race sRace;
+
+    private class WidgetProviderObserver extends ContentObserver {
+        private final Context mContext;
+
+        public WidgetProviderObserver(final Context context, final Handler handler) {
+            super(handler);
+            mContext = context.getApplicationContext();
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            Util.log("WidgetProviderObserver.onChange");
+            final AppWidgetManager appWM = AppWidgetManager.getInstance(mContext);
+            final int[] appWidgetIds = getInstalledWidgets(mContext, appWM);
+            onUpdate(mContext, appWM, appWidgetIds);
+        }
+    }
 
     @Override
     public void onReceive (@NonNull final Context context, @NonNull final Intent intent) {
@@ -56,13 +78,6 @@ public class WidgetProvider extends AppWidgetProvider implements OnContainerAvai
         } else if (intent.getAction().equals(Intent.ACTION_TIME_CHANGED)) {
             Util.log("WidgetProvider.onReceive: Time change");
             setAlarm(context);
-        } else if (intent.getAction().equals(PTW.INTENT_ACTION_SCHEDULE)) {
-            Util.log("WidgetProvider.onReceive: Schedule Updated");
-            if (appWidgetIds.length > 0) {
-                /* Force full widget update */
-                sRace = null;
-                onUpdate(context, appWM, appWidgetIds);
-            }
         } else if (intent.getAction().equals(PTW.INTENT_ACTION_ANSWERS)) {
             Util.log("WidgetProvider.onReceive: Answers submitted");
             if (appWidgetIds.length > 0) {
@@ -93,6 +108,12 @@ public class WidgetProvider extends AppWidgetProvider implements OnContainerAvai
 
         /* Set alarm to update widget when device is awake. */
         setAlarm(context);
+
+        if (sDataObserver == null) {
+            sDataObserver = new WidgetProviderObserver(context, null);
+            final ContentResolver r = context.getContentResolver();
+            r.registerContentObserver(PtwContract.Race.CONTENT_URI, false, sDataObserver);
+        }
     }
 
     @Override
@@ -101,6 +122,12 @@ public class WidgetProvider extends AppWidgetProvider implements OnContainerAvai
 
         final AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         am.cancel(getAlarmIntent(context));
+
+        if (sDataObserver != null) {
+            final ContentResolver r = context.getContentResolver();
+            r.unregisterContentObserver(sDataObserver);
+            sDataObserver = null;
+        }
 
         Util.getState(context).edit().putBoolean(WIDGET_STATE, false).apply();
         Analytics.trackEvent(context, "Widget", "state", "disabled");
