@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     repositories {
-        mavenCentral()
+        jcenter()
         maven {
             url 'http://download.crashlytics.com/maven'
         }
@@ -14,7 +14,7 @@ buildscript {
 
 allprojects {
     repositories {
-        mavenCentral()
+        jcenter()
         maven {
             url 'http://download.crashlytics.com/maven'
         }
