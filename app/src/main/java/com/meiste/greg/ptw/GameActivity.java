@@ -67,6 +67,12 @@ public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo, O
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mHelper = new IabHelper(this, PTW.PUB_KEY);
+        mHelper.enableDebugLogging(BuildConfig.DEBUG, PTW.TAG);
+
+        // This has to be called before setContentView
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+
         // This activity is always started via the MainActivity, which ensures
         // the container is loaded before starting this activity. So the call
         // to getContainer() here should immediately call onContainerAvailable().
@@ -76,12 +82,6 @@ public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo, O
     @Override
     public void onContainerAvailable(final Context context, final Container container) {
         mContainer = container;
-
-        mHelper = new IabHelper(this, PTW.PUB_KEY);
-        mHelper.enableDebugLogging(BuildConfig.DEBUG, PTW.TAG);
-
-        // This has to be called before setContentView
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
         setContentView(R.layout.main);
 
