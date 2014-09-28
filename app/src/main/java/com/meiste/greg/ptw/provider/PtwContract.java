@@ -45,6 +45,9 @@ public class PtwContract {
         public static final Uri CONTENT_SINGLE_URI =
                 CONTENT_URI.buildUpon().appendQueryParameter(QUERY_PARAMETER_LIMIT, "1").build();
 
+        public static final Uri CONTENT_WIDGET_URI =
+                CONTENT_URI.buildUpon().appendQueryParameter(QUERY_PARAMETER_LIMIT, "3").build();
+
         public static final String TABLE_NAME = "schedule";
 
         public static final String COLUMN_NAME_RACE_ID = "race_id";

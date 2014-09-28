@@ -29,8 +29,8 @@ public final class Race {
     public static final int NAME_SHORT = 0;
     public static final int NAME_LONG = 1;
 
-    private static final long RECENT_TIME_POINTS = DateUtils.HOUR_IN_MILLIS * 4;
-    private static final long RECENT_TIME_EXHIBITION = DateUtils.HOUR_IN_MILLIS;
+    public static final long RECENT_TIME_POINTS = DateUtils.HOUR_IN_MILLIS * 4;
+    public static final long RECENT_TIME_EXHIBITION = DateUtils.HOUR_IN_MILLIS;
 
     private int mId;
     private int mRaceNum;

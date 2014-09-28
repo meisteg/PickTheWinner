@@ -26,6 +26,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.ContentObserver;
+import android.database.Cursor;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -49,7 +50,6 @@ public class WidgetProvider extends AppWidgetProvider implements OnContainerAvai
     private static final String WIDGET_STATE = "widget.enabled";
 
     private static WidgetProviderObserver sDataObserver;
-    private static Race sRace;
 
     private class WidgetProviderObserver extends ContentObserver {
         private final Context mContext;
@@ -142,44 +142,52 @@ public class WidgetProvider extends AppWidgetProvider implements OnContainerAvai
 
         final AppWidgetManager appWM = AppWidgetManager.getInstance(context);
         if (container.getBoolean(GtmHelper.KEY_GAME_ENABLED)) {
-            if ((sRace == null) || (!sRace.isFuture() && !sRace.isRecent())) {
-                sRace = Race.getNext(context, true, true);
-            }
-
-            if (sRace != null) {
-                setRaceView(context, appWM);
+            final ContentResolver cr = context.getContentResolver();
+            final Cursor c = cr.query(PtwContract.Race.CONTENT_WIDGET_URI,
+                    PtwContract.Race.PROJECTION_ALL,
+                    PtwContract.Race.COLUMN_NAME_START + ">=?",
+                    new String[]{Long.toString(System.currentTimeMillis() - Race.RECENT_TIME_POINTS)},
+                    PtwContract.Race.DEFAULT_SORT);
+            if ((c != null) && c.moveToNext()) {
+                Race race = new Race(c);
+                // Exhibition races have a shorter "recent" time
+                while (!race.isFuture() && !race.isRecent() && c.moveToNext()) {
+                    race = new Race(c);
+                }
+                setRaceView(context, appWM, race);
             } else {
                 setEndOfSeasonView(context, appWM);
             }
+            if (c != null) c.close();
         } else {
             setDisabledView(context, appWM);
         }
     }
 
-    private void setRaceView(final Context context, final AppWidgetManager appWM) {
+    private void setRaceView(final Context context, final AppWidgetManager appWM, final Race race) {
         final RemoteViews rViews = new RemoteViews(context.getPackageName(), R.layout.widget);
-        final int str_id = sRace.isRecent() ? R.string.widget_current_race : R.string.widget_next_race;
+        final int str_id = race.isRecent() ? R.string.widget_current_race : R.string.widget_next_race;
         final String nextRace = context.getString(str_id,
-                sRace.getStartRelative(context, sRace.isRecent() ? 0 : UPDATE_FUDGE));
+                race.getStartRelative(context, race.isRecent() ? 0 : UPDATE_FUDGE));
 
         rViews.setTextViewText(R.id.when, nextRace);
 
-        if (sRace.isExhibition()) {
+        if (race.isExhibition()) {
             rViews.setInt(R.id.status, "setText", R.string.widget_exhibition);
             rViews.setInt(R.id.widget_text_layout, "setBackgroundResource", R.drawable.widget_normal);
-        } else if (sRace.isRecent()) {
+        } else if (race.isRecent()) {
             rViews.setInt(R.id.status, "setText", R.string.widget_no_results);
             rViews.setInt(R.id.widget_text_layout, "setBackgroundResource", R.drawable.widget_normal);
-        } else if (!sRace.inProgress()) {
+        } else if (!race.inProgress()) {
             rViews.setInt(R.id.status, "setText", R.string.widget_no_questions);
             rViews.setInt(R.id.widget_text_layout, "setBackgroundResource", R.drawable.widget_normal);
         } else {
             final SharedPreferences acache =
                     context.getSharedPreferences(Questions.ACACHE, Activity.MODE_PRIVATE);
-            if (acache.contains(Questions.cachePrefix() + sRace.getId())) {
+            if (acache.contains(Questions.cachePrefix() + race.getId())) {
                 rViews.setInt(R.id.status, "setText", R.string.widget_submitted);
                 rViews.setInt(R.id.widget_text_layout, "setBackgroundResource", R.drawable.widget_good);
-            } else if ((sRace.getStartTimestamp() - System.currentTimeMillis()) <= UPDATE_WARNING) {
+            } else if ((race.getStartTimestamp() - System.currentTimeMillis()) <= UPDATE_WARNING) {
                 rViews.setInt(R.id.status, "setText", R.string.widget_no_answers);
                 rViews.setInt(R.id.widget_text_layout, "setBackgroundResource", R.drawable.widget_warning);
             } else {
@@ -196,14 +204,16 @@ public class WidgetProvider extends AppWidgetProvider implements OnContainerAvai
         rViews.setOnClickPendingIntent(R.id.widget_text_layout, pi);
 
         intent = new Intent(context, RaceActivity.class);
-        intent.putExtra(RaceActivity.INTENT_ID, sRace.getId());
+        intent.putExtra(RaceActivity.INTENT_ID, race.getId());
         intent.putExtra(RaceActivity.INTENT_ALARM, true);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         pi = PendingIntent.getActivity(context, PI_REQ_CODE,
                 intent, PendingIntent.FLAG_UPDATE_CURRENT);
         rViews.setOnClickPendingIntent(R.id.race_logo, pi);
 
-        Picasso.with(context).load(GAE.PROD_URL + "/img/race/" + sRace.getId() + ".png")
+        Picasso picasso = Picasso.with(context);
+        picasso.setLoggingEnabled(false);
+        picasso.load(GAE.PROD_URL + "/img/race/" + race.getId() + ".png")
                 .error(R.drawable.logo)
                 .into(rViews, R.id.race_logo, getInstalledWidgets(context, appWM));
     }
