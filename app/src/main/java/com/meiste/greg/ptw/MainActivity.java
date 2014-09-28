@@ -79,8 +79,11 @@ public class MainActivity extends BaseActivity implements OnContainerAvailableLi
         final ContentResolver cr = getContentResolver();
         final Cursor c = cr.query(PtwContract.Race.CONTENT_SINGLE_URI, null, null, null,
                 PtwContract.Race.DEFAULT_SORT);
-        final int racesFound = c.getCount();
-        c.close();
+        int racesFound = 0;
+        if (c != null) {
+            racesFound = c.getCount();
+            c.close();
+        }
 
         long minTime = 0;
         try {
