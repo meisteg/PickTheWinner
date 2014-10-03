@@ -20,17 +20,16 @@ import java.util.Map;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.TextView;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -40,7 +39,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.meiste.greg.ptw.view.ObservableScrollView;
 import com.meiste.greg.ptw.view.ObservableScrollView.ScrollViewListener;
 
-public class RaceFragment extends Fragment implements ScrollViewListener {
+public class RaceFragment extends Fragment implements ScrollViewListener, OnGlobalLayoutListener {
     private static final String ARG_RACE_ID = "race_id";
     private static final String MAP_FRAGMENT_TAG = "map";
 
@@ -48,6 +47,7 @@ public class RaceFragment extends Fragment implements ScrollViewListener {
     private GoogleMap mMap;
     private SupportMapFragment mMapFragment;
     private ObservableScrollView mScrollView;
+    private ViewTreeObserver mViewTreeObserver;
 
     public static RaceFragment newInstance(final int race_id) {
         final RaceFragment fragment = new RaceFragment();
@@ -177,24 +177,17 @@ public class RaceFragment extends Fragment implements ScrollViewListener {
         mMap.getUiSettings().setZoomControlsEnabled(false);
         mMap.getUiSettings().setAllGesturesEnabled(false);
 
-        final View mapView = mMapFragment.getView();
-        if (mapView.getViewTreeObserver().isAlive()) {
-            mapView.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
-                @SuppressWarnings("deprecation")
-                @Override
-                public void onGlobalLayout() {
-                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                        mapView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                    } else {
-                        mapView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    }
-                    moveMap();
-                }
-            });
+        mViewTreeObserver = mMapFragment.getView().getViewTreeObserver();
+        if (mViewTreeObserver.isAlive()) {
+            mViewTreeObserver.addOnGlobalLayoutListener(this);
         }
     }
 
-    private void moveMap() {
+    @Override
+    public void onGlobalLayout() {
+        onGlobalLayoutCleanup();
+
+        // Move the map
         final LatLngBounds bounds = mBounds.get(mRace.getAbbr());
         if (bounds != null) {
             final CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 50);
@@ -202,22 +195,26 @@ public class RaceFragment extends Fragment implements ScrollViewListener {
                 mMap.moveCamera(cameraUpdate);
             } catch (final IllegalStateException e) {
                 Util.log("Failed to move camera! - " + e);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mMap != null) {
-                            Util.log("Trying moveCamera again...");
-                            try {
-                                mMap.moveCamera(cameraUpdate);
-                            } catch (final IllegalStateException e) {
-                                Util.log("Failed again to move camera. Aborting.");
-                                Crashlytics.logException(e);
-                            }
-                        }
-                    }
-                }, 500);
             }
         }
+    }
+
+    @SuppressWarnings("deprecation")
+    private synchronized void onGlobalLayoutCleanup() {
+        if (mViewTreeObserver != null) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                mViewTreeObserver.removeGlobalOnLayoutListener(this);
+            } else {
+                mViewTreeObserver.removeOnGlobalLayoutListener(this);
+            }
+            mViewTreeObserver = null;
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        onGlobalLayoutCleanup();
+        super.onDestroyView();
     }
 
     private static final LatLngBounds ATLANTA = new LatLngBounds.Builder()
