@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,7 +71,7 @@ public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo, O
         mHelper.enableDebugLogging(BuildConfig.DEBUG, PTW.TAG);
 
         // This has to be called before setContentView
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+        supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
         // This activity is always started via the MainActivity, which ensures
         // the container is loaded before starting this activity. So the call
@@ -86,7 +86,7 @@ public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo, O
         setContentView(R.layout.main);
 
         // Must be after setContentView.
-        setProgressBarIndeterminateVisibility(false);
+        setSupportProgressBarIndeterminateVisibility(false);
 
         if (Eula.show(this))
             onEulaAgreedTo();

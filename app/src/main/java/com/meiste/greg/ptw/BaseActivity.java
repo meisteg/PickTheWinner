@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2014-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@
 package com.meiste.greg.ptw;
 
 import android.accounts.AccountManager;
-import android.app.ActionBar;
 import android.content.Intent;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 
-public abstract class BaseActivity extends FragmentActivity {
+public abstract class BaseActivity extends ActionBarActivity {
 
     public static final int REQUEST_ACCOUNT_CODE = 1316;
 
@@ -52,7 +52,7 @@ public abstract class BaseActivity extends FragmentActivity {
     }
 
     protected void setDisplayHomeAsUpEnabled(final boolean showHomeAsUp) {
-        ActionBar actionBar = getActionBar();
+        final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(showHomeAsUp);
         }

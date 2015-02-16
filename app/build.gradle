@@ -16,12 +16,12 @@ repositories {
 }
 
 android {
-    compileSdkVersion 20
-    buildToolsVersion "20.0.0"
+    compileSdkVersion 21
+    buildToolsVersion "21.1.2"
 
     defaultConfig {
         minSdkVersion 15
-        targetSdkVersion 20
+        targetSdkVersion 21
         versionCode 400
         versionName "4.0.0-" + gitSha()
     }
@@ -62,7 +62,7 @@ def gitSha() {
 
 dependencies {
     compile 'com.google.code.gson:gson:2.2.4'
-    compile 'com.android.support:support-v4:20.0.0'
+    compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.google.android.gms:play-services:6.1.11'
     compile 'com.squareup.picasso:picasso:2.3.4'
     compile 'com.squareup.retrofit:retrofit:1.6.1'
