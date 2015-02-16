@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.meiste.greg.ptw;
 import android.app.Application;
 
 import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
 
 public class PTW extends Application {
 
@@ -39,10 +40,11 @@ public class PTW extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
 
         // Initialize analytics
         Analytics.init(this);
-        Crashlytics.start(this);
+
 
         /* HACK: Instantiate GAE class here so it can be used by activities and
          * services. For some reason, passing getApplicationContext() to GAE
