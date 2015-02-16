@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,96 +16,78 @@
 package com.meiste.greg.ptw;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.CursorAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public final class RaceItemAdapter extends ArrayAdapter<Race> {
-    private Race[] mRaces;
-    private final Context mContext;
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.Optional;
 
-    private class ViewHolder {
-        public LinearLayout row;
-        public TextView raceNum;
-        public TextView startDate;
-        public TextView startTime;
-        public TextView name;
-        public TextView trackLong;
-        public TextView trackShort;
-        public TextView tv;
-    }
+public final class RaceItemAdapter extends CursorAdapter {
 
-    public RaceItemAdapter(final Context context, final int textViewResourceId) {
-        super(context, textViewResourceId);
-        mContext = context;
-        mRaces = Races.get(context);
-    }
+    private final LayoutInflater mInflater;
 
-    @Override
-    public int getCount() {
-        return mRaces.length;
-    }
+    static class ViewHolder {
+        @InjectView(R.id.row) LinearLayout row;
+        @InjectView(R.id.race_num) TextView raceNum;
+        @InjectView(R.id.race_date) TextView startDate;
+        @Optional @InjectView(R.id.race_time) TextView startTime;
+        @Optional @InjectView(R.id.race_name) TextView name;
+        @Optional @InjectView(R.id.race_track) TextView trackLong;
+        @Optional @InjectView(R.id.race_track_short) TextView trackShort;
+        @Optional @InjectView(R.id.race_tv) TextView tv;
 
-    @Override
-    public void notifyDataSetChanged() {
-        mRaces = Races.get(mContext);
-        super.notifyDataSetChanged();
-    }
-
-    @Override
-    public View getView(final int pos, final View convertView, final ViewGroup parent) {
-        final ViewHolder holder;
-        View v = convertView;
-
-        if (v == null) {
-            final LayoutInflater vi = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = vi.inflate(R.layout.schedule_row, parent, false);
-
-            holder = new ViewHolder();
-            holder.row = (LinearLayout) v.findViewById(R.id.row);
-            holder.raceNum = (TextView) v.findViewById(R.id.race_num);
-            holder.startDate = (TextView) v.findViewById(R.id.race_date);
-            holder.startTime = (TextView) v.findViewById(R.id.race_time);
-            holder.name = (TextView) v.findViewById(R.id.race_name);
-            holder.trackLong = (TextView) v.findViewById(R.id.race_track);
-            holder.trackShort = (TextView) v.findViewById(R.id.race_track_short);
-            holder.tv = (TextView) v.findViewById(R.id.race_tv);
-            v.setTag(holder);
-        } else {
-            holder = (ViewHolder) v.getTag();
+        public ViewHolder(final View view) {
+            ButterKnife.inject(this, view);
         }
+    }
 
-        if (!mRaces[pos].isFuture() && !mRaces[pos].isRecent())
+    public RaceItemAdapter(final Context context) {
+        super(context, null, 0);
+        mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    }
+
+    @Override
+    public View newView(final Context context, final Cursor cursor, final ViewGroup parent) {
+        final View v = mInflater.inflate(R.layout.schedule_row, parent, false);
+        v.setTag(new ViewHolder(v));
+        return v;
+    }
+
+    @Override
+    public void bindView(final View view, final Context context, final Cursor cursor) {
+        final ViewHolder holder = (ViewHolder) view.getTag();
+        final Race race = new Race(cursor);
+
+        if (!race.isFuture() && !race.isRecent())
             holder.row.setBackgroundResource(R.drawable.schedule_past);
-        else if (mRaces[pos].isInChase())
+        else if (race.isInChase())
             holder.row.setBackgroundResource(R.drawable.schedule_chase);
         else
             holder.row.setBackgroundResource(R.drawable.schedule_future);
 
-        if (holder.raceNum != null)
-            holder.raceNum.setText(mRaces[pos].getRaceNum());
+        holder.raceNum.setText(race.getRaceNum());
+        holder.startDate.setText(race.getStartDate(context));
 
-        if (holder.startDate != null)
-            holder.startDate.setText(mRaces[pos].getStartDate(mContext));
-
-        if (holder.startTime != null)
-            holder.startTime.setText(mRaces[pos].getStartTime(mContext));
-
-        if (holder.name != null)
-            holder.name.setText(mRaces[pos].getName());
-
-        if (holder.trackLong != null)
-            holder.trackLong.setText(mRaces[pos].getTrack(Race.NAME_LONG));
-
-        if (holder.trackShort != null)
-            holder.trackShort.setText(mRaces[pos].getTrack(Race.NAME_SHORT));
-
-        if (holder.tv != null)
-            holder.tv.setText(mRaces[pos].getTv());
-
-        return v;
+        if (holder.startTime != null) {
+            holder.startTime.setText(race.getStartTime(context));
+        }
+        if (holder.name != null) {
+            holder.name.setText(race.getName());
+        }
+        if (holder.trackLong != null) {
+            holder.trackLong.setText(race.getTrack(Race.NAME_LONG));
+        }
+        if (holder.trackShort != null) {
+            holder.trackShort.setText(race.getTrack(Race.NAME_SHORT));
+        }
+        if (holder.tv != null) {
+            holder.tv.setText(race.getTv());
+        }
     }
 }

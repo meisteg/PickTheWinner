@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,14 @@
 package com.meiste.greg.ptw.tab;
 
 import android.accounts.Account;
-import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SyncStatusObserver;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.view.LayoutInflater;
@@ -34,7 +35,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.meiste.greg.ptw.BuildConfig;
-import com.meiste.greg.ptw.PTW;
 import com.meiste.greg.ptw.R;
 import com.meiste.greg.ptw.Race;
 import com.meiste.greg.ptw.RaceActivity;
@@ -43,7 +43,8 @@ import com.meiste.greg.ptw.Util;
 import com.meiste.greg.ptw.provider.PtwContract;
 import com.meiste.greg.ptw.sync.SyncAdapter;
 
-public final class Schedule extends TabFragment implements OnRefreshListener  {
+public final class Schedule extends TabFragment implements
+        OnRefreshListener, LoaderManager.LoaderCallbacks<Cursor>  {
 
     private SwipeRefreshLayout mSwipeRefreshWidget;
     private RaceItemAdapter mAdapter;
@@ -64,7 +65,7 @@ public final class Schedule extends TabFragment implements OnRefreshListener  {
         mSwipeRefreshWidget.setEnabled(BuildConfig.DEBUG);
 
         final ListView lv = (ListView) v.findViewById(R.id.content);
-        mAdapter = new RaceItemAdapter(getActivity(), R.layout.schedule_row);
+        mAdapter = new RaceItemAdapter(getActivity());
         lv.setAdapter(mAdapter);
 
         lv.setOnItemClickListener(new OnItemClickListener() {
@@ -89,15 +90,8 @@ public final class Schedule extends TabFragment implements OnRefreshListener  {
             mNeedScroll = false;
         }
 
-        final IntentFilter filter = new IntentFilter(PTW.INTENT_ACTION_SCHEDULE);
-        getActivity().registerReceiver(mScheduleUpdateReceiver, filter);
+        getLoaderManager().initLoader(0, null, this);
         return v;
-    }
-
-    @Override
-    public void onDestroyView() {
-        getActivity().unregisterReceiver(mScheduleUpdateReceiver);
-        super.onDestroyView();
     }
 
     @Override
@@ -133,16 +127,6 @@ public final class Schedule extends TabFragment implements OnRefreshListener  {
         }
     }
 
-    private final BroadcastReceiver mScheduleUpdateReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(final Context context, final Intent intent) {
-            if (intent.getAction().equals(PTW.INTENT_ACTION_SCHEDULE)) {
-                Util.log("Schedule.onReceive: Schedule Updated");
-                mAdapter.notifyDataSetChanged();
-            }
-        }
-    };
-
     private final SyncStatusObserver mSyncStatusObserver = new SyncStatusObserver() {
         @Override
         public void onStatusChanged(final int which) {
@@ -170,4 +154,24 @@ public final class Schedule extends TabFragment implements OnRefreshListener  {
             });
         }
     };
+
+    @Override
+    public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
+        return new CursorLoader(getActivity(),    // Context
+                PtwContract.Race.CONTENT_URI,     // URI
+                PtwContract.Race.PROJECTION_ALL,  // Projection
+                null,                             // Selection
+                null,                             // Selection args
+                PtwContract.Race.DEFAULT_SORT);   // Sort
+    }
+
+    @Override
+    public void onLoadFinished(final Loader<Cursor> loader, final Cursor cursor) {
+        mAdapter.changeCursor(cursor);
+    }
+
+    @Override
+    public void onLoaderReset(final Loader<Cursor> loader) {
+        mAdapter.changeCursor(null);
+    }
 }
