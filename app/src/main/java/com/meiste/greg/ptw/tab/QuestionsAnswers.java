@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2013-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -108,7 +108,7 @@ public class QuestionsAnswers extends Fragment {
 
             // Have to check for null in case there is no correct answer
             if ((rca.a1 != null) && (rca.a1 >= 0)) {
-                if (rca.a1 == ra.a1) {
+                if (rca.a1.equals(ra.a1)) {
                     a1.setTextColor(res.getColor(R.color.answer_right));
                 } else {
                     a1.setPaintFlags(a1.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
@@ -119,7 +119,7 @@ public class QuestionsAnswers extends Fragment {
                 }
             }
             if ((rca.a2 != null) && (rca.a2 >= 0)) {
-                if (rca.a2 == ra.a2) {
+                if (rca.a2.equals(ra.a2)) {
                     a2.setTextColor(res.getColor(R.color.answer_right));
                 } else {
                     a2.setPaintFlags(a2.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
@@ -130,7 +130,7 @@ public class QuestionsAnswers extends Fragment {
                 }
             }
             if ((rca.a3 != null) && (rca.a3 >= 0)) {
-                if (rca.a3 == ra.a3) {
+                if (rca.a3.equals(ra.a3)) {
                     a3.setTextColor(res.getColor(R.color.answer_right));
                 } else {
                     a3.setPaintFlags(a3.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
@@ -141,7 +141,7 @@ public class QuestionsAnswers extends Fragment {
                 }
             }
             if ((rca.a4 != null) && (rca.a4 >= 0)) {
-                if (rca.a4 == ra.a4) {
+                if (rca.a4.equals(ra.a4)) {
                     a4.setTextColor(res.getColor(R.color.answer_right));
                 } else {
                     a4.setPaintFlags(a4.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
@@ -152,7 +152,7 @@ public class QuestionsAnswers extends Fragment {
                 }
             }
             if ((rca.a5 != null) && (rca.a5 >= 0)) {
-                if (rca.a5 == ra.a5) {
+                if (rca.a5.equals(ra.a5)) {
                     a5.setTextColor(res.getColor(R.color.answer_right));
                 } else {
                     a5.setPaintFlags(a5.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
