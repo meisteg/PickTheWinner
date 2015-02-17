@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012, 2014-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,25 +25,33 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.meiste.greg.ptw.tab.Questions;
 
-public final class QuestionsRaceAdapter extends ArrayAdapter<Race> {
-    private final List<Race> mRaces = new ArrayList<Race>();
-    private final Context mContext;
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
+public final class QuestionsRaceAdapter extends BaseAdapter {
+    private final List<Race> mRaces = new ArrayList<>();
+    private final LayoutInflater mInflater;
     private final int widthPx;
 
-    private class ViewHolder {
-        public TextView raceName;
-        public TextView raceTrack;
+    static class ViewHolder {
+        @InjectView(R.id.race_name) TextView raceName;
+        @InjectView(R.id.race_track) TextView raceTrack;
+
+        public ViewHolder(final View view, final int w) {
+            ButterKnife.inject(this, view);
+            raceName.setWidth(w);
+            raceTrack.setWidth(w);
+        }
     }
 
     public QuestionsRaceAdapter(final Context context) {
-        super(context, R.layout.questions_race_spinner);
+        mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        mContext = context;
         final Race[] allRaces = Races.get(context);
         final SharedPreferences qcache = context.getSharedPreferences(Questions.QCACHE, Activity.MODE_PRIVATE);
         final SharedPreferences acache = context.getSharedPreferences(Questions.ACACHE, Activity.MODE_PRIVATE);
@@ -67,7 +75,7 @@ public final class QuestionsRaceAdapter extends ArrayAdapter<Race> {
             }
         }
 
-        final DisplayMetrics dm = mContext.getResources().getDisplayMetrics();
+        final DisplayMetrics dm = context.getResources().getDisplayMetrics();
         widthPx = (int) (dm.widthPixels - (50 * dm.density));
     }
 
@@ -82,39 +90,32 @@ public final class QuestionsRaceAdapter extends ArrayAdapter<Race> {
     }
 
     @Override
-    public int getPosition(final Race race) {
-        for (int i = 0; i < mRaces.size(); ++i) {
-            if (mRaces.get(i).getId() == race.getId()) {
-                return i;
-            }
-        }
+    public long getItemId(int position) {
+        return position;
+    }
 
-        return -1;
+    public int getPosition(final Race race) {
+        return mRaces.indexOf(race);
     }
 
     @Override
     public View getView(final int pos, final View convertView, final ViewGroup parent) {
-        return commonView(pos, convertView, R.layout.questions_race_spinner);
+        return commonView(pos, convertView, parent, R.layout.questions_race_spinner);
     }
 
     @Override
     public View getDropDownView(final int pos, final View convertView, final ViewGroup parent) {
-        return commonView(pos, convertView, R.layout.questions_race_spinner_dropdown);
+        return commonView(pos, convertView, parent, R.layout.questions_race_spinner_dropdown);
     }
 
-    private View commonView(final int pos, final View convertView, final int layout) {
+    private View commonView(final int pos, final View convertView, final ViewGroup parent, final int layout) {
         final ViewHolder holder;
         View v = convertView;
 
         if (v == null) {
-            final LayoutInflater vi = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = vi.inflate(layout, null);
+            v = mInflater.inflate(layout, parent, false);
 
-            holder = new ViewHolder();
-            holder.raceName = (TextView) v.findViewById(R.id.race_name);
-            holder.raceName.setWidth(widthPx);
-            holder.raceTrack = (TextView) v.findViewById(R.id.race_track);
-            holder.raceTrack.setWidth(widthPx);
+            holder = new ViewHolder(v, widthPx);
             v.setTag(holder);
         } else {
             holder = (ViewHolder) v.getTag();
