@@ -22,8 +22,8 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 20
-        versionCode 400
-        versionName "4.0.0-" + gitSha()
+        versionCode 350
+        versionName "3.5.0-" + gitSha()
     }
 
     compileOptions {
