@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2014-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ public class ControllableViewPager extends ViewPager {
             return super.onTouchEvent(event);
         }
 
-        return true;
+        return false;
     }
 
     @Override
@@ -44,7 +44,7 @@ public class ControllableViewPager extends ViewPager {
             return super.onInterceptTouchEvent(event);
         }
 
-        return true;
+        return false;
     }
 
     public void setPagingEnabled(final boolean enabled) {
