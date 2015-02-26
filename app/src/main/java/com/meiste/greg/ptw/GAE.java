@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -107,7 +107,6 @@ public final class GAE {
             public void run() {
                 synchronized (mListenerSync) {
                     if (mListener == null) {
-                        Util.log("Connect using " + account);
                         mListener = listener;
                         mAccountName = account;
                         doConnect();
@@ -195,7 +194,7 @@ public final class GAE {
                 return true;
             }
         }
-        Util.log("Account " + mAccountName + " not found!");
+        Util.log("Account not found!");
         return false;
     }
 

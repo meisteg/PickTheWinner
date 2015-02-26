@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -201,14 +201,14 @@ public class RaceFragment extends Fragment implements ScrollViewListener, OnGlob
 
     @SuppressWarnings("deprecation")
     private synchronized void onGlobalLayoutCleanup() {
-        if (mViewTreeObserver != null) {
+        if ((mViewTreeObserver != null) && mViewTreeObserver.isAlive()) {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
                 mViewTreeObserver.removeGlobalOnLayoutListener(this);
             } else {
                 mViewTreeObserver.removeOnGlobalLayoutListener(this);
             }
-            mViewTreeObserver = null;
         }
+        mViewTreeObserver = null;
     }
 
     @Override

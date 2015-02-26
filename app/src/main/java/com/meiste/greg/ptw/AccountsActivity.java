@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,8 +51,6 @@ public class AccountsActivity extends BaseActivity implements GaeListener {
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         if (requestCode == REQUEST_LAUNCH_INTENT) {
-            Util.log("onActivityResult: resultCode=" + resultCode + ", mAccountName=" + mAccountName);
-
             if ((resultCode == RESULT_OK) && (mAccountName != null)) {
                 mGae.connect(this, mAccountName);
             } else {
