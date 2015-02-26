@@ -71,10 +71,10 @@ public final class Schedule extends TabFragment implements
         lv.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(final AdapterView<?> parent, final View v, final int pos, final long id) {
-                Util.log("Starting activity for race " + id);
+                Util.log("Starting activity for race " + pos);
 
                 final Intent intent = new Intent(getActivity(), RaceActivity.class);
-                intent.putExtra(RaceActivity.INTENT_ID, (int)id);
+                intent.putExtra(RaceActivity.INTENT_ID, pos);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
                 startActivity(intent);
             }
