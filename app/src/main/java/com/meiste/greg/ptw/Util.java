@@ -37,6 +37,8 @@ import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
 
+import io.fabric.sdk.android.Fabric;
+
 public final class Util {
 
     private final static String PREFS_STATE = "state";
@@ -49,11 +51,9 @@ public final class Util {
     }
 
     public static void log(final String msg) {
-        if (LOGGING_ENABLED) {
-            Crashlytics.log(Log.DEBUG, PTW.TAG, msg);
-        } else {
-            Crashlytics.log(msg);
-        }
+        if (LOGGING_ENABLED) Log.d(PTW.TAG, msg);
+
+        if (Fabric.isInitialized()) Crashlytics.log(msg);
     }
 
     public static SharedPreferences getState(final Context context) {

@@ -40,11 +40,11 @@ public class PTW extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Fabric.with(this, new Crashlytics());
 
-        // Initialize analytics
+        if (!BuildConfig.VERSION_NAME.contains("dirty")) {
+            Fabric.with(this, new Crashlytics());
+        }
         Analytics.init(this);
-
 
         /* HACK: Instantiate GAE class here so it can be used by activities and
          * services. For some reason, passing getApplicationContext() to GAE
