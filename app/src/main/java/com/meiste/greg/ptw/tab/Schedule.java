@@ -43,10 +43,15 @@ import com.meiste.greg.ptw.Util;
 import com.meiste.greg.ptw.provider.PtwContract;
 import com.meiste.greg.ptw.sync.SyncAdapter;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 public final class Schedule extends TabFragment implements
         OnRefreshListener, LoaderManager.LoaderCallbacks<Cursor>  {
 
-    private SwipeRefreshLayout mSwipeRefreshWidget;
+    @InjectView(R.id.swipe_refresh_widget) SwipeRefreshLayout mSwipeRefreshWidget;
+    @InjectView(R.id.content) ListView mListView;
+
     private RaceItemAdapter mAdapter;
     private boolean mNeedScroll = true;
     private Account mSyncAccount;
@@ -57,18 +62,17 @@ public final class Schedule extends TabFragment implements
             final Bundle savedInstanceState) {
         setRetainInstance(true);
         final View v = inflater.inflate(R.layout.list, container, false);
+        ButterKnife.inject(this, v);
 
-        mSwipeRefreshWidget = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_widget);
         mSwipeRefreshWidget.setOnRefreshListener(this);
         mSwipeRefreshWidget.setColorSchemeResources(R.color.refresh1, R.color.refresh2,
                 R.color.refresh3, R.color.refresh4);
         mSwipeRefreshWidget.setEnabled(BuildConfig.DEBUG);
 
-        final ListView lv = (ListView) v.findViewById(R.id.content);
         mAdapter = new RaceItemAdapter(getActivity());
-        lv.setAdapter(mAdapter);
+        mListView.setAdapter(mAdapter);
 
-        lv.setOnItemClickListener(new OnItemClickListener() {
+        mListView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(final AdapterView<?> parent, final View v, final int pos, final long id) {
                 Util.log("Starting activity for race " + pos);
@@ -79,16 +83,6 @@ public final class Schedule extends TabFragment implements
                 startActivity(intent);
             }
         });
-
-        if (mNeedScroll) {
-            final Race race = Race.getNext(getActivity(), true, true);
-            if (race != null) {
-                // If possible set previous race so "recent" race is shown (if applicable)
-                final int id = race.getId();
-                lv.setSelection(id > 0 ? id - 1 : id);
-            }
-            mNeedScroll = false;
-        }
 
         getLoaderManager().initLoader(0, null, this);
         return v;
@@ -168,6 +162,16 @@ public final class Schedule extends TabFragment implements
     @Override
     public void onLoadFinished(final Loader<Cursor> loader, final Cursor cursor) {
         mAdapter.changeCursor(cursor);
+
+        if (mNeedScroll) {
+            final Race race = Race.getNext(getActivity(), true, true);
+            if (race != null) {
+                // If possible set previous race so "recent" race is shown (if applicable)
+                final int id = race.getId();
+                mListView.setSelection(id > 0 ? id - 1 : id);
+            }
+            mNeedScroll = false;
+        }
     }
 
     @Override
