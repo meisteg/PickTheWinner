@@ -39,6 +39,7 @@ import android.widget.Toast;
 import com.meiste.greg.ptw.Analytics;
 import com.meiste.greg.ptw.GAE;
 import com.meiste.greg.ptw.GAE.GaeListener;
+import com.meiste.greg.ptw.GameActivity;
 import com.meiste.greg.ptw.PTW;
 import com.meiste.greg.ptw.PlayerAdapter;
 import com.meiste.greg.ptw.PlayerHistory;
@@ -162,7 +163,7 @@ public final class Questions extends TabFragment implements GaeListener {
                         if (raceAfterNum >= mRaceSelected.getId()) {
                             // Standings are available for race, so correct answers
                             // should be available for download.
-                            getActivity().setProgressBarIndeterminateVisibility(true);
+                            ((GameActivity) getActivity()).setSupportProgressBarIndeterminateVisibility(true);
                             selectEnable = false;
                             GAE.getInstance(getActivity()).getPage(
                                     new CorrectAnswersListener(mRaceSelected.getId()),
@@ -324,7 +325,7 @@ public final class Questions extends TabFragment implements GaeListener {
 
             // Verify application wasn't closed before callback returned
             if (getActivity() != null) {
-                getActivity().setProgressBarIndeterminateVisibility(false);
+                ((GameActivity) getActivity()).setSupportProgressBarIndeterminateVisibility(false);
             }
         }
 
@@ -343,7 +344,7 @@ public final class Questions extends TabFragment implements GaeListener {
 
             // Verify application wasn't closed before callback returned
             if (getActivity() != null) {
-                getActivity().setProgressBarIndeterminateVisibility(false);
+                ((GameActivity) getActivity()).setSupportProgressBarIndeterminateVisibility(false);
                 setSubFragment();
             }
         }
