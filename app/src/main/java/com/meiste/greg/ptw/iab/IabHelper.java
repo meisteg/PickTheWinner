@@ -636,6 +636,17 @@ public class IabHelper {
                 catch (IabException ex) {
                     result = ex.getResult();
                 }
+                // START PICK THE WINNER WORKAROUND
+                // The queryInventory function can throw a ISE if helper is disposed after the
+                // disposed check above but before this thread can call queryInventory().
+                catch (IllegalStateException e) {
+                    if (!mDisposed) {
+                        // Exception wasn't due to being disposed. Go ahead and re-throw
+                        // exception to get crash report.
+                        throw e;
+                    }
+                }
+                // END PICK THE WINNER WORKAROUND
 
                 flagEndAsync();
 
