@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -106,7 +106,10 @@ public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo, O
         Util.log(GameActivity.class.getSimpleName() + ".onNewIntent: " + intent);
 
         setIntent(intent);
-        mPager.setCurrentItem(getTab(intent));
+
+        if (mPager != null) {
+            mPager.setCurrentItem(getTab(intent));
+        }
     }
 
     @Override
@@ -117,8 +120,10 @@ public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo, O
             mAdView.pause();
         }
 
-        Util.log("Saving state: tab=" + mPager.getCurrentItem());
-        Util.getState(this).edit().putInt(LAST_TAB, mPager.getCurrentItem()).apply();
+        if (mPager != null) {
+            Util.log("Saving state: tab=" + mPager.getCurrentItem());
+            Util.getState(this).edit().putInt(LAST_TAB, mPager.getCurrentItem()).apply();
+        }
     }
 
     @Override
