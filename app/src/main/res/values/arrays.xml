@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     Copyright (C) 2012-2013 Gregory S. Meiste <http://gregmeiste.com>
+     Copyright (C) 2012-2013, 2015 Gregory S. Meiste <http://gregmeiste.com>
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -16,74 +16,7 @@
 -->
 
 <resources>
-    <!-- Each driver number MUST be unique! Should NOT change a number during season. -->
-    <string-array name="drivers" translatable="false">
-        <item>{\"mFirstName\":\"A.J.\",\"mLastName\":\"Allmendinger\",\"mNumber\":22}</item>
-        <item>{\"mFirstName\":\"Aric\",\"mLastName\":\"Almirola\",\"mNumber\":43}</item>
-        <item>{\"mFirstName\":\"Marcos\",\"mLastName\":\"Ambrose\",\"mNumber\":9}</item>
-        <item>{\"mFirstName\":\"Trevor\",\"mLastName\":\"Bayne\",\"mNumber\":21}</item>
-        <item>{\"mFirstName\":\"Greg\",\"mLastName\":\"Biffle\",\"mNumber\":16}</item>
-        <item>{\"mFirstName\":\"Dave\",\"mLastName\":\"Blaney\",\"mNumber\":36}</item>
-        <item>{\"mFirstName\":\"Mike\",\"mLastName\":\"Bliss\",\"mNumber\":32}</item>
-        <item>{\"mFirstName\":\"Clint\",\"mLastName\":\"Bowyer\",\"mNumber\":15}</item>
-        <item>{\"mFirstName\":\"Jeff\",\"mLastName\":\"Burton\",\"mNumber\":31}</item>
-        <item>{\"mFirstName\":\"Kurt\",\"mLastName\":\"Busch\",\"mNumber\":51}</item>
-        <item>{\"mFirstName\":\"Kyle\",\"mLastName\":\"Busch\",\"mNumber\":18}</item>
-        <item>{\"mFirstName\":\"Landon\",\"mLastName\":\"Cassill\",\"mNumber\":83}</item>
-        <item>{\"mFirstName\":\"Dale\",\"mLastName\":\"Earnhardt Jr.\",\"mNumber\":88}</item>
-        <item>{\"mFirstName\":\"Carl\",\"mLastName\":\"Edwards\",\"mNumber\":99}</item>
-        <item>{\"mFirstName\":\"Brendan\",\"mLastName\":\"Gaughan\",\"mNumber\":33}</item>
-        <item>{\"mFirstName\":\"David\",\"mLastName\":\"Gilliland\",\"mNumber\":38}</item>
-        <item>{\"mFirstName\":\"Jeff\",\"mLastName\":\"Gordon\",\"mNumber\":24}</item>
-        <item>{\"mFirstName\":\"Robby\",\"mLastName\":\"Gordon\",\"mNumber\":7}</item>
-        <item>{\"mFirstName\":\"Denny\",\"mLastName\":\"Hamlin\",\"mNumber\":11}</item>
-        <item>{\"mFirstName\":\"Kevin\",\"mLastName\":\"Harvick\",\"mNumber\":29}</item>
-        <item>{\"mFirstName\":\"Sam\",\"mLastName\":\"Hornish Jr.\",\"mNumber\":220}</item>
-        <item>{\"mFirstName\":\"Jimmie\",\"mLastName\":\"Johnson\",\"mNumber\":48}</item>
-        <item>{\"mFirstName\":\"Kasey\",\"mLastName\":\"Kahne\",\"mNumber\":5}</item>
-        <item>{\"mFirstName\":\"Matt\",\"mLastName\":\"Kenseth\",\"mNumber\":17}</item>
-        <item>{\"mFirstName\":\"Brad\",\"mLastName\":\"Keselowski\",\"mNumber\":2}</item>
-        <item>{\"mFirstName\":\"Travis\",\"mLastName\":\"Kvapil\",\"mNumber\":93}</item>
-        <item>{\"mFirstName\":\"Bobby\",\"mLastName\":\"Labonte\",\"mNumber\":47}</item>
-        <item>{\"mFirstName\":\"Joey\",\"mLastName\":\"Logano\",\"mNumber\":20}</item>
-        <item>{\"mFirstName\":\"Mark\",\"mLastName\":\"Martin\",\"mNumber\":55}</item>
-        <item>{\"mFirstName\":\"Michael\",\"mLastName\":\"McDowell\",\"mNumber\":98}</item>
-        <item>{\"mFirstName\":\"Jamie\",\"mLastName\":\"McMurray\",\"mNumber\":1}</item>
-        <item>{\"mFirstName\":\"Casey\",\"mLastName\":\"Mears\",\"mNumber\":13}</item>
-        <item>{\"mFirstName\":\"Paul\",\"mLastName\":\"Menard\",\"mNumber\":27}</item>
-        <item>{\"mFirstName\":\"Juan Pablo\",\"mLastName\":\"Montoya\",\"mNumber\":42}</item>
-        <item>{\"mFirstName\":\"Joe\",\"mLastName\":\"Nemechek\",\"mNumber\":87}</item>
-        <item>{\"mFirstName\":\"Ryan\",\"mLastName\":\"Newman\",\"mNumber\":39}</item>
-        <item>{\"mFirstName\":\"Danica\",\"mLastName\":\"Patrick\",\"mNumber\":100}</item>
-        <item>{\"mFirstName\":\"David\",\"mLastName\":\"Ragan\",\"mNumber\":34}</item>
-        <item>{\"mFirstName\":\"Tony\",\"mLastName\":\"Raines\",\"mNumber\":26}</item>
-        <item>{\"mFirstName\":\"David\",\"mLastName\":\"Reutimann\",\"mNumber\":10}</item>
-        <item>{\"mFirstName\":\"Elliott\",\"mLastName\":\"Sadler\",\"mNumber\":330}</item>
-        <item>{\"mFirstName\":\"Ken\",\"mLastName\":\"Schrader\",\"mNumber\":321}</item>
-        <item>{\"mFirstName\":\"Regan\",\"mLastName\":\"Smith\",\"mNumber\":78}</item>
-        <item>{\"mFirstName\":\"Scott\",\"mLastName\":\"Speed\",\"mNumber\":195}</item>
-        <item>{\"mFirstName\":\"Ricky\",\"mLastName\":\"Stenhouse Jr.\",\"mNumber\":6}</item>
-        <item>{\"mFirstName\":\"Tony\",\"mLastName\":\"Stewart\",\"mNumber\":14}</item>
-        <item>{\"mFirstName\":\"Martin\",\"mLastName\":\"Truex Jr.\",\"mNumber\":56}</item>
-        <item>{\"mFirstName\":\"Brian\",\"mLastName\":\"Vickers\",\"mNumber\":550}</item>
-        <item>{\"mFirstName\":\"Michael\",\"mLastName\":\"Waltrip\",\"mNumber\":140}</item>
-        <item>{\"mFirstName\":\"Josh\",\"mLastName\":\"Wise\",\"mNumber\":260}</item>
-        <item>{\"mFirstName\":\"J.J.\",\"mLastName\":\"Yeley\",\"mNumber\":249}</item>
-    </string-array>
-    
-    <string-array name="drivers_inactive" translatable="false">
-        <item>{\"mFirstName\":\"Stacy\",\"mLastName\":\"Compton\",\"mNumber\":74}</item>
-        <item>{\"mFirstName\":\"Bill\",\"mLastName\":\"Elliott\",\"mNumber\":97}</item>
-        <item>{\"mFirstName\":\"Timmy\",\"mLastName\":\"Hill\",\"mNumber\":37}</item>
-        <item>{\"mFirstName\":\"Terry\",\"mLastName\":\"Labonte\",\"mNumber\":320}</item>
-        <item>{\"mFirstName\":\"Robert\",\"mLastName\":\"Richardson Jr.\",\"mNumber\":23}</item>
-        <item>{\"mFirstName\":\"Scott\",\"mLastName\":\"Riggs\",\"mNumber\":230}</item>
-        <item>{\"mFirstName\":\"Reed\",\"mLastName\":\"Sorenson\",\"mNumber\":740}</item>
-        <item>{\"mFirstName\":\"David\",\"mLastName\":\"Stremme\",\"mNumber\":30}</item>
-        <item>{\"mFirstName\":\"Kenny\",\"mLastName\":\"Wallace\",\"mNumber\":109}</item>
-        <item>{\"mFirstName\":\"Mike\",\"mLastName\":\"Wallace\",\"mNumber\":370}</item>
-    </string-array>
-    
+
     <string-array name="num_leaders">
         <item>1 &#8211; 5 drivers</item>
         <item>6 &#8211; 10 drivers</item>

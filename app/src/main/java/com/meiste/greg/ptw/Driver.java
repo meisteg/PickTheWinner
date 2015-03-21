@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2013, 2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,27 +37,8 @@ public final class Driver {
                 }
             }
         }
-        return newInstance(res, num);
-    }
 
-    private static Driver newInstance(final Resources res, final int num) {
-        String[] drivers = res.getStringArray(R.array.drivers);
-        final Gson gson = new Gson();
-
-        for (final String json : drivers) {
-            final Driver driver = gson.fromJson(json, Driver.class);
-            if (driver.getNumber() == num)
-                return driver;
-        }
-
-        // Now check the inactive drivers array
-        drivers = res.getStringArray(R.array.drivers_inactive);
-        for (final String json : drivers) {
-            final Driver driver = gson.fromJson(json, Driver.class);
-            if (driver.getNumber() == num)
-                return driver;
-        }
-
+        // This should never happen
         final Driver driver = new Driver();
         driver.mNumber = num;
         driver.mFirstName = "";

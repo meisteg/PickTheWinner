@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2013 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2013, 2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,10 @@ import android.content.Context;
 import android.widget.ArrayAdapter;
 
 public final class DriverAdapter extends ArrayAdapter<Driver> {
-    private final Context mContext;
     private final Driver[] mDrivers;
 
     public DriverAdapter(final Context context, final Driver[] drivers) {
         super(context, android.R.layout.simple_spinner_item);
-        mContext = context;
         mDrivers = drivers;
 
         setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -35,14 +33,11 @@ public final class DriverAdapter extends ArrayAdapter<Driver> {
         if (mDrivers != null) {
             return mDrivers.length;
         }
-        return mContext.getResources().getStringArray(R.array.drivers).length;
+        return 0;
     }
 
     @Override
     public Driver getItem(final int position) {
-        if (mDrivers != null) {
-            return mDrivers[position];
-        }
-        return Driver.fromJson(mContext.getResources().getStringArray(R.array.drivers)[position]);
+        return mDrivers[position];
     }
 }
