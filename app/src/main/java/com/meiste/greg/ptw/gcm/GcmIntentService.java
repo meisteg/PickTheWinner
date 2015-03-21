@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -88,7 +89,7 @@ public class GcmIntentService extends IntentService implements OnContainerAvaila
             }
         }
 
-        if ((extras != null) && !extras.isEmpty()) {
+        if ((extras != null) && !extras.isEmpty() && !TextUtils.isEmpty(messageType)) {
             /*
              * Filter messages based on message type. Since it is likely that GCM will be
              * extended in the future with new message types, just ignore any message types
