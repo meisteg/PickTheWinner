@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012, 2014-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,7 @@
 package com.meiste.greg.ptw;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
@@ -37,56 +35,39 @@ public final class Races {
         synchronized (sRacesSync) {
             if (sRaces == null) {
                 Util.log("Populating race array");
-
                 sRaces = getDownloaded(context);
-                if (BuildConfig.DEBUG) {
-                    final Race[] includedRaces = getIncluded(context);
-                    if (includedRaces.length > 0) {
-                        Util.log("DEBUG build schedule override");
-                        sRaces = includedRaces;
-                    }
-                }
             }
         }
         return sRaces;
     }
 
-    public static void update(final Context context, final String json) {
+    public static boolean update(final Context context, final String json) {
         synchronized (sRacesSync) {
+            try {
+                sRaces = new Gson().fromJson(json, Race[].class);
+            } catch (final Exception e) {
+                Util.log("Failed to parse downloaded schedule: " + e);
+                return false;
+            }
+
             try {
                 final FileOutputStream fos = context.openFileOutput(FILENAME, Context.MODE_PRIVATE);
                 fos.write(json.getBytes());
                 fos.close();
-                sRaces = null;
-
-                RaceAlarm.reset(context);
-                context.sendBroadcast(new Intent(PTW.INTENT_ACTION_SCHEDULE));
             } catch (final Exception e) {
-                Util.log("Failed to save update to schedule");
+                Util.log("Failed to save update to schedule: " + e);
+                return false;
             }
         }
-    }
 
-    private static Race[] getIncluded(final Context context) {
-        try {
-            return parseInputStream(context.getAssets().open(FILENAME));
-        } catch (final IOException e) {
-            Util.log("No included schedule found");
-        }
-        return new Race[0];
+        RaceAlarm.reset(context);
+        context.sendBroadcast(new Intent(PTW.INTENT_ACTION_SCHEDULE));
+        return true;
     }
 
     private static Race[] getDownloaded(final Context context) {
         try {
-            return parseInputStream(context.openFileInput(FILENAME));
-        } catch (final FileNotFoundException e) {
-            Util.log("No downloaded schedule found");
-        }
-        return new Race[0];
-    }
-
-    private static Race[] parseInputStream(final InputStream is) {
-        try {
+            final InputStream is = context.openFileInput(FILENAME);
             final BufferedReader in = new BufferedReader(new InputStreamReader(is));
             String line;
             final StringBuilder buffer = new StringBuilder();
@@ -94,7 +75,8 @@ public final class Races {
                 buffer.append(line).append('\n');
             in.close();
             return new Gson().fromJson(buffer.toString(), Race[].class);
-        } catch (final IOException e) {
+        } catch (final Exception e) {
+            Util.log("Failed to open/parse schedule: " + e);
         }
         return new Race[0];
     }

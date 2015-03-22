@@ -178,8 +178,11 @@ public class GcmIntentService extends IntentService implements OnContainerAvaila
         public void onGet(final Context context, final String json) {
             Util.log("scheduleListener: onGet");
 
-            Races.update(context, json);
-            super.onGet(context, json);
+            if (Races.update(context, json)) {
+                super.onGet(context, json);
+            } else {
+                super.onFailedConnect(context);
+            }
         }
     };
 

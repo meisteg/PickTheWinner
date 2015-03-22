@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2014-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -123,9 +123,12 @@ public class MainActivity extends BaseActivity implements OnContainerAvailableLi
     private final GaeListener mScheduleListener = new GaeListener() {
         @Override
         public void onGet(final Context context, final String json) {
-            Util.log("Schedule init success!");
-            Races.update(context, json);
-            GAE.getInstance(getApplicationContext()).getPage(mRulesListener, "rule_book");
+            Util.log("Schedule downloaded");
+            if (Races.update(context, json)) {
+                GAE.getInstance(getApplicationContext()).getPage(mRulesListener, "rule_book");
+            } else {
+                showError();
+            }
         }
 
         @Override
