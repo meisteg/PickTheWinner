@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- Will fix when minimum API is 17 or later -->
+    <issue id="RtlHardcoded" severity="ignore" />
+</lint>

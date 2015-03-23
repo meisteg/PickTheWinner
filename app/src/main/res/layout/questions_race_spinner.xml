@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     Copyright (C) 2012 Gregory S. Meiste <http://gregmeiste.com>
+     Copyright (C) 2012-2015 Gregory S. Meiste <http://gregmeiste.com>
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    
+
     <TextView android:id="@+id/race_name"
         style="?android:attr/spinnerItemStyle"
         android:singleLine="true"
@@ -28,8 +28,9 @@
     	android:layout_height="wrap_content"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:paddingLeft="0px" />
-    
+        android:paddingLeft="0px"
+        android:paddingRight="0px" />
+
     <TextView android:id="@+id/race_track"
         style="?android:attr/spinnerItemStyle"
         android:singleLine="true"
@@ -38,6 +39,7 @@
     	android:layout_height="wrap_content"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:paddingLeft="0px" />
+        android:paddingLeft="0px"
+        android:paddingRight="0px" />
 
 </LinearLayout>

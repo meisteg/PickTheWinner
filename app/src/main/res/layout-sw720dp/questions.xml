@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     Copyright (C) 2014 Gregory S. Meiste <http://gregmeiste.com>
+     Copyright (C) 2014-2015 Gregory S. Meiste <http://gregmeiste.com>
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -15,12 +15,6 @@
      limitations under the License.
 -->
 
-<!--
-     Dividers are not supported until API 11. Smallest width layouts were not
-     introduced until API 13 (Android 3.2). Because of this, the lint error
-     for the divider (NewApi) can be ignored since this layout will never be
-     used on devices that do not support layout dividers.
--->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -30,7 +24,7 @@
     android:divider="?android:attr/dividerHorizontal"
     android:showDividers="middle"
     android:baselineAligned="false"
-    tools:ignore="NewApi">
+    tools:ignore="InconsistentLayout">
 
     <ListView
         android:id="@+id/race_list"

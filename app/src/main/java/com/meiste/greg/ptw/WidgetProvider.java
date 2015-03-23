@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2013-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package com.meiste.greg.ptw;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -177,7 +178,7 @@ public class WidgetProvider extends AppWidgetProvider implements OnContainerAvai
         rViews.setOnClickPendingIntent(R.id.race_logo, pi);
 
         Picasso.with(context).load(GAE.PROD_URL + "/img/race/" + sRace.getId() + ".png")
-                .error(R.drawable.logo)
+                .error(R.mipmap.ic_launcher)
                 .into(rViews, R.id.race_logo, getInstalledWidgets(context, appWM));
     }
 
@@ -197,6 +198,7 @@ public class WidgetProvider extends AppWidgetProvider implements OnContainerAvai
         appWM.updateAppWidget(getInstalledWidgets(context, appWM), rViews);
     }
 
+    @SuppressLint("NewApi")
     private void setAlarm(final Context context) {
         /* No point setting alarm if no widgets */
         if (getInstalledWidgets(context).length == 0)

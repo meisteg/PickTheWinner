@@ -18,6 +18,7 @@ package com.meiste.greg.ptw;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -199,6 +200,7 @@ public class RaceFragment extends Fragment implements ScrollViewListener, OnGlob
         }
     }
 
+    @SuppressLint("NewApi")
     @SuppressWarnings("deprecation")
     private synchronized void onGlobalLayoutCleanup() {
         if ((mViewTreeObserver != null) && mViewTreeObserver.isAlive()) {

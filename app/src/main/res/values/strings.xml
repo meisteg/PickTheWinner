@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     Copyright (C) 2012-2014 Gregory S. Meiste <http://gregmeiste.com>
+     Copyright (C) 2012-2015 Gregory S. Meiste <http://gregmeiste.com>
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
      limitations under the License.
 -->
 
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="about">About</string>
     <string name="account">Account</string>
     <string name="account_needed">Please select an account</string>
@@ -124,8 +124,9 @@
     <string name="standings_points">Points</string>
     <string name="standings_races">Races</string>
     <string name="standings_wins">Wins</string>
-    <string name="standings_footer">Only Top %d players and friends are shown. Players in yellow
-        are currently in the Chase. The green bar indicates your place in the standings.</string>
+    <string name="standings_footer" tools:ignore="PluralsCandidate">Only Top %d players and friends
+        are shown. Players in yellow are currently in the Chase. The green bar indicates your place
+        in the standings.</string>
     
     <!-- Suggest Strings -->
     <string name="suggest_para1">You can submit question ideas for the next race at:</string>

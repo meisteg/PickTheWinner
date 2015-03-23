@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     Copyright (C) 2014 Gregory S. Meiste <http://gregmeiste.com>
+     Copyright (C) 2014-2015 Gregory S. Meiste <http://gregmeiste.com>
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -15,22 +15,13 @@
      limitations under the License.
 -->
 
-<!--
-     The activated background indicator is not supported until API 11.
-     Smallest width layouts were not introduced until API 13 (Android 3.2).
-     Because of this, the lint error for the activated background indicator
-     (NewApi) can be ignored since this layout will never be used on devices
-     that do not support the activated background indicator.
--->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?android:attr/activatedBackgroundIndicator"
     android:orientation="vertical"
     android:paddingTop="6dp"
-    android:paddingBottom="6dp"
-    tools:ignore="NewApi">
+    android:paddingBottom="6dp">
     
     <TextView android:id="@+id/race_name"
         style="?android:attr/spinnerItemStyle"

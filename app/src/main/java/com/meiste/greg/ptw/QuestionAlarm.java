@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package com.meiste.greg.ptw;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.Notification;
@@ -47,6 +48,7 @@ public final class QuestionAlarm extends IntentService implements OnContainerAva
         setIntentRedelivery(true);
     }
 
+    @SuppressLint("NewApi")
     public static void set(final Context context) {
         // Get next points race: allow in progress
         Race race = Race.getNext(context, false, true);
@@ -121,7 +123,7 @@ public final class QuestionAlarm extends IntentService implements OnContainerAva
 
             final NotificationCompat.Builder b = new NotificationCompat.Builder(this);
             b.setSmallIcon(R.drawable.ic_stat_steering_wheel);
-            b.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher));
+            b.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
             b.setTicker(getString(R.string.remind_questions_ticker, race.getName()));
             b.setContentTitle(getString(R.string.app_name));
             b.setContentText(race.getName());

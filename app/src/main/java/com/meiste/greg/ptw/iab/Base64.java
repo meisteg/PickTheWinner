@@ -341,7 +341,6 @@ public class Base64 {
             e += 4;
         }
 
-        assert (e == outBuff.length);
         return outBuff;
     }
 

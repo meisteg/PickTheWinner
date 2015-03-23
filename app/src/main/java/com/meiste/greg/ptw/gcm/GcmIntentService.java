@@ -287,7 +287,7 @@ public class GcmIntentService extends IntentService implements OnContainerAvaila
             final String contextText = context.getString(R.string.remind_results_notify, race);
             final NotificationCompat.Builder b = new NotificationCompat.Builder(context);
             b.setSmallIcon(R.drawable.ic_stat_steering_wheel);
-            b.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher));
+            b.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
             b.setTicker(context.getString(R.string.remind_results_notify, race));
             b.setContentTitle(context.getString(R.string.app_name));
             b.setContentText(contextText);

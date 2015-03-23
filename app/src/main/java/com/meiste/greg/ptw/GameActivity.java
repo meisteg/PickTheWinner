@@ -15,6 +15,7 @@
  */
 package com.meiste.greg.ptw;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -170,6 +171,7 @@ public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo, O
         super.onDestroy();
     }
 
+    @SuppressLint("AlwaysShowAction")
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
