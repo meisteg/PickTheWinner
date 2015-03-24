@@ -132,6 +132,7 @@ public final class RaceAlarm extends IntentService implements OnContainerAvailab
             b.setDefaults(defaults);
             b.setSound(Uri.parse(prefs.getString(EditPreferences.KEY_NOTIFY_RINGTONE,
                     PTW.DEFAULT_NOTIFY_SND)));
+            b.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
             final SharedPreferences cache = getSharedPreferences(Questions.ACACHE, Activity.MODE_PRIVATE);
             if (cache.contains(Questions.cachePrefix() + race.getId())) {

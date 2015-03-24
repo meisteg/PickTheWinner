@@ -297,6 +297,7 @@ public class GcmIntentService extends IntentService implements OnContainerAvaila
             b.setDefaults(defaults);
             b.setSound(Uri.parse(prefs.getString(EditPreferences.KEY_NOTIFY_RINGTONE,
                     PTW.DEFAULT_NOTIFY_SND)));
+            b.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
             getNM(context).notify(R.string.remind_results_notify, b.build());
         }

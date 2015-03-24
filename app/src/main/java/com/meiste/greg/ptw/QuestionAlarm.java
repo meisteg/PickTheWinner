@@ -133,6 +133,7 @@ public final class QuestionAlarm extends IntentService implements OnContainerAva
             b.setDefaults(defaults);
             b.setSound(Uri.parse(prefs.getString(EditPreferences.KEY_NOTIFY_RINGTONE,
                     PTW.DEFAULT_NOTIFY_SND)));
+            b.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
             getNM(this).notify(R.string.remind_questions_ticker, b.build());
         } else {
