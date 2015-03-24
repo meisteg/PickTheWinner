@@ -44,8 +44,7 @@ public class WidgetProvider extends AppWidgetProvider implements OnContainerAvai
     private static final int PI_REQ_CODE = 810647;
 
     private static final String WIDGET_STATE = "widget.enabled";
-
-    private static Race sRace;
+    private static final String WIDGET_STATE_RACE = "widget.race";
 
     @Override
     public void onReceive (@NonNull final Context context, @NonNull final Intent intent) {
@@ -61,7 +60,7 @@ public class WidgetProvider extends AppWidgetProvider implements OnContainerAvai
             Util.log("WidgetProvider.onReceive: Schedule Updated");
             if (appWidgetIds.length > 0) {
                 /* Force full widget update */
-                sRace = null;
+                Util.getState(context).edit().putInt(WIDGET_STATE_RACE, -1).apply();
                 onUpdate(context, appWM, appWidgetIds);
             }
         } else if (intent.getAction().equals(PTW.INTENT_ACTION_ANSWERS)) {
@@ -103,7 +102,8 @@ public class WidgetProvider extends AppWidgetProvider implements OnContainerAvai
         final AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         am.cancel(getAlarmIntent(context));
 
-        Util.getState(context).edit().putBoolean(WIDGET_STATE, false).apply();
+        Util.getState(context).edit().putBoolean(WIDGET_STATE, false)
+                .putInt(WIDGET_STATE_RACE, -1).apply();
         Analytics.trackEvent(context, "Widget", "state", "disabled");
     }
 
@@ -116,44 +116,56 @@ public class WidgetProvider extends AppWidgetProvider implements OnContainerAvai
 
         final AppWidgetManager appWM = AppWidgetManager.getInstance(context);
         if (container.getBoolean(GtmHelper.KEY_GAME_ENABLED)) {
-            if ((sRace == null) || (!sRace.isFuture() && !sRace.isRecent())) {
-                sRace = Race.getNext(context, true, true);
+            final int raceId = Util.getState(context).getInt(WIDGET_STATE_RACE, -1);
+            // getInstance already checks for a sane value of raceId. No need to do again here.
+            Race race = Race.getInstance(context, raceId);
+
+            if ((race == null) || (!race.isFuture() && !race.isRecent())) {
+                race = Race.getNext(context, true, true);
             }
 
-            if (sRace != null) {
-                setRaceView(context, appWM);
+            if (race != null) {
+                setRaceView(context, appWM, race);
+
+                if (raceId != race.getId()) {
+                    Util.getState(context).edit().putInt(WIDGET_STATE_RACE, race.getId()).apply();
+                }
             } else {
                 setEndOfSeasonView(context, appWM);
+
+                if (raceId >= 0) {
+                    Util.getState(context).edit().putInt(WIDGET_STATE_RACE, -1).apply();
+                }
             }
         } else {
             setDisabledView(context, appWM);
         }
     }
 
-    private void setRaceView(final Context context, final AppWidgetManager appWM) {
+    private void setRaceView(final Context context, final AppWidgetManager appWM, final Race race) {
         final RemoteViews rViews = new RemoteViews(context.getPackageName(), R.layout.widget);
-        final int str_id = sRace.isRecent() ? R.string.widget_current_race : R.string.widget_next_race;
+        final int str_id = race.isRecent() ? R.string.widget_current_race : R.string.widget_next_race;
         final String nextRace = context.getString(str_id,
-                sRace.getStartRelative(context, sRace.isRecent() ? 0 : UPDATE_FUDGE));
+                race.getStartRelative(context, race.isRecent() ? 0 : UPDATE_FUDGE));
 
         rViews.setTextViewText(R.id.when, nextRace);
 
-        if (sRace.isExhibition()) {
+        if (race.isExhibition()) {
             rViews.setInt(R.id.status, "setText", R.string.widget_exhibition);
             rViews.setInt(R.id.widget_text_layout, "setBackgroundResource", R.drawable.widget_normal);
-        } else if (sRace.isRecent()) {
+        } else if (race.isRecent()) {
             rViews.setInt(R.id.status, "setText", R.string.widget_no_results);
             rViews.setInt(R.id.widget_text_layout, "setBackgroundResource", R.drawable.widget_normal);
-        } else if (!sRace.inProgress()) {
+        } else if (!race.inProgress()) {
             rViews.setInt(R.id.status, "setText", R.string.widget_no_questions);
             rViews.setInt(R.id.widget_text_layout, "setBackgroundResource", R.drawable.widget_normal);
         } else {
             final SharedPreferences acache =
                     context.getSharedPreferences(Questions.ACACHE, Activity.MODE_PRIVATE);
-            if (acache.contains(Questions.cachePrefix() + sRace.getId())) {
+            if (acache.contains(Questions.cachePrefix() + race.getId())) {
                 rViews.setInt(R.id.status, "setText", R.string.widget_submitted);
                 rViews.setInt(R.id.widget_text_layout, "setBackgroundResource", R.drawable.widget_good);
-            } else if ((sRace.getStartTimestamp() - System.currentTimeMillis()) <= UPDATE_WARNING) {
+            } else if ((race.getStartTimestamp() - System.currentTimeMillis()) <= UPDATE_WARNING) {
                 rViews.setInt(R.id.status, "setText", R.string.widget_no_answers);
                 rViews.setInt(R.id.widget_text_layout, "setBackgroundResource", R.drawable.widget_warning);
             } else {
@@ -170,14 +182,14 @@ public class WidgetProvider extends AppWidgetProvider implements OnContainerAvai
         rViews.setOnClickPendingIntent(R.id.widget_text_layout, pi);
 
         intent = new Intent(context, RaceActivity.class);
-        intent.putExtra(RaceActivity.INTENT_ID, sRace.getId());
+        intent.putExtra(RaceActivity.INTENT_ID, race.getId());
         intent.putExtra(RaceActivity.INTENT_ALARM, true);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         pi = PendingIntent.getActivity(context, PI_REQ_CODE,
                 intent, PendingIntent.FLAG_UPDATE_CURRENT);
         rViews.setOnClickPendingIntent(R.id.race_logo, pi);
 
-        Picasso.with(context).load(GAE.PROD_URL + "/img/race/" + sRace.getId() + ".png")
+        Picasso.with(context).load(GAE.PROD_URL + "/img/race/" + race.getId() + ".png")
                 .error(R.mipmap.ic_launcher)
                 .into(rViews, R.id.race_logo, getInstalledWidgets(context, appWM));
     }
