@@ -18,7 +18,6 @@ package com.meiste.greg.ptw;
 import java.util.HashMap;
 import java.util.Map;
 
-import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -27,28 +26,25 @@ import android.view.LayoutInflater;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMapOptions;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.meiste.greg.ptw.view.ObservableScrollView;
 import com.meiste.greg.ptw.view.ObservableScrollView.ScrollViewListener;
 
-public class RaceFragment extends Fragment implements ScrollViewListener, OnGlobalLayoutListener {
+public class RaceFragment extends Fragment implements ScrollViewListener, OnMapReadyCallback {
     private static final String ARG_RACE_ID = "race_id";
     private static final String MAP_FRAGMENT_TAG = "map";
 
     private Race mRace;
-    private GoogleMap mMap;
     private SupportMapFragment mMapFragment;
     private ObservableScrollView mScrollView;
-    private ViewTreeObserver mViewTreeObserver;
 
     public static RaceFragment newInstance(final int race_id) {
         final RaceFragment fragment = new RaceFragment();
@@ -100,7 +96,15 @@ public class RaceFragment extends Fragment implements ScrollViewListener, OnGlob
         mMapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentByTag(MAP_FRAGMENT_TAG);
         if (mMapFragment == null) {
-            mMapFragment = SupportMapFragment.newInstance();
+            final GoogleMapOptions options = new GoogleMapOptions()
+                    .mapType(GoogleMap.MAP_TYPE_SATELLITE)
+                    .zoomControlsEnabled(false)
+                    .rotateGesturesEnabled(false)
+                    .scrollGesturesEnabled(false)
+                    .tiltGesturesEnabled(false)
+                    .zoomGesturesEnabled(false)
+                    .mapToolbarEnabled(false);
+            mMapFragment = SupportMapFragment.newInstance(options);
 
             final FragmentTransaction fragmentTransaction =
                     getChildFragmentManager().beginTransaction();
@@ -108,7 +112,7 @@ public class RaceFragment extends Fragment implements ScrollViewListener, OnGlob
             fragmentTransaction.commit();
         }
 
-        setUpMapIfNeeded();
+        mMapFragment.getMapAsync(this);
         return v;
     }
 
@@ -145,7 +149,6 @@ public class RaceFragment extends Fragment implements ScrollViewListener, OnGlob
     @Override
     public void onResume() {
         super.onResume();
-        setUpMapIfNeeded();
 
         if (isWorkaroundNeeded((ViewGroup) mMapFragment.getView())) {
             // Workaround not needed on Android 4.1+ devices using TextureView:
@@ -164,59 +167,13 @@ public class RaceFragment extends Fragment implements ScrollViewListener, OnGlob
         }
     }
 
-    private void setUpMapIfNeeded() {
-        if (mMap == null) {
-            mMap = mMapFragment.getMap();
-            if (mMap != null) {
-                setUpMap();
-            }
-        }
-    }
-
-    private void setUpMap() {
-        mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-        mMap.getUiSettings().setZoomControlsEnabled(false);
-        mMap.getUiSettings().setAllGesturesEnabled(false);
-
-        mViewTreeObserver = mMapFragment.getView().getViewTreeObserver();
-        if (mViewTreeObserver.isAlive()) {
-            mViewTreeObserver.addOnGlobalLayoutListener(this);
-        }
-    }
-
     @Override
-    public void onGlobalLayout() {
-        onGlobalLayoutCleanup();
-
+    public void onMapReady(final GoogleMap map) {
         // Move the map
         final LatLngBounds bounds = mBounds.get(mRace.getAbbr());
         if (bounds != null) {
-            final CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 50);
-            try {
-                mMap.moveCamera(cameraUpdate);
-            } catch (final IllegalStateException e) {
-                Util.log("Failed to move camera! - " + e);
-            }
+            map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
         }
-    }
-
-    @SuppressLint("NewApi")
-    @SuppressWarnings("deprecation")
-    private synchronized void onGlobalLayoutCleanup() {
-        if ((mViewTreeObserver != null) && mViewTreeObserver.isAlive()) {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                mViewTreeObserver.removeGlobalOnLayoutListener(this);
-            } else {
-                mViewTreeObserver.removeOnGlobalLayoutListener(this);
-            }
-        }
-        mViewTreeObserver = null;
-    }
-
-    @Override
-    public void onDestroyView() {
-        onGlobalLayoutCleanup();
-        super.onDestroyView();
     }
 
     private static final LatLngBounds ATLANTA = new LatLngBounds.Builder()
