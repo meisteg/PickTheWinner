@@ -15,6 +15,9 @@ repositories {
     maven { url 'https://maven.fabric.io/public' }
 }
 
+def isTravis = "true".equals(System.getenv("TRAVIS"))
+def preDexEnabled = "true".equals(System.getProperty("pre-dex", "true"))
+
 android {
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
@@ -29,6 +32,16 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    dexOptions {
+        // Skip pre-dexing when running on Travis CI or when disabled via -Dpre-dex=false.
+        preDexLibraries = preDexEnabled && !isTravis
+    }
+
+    lintOptions {
+        textReport true
+        xmlReport false
     }
 
     productFlavors {
