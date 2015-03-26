@@ -33,6 +33,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.meiste.greg.ptw.view.ObservableScrollView;
@@ -169,11 +170,22 @@ public class RaceFragment extends Fragment implements ScrollViewListener, OnMapR
 
     @Override
     public void onMapReady(final GoogleMap map) {
-        // Move the map
-        final LatLngBounds bounds = mBounds.get(mRace.getAbbr());
-        if (bounds != null) {
-            map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
-        }
+        // GoogleMap object may be ready, but on Android 4.0 test device, it was not ready to move
+        // the camera. Wait until the initial camera move occurs (which will signal that the map
+        // is ready for camera moves), then set the correct camera position for the track.
+        map.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+            @Override
+            public void onCameraChange(final CameraPosition cameraPosition) {
+                // Only care about initial camera move, so unset the camera change listener
+                map.setOnCameraChangeListener(null);
+
+                // Move the map
+                final LatLngBounds bounds = mBounds.get(mRace.getAbbr());
+                if (bounds != null) {
+                    map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
+                }
+            }
+        });
     }
 
     private static final LatLngBounds ATLANTA = new LatLngBounds.Builder()
