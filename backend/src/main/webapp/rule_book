@@ -1,0 +1,32 @@
+{
+  "sections": [
+    {
+      "header": "Weekly Scoring",
+      "body": [
+        "Every week that there is a point paying NASCAR Sprint Cup Series race, five questions related to the event will be asked on Thursday. Each question has its own individual point value, for a total of 200 points:",
+        " • 100 points: Pick The Winner of the race\n • 50 points: Answer Question 2 correctly\n • 35 points: Answer Question 3 correctly\n • 10 points: Pick the leader of most laps\n • 5 points: Pick number of lap leaders",
+        "You can make your picks until the TV coverage is scheduled to begin (see Schedule page for exact times). Once the race is completed, the points will be calculated within 24 hours of the race results being made official by NASCAR.",
+        "The questions are multiple choice and due to the unpredictable nature of racing, in rare cases, none of the provided choices for a question will be correct. If this happens, no points will be awarded for that question that week."
+      ]
+    },
+    {
+      "header": "The Chase Grid",
+      "body": [
+        "The Pick The Winner Chase Grid is based on, but slightly different than the NASCAR Sprint Cup Series Chase Grid format. The main differences are players' points are not reset each round and wins do not guarantee advancement to the next round.",
+        "After the 26th race of the season, the current points leader plus the 15 players with the most wins will earn a spot in the Chase Grid (provided they are in the top 30 in points). The 16 players who qualify for the Chase Grid will have their point totals reset to 5,000 points, plus receive a bonus of 10 points for each race win during the regular season.",
+        "The Chase Grid consists of four rounds. The first three rounds are each three races in length, and the fourth round is the final race of the season. After the third Chase race, the Chase Grid will be reduced to the top 12 players. After the sixth Chase race, the field will reduce to the top 8 players, and following the ninth Chase race, only the top 4 players will remain eligible for the championship.",
+        "When a player advances to the next round, they will receive a 1,000 point bonus. Additionally, as players are eliminated from the rounds, their points total will reset to the Chase-start base of 5,000, plus the additional points they have earned during the Chase."
+      ]
+    },
+    {
+      "header": "Tie Breakers",
+      "body": [
+        "During the season, points are used to determine a player's ranking. When players are tied with the same number of points, the following tie breakers will be used, in order, to determine their ranking in the standings:",
+        " • Player with more wins\n • Player who participated in more races\n • Player who answered questions first",
+        "When selecting the players for the Chase Grid, wins are used to determine eligibility. When players are tied with the same number of wins, the following tie breakers will be used, in order:",
+        " • Player with more points\n • Player who participated in more races\n • Player with better ranking"
+      ]
+    }
+  ],
+  "timestamp": 1391293883000
+}

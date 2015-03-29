@@ -1,0 +1,16 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    background: #BBBBBB;
+}
+
+h1, h2 {
+    font-weight: 300;
+    text-shadow: rgba(0, 0, 0, 0.01) 0 0 1px;
+}
+
+.custom-header{
+    text-align: center;
+    padding: 3px;
+    background: #000;
+    color: #fff;
+}

@@ -1,0 +1,26 @@
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
+h1, h2 {
+    font-weight: 300;
+    color:#F44336;
+}
+
+a {
+    color: #B71C1C;
+    text-decoration: none;
+}
+
+a:hover, a:active {
+    color: #F44336;
+    text-decoration: underline;
+}
+
+.container {
+    padding:15px;
+    min-width:400px;
+    max-width:750px;
+    margin-right:auto;
+    margin-left:auto;
+}
