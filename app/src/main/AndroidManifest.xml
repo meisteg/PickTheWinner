@@ -17,7 +17,7 @@
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.meiste.greg.ptw" >
+    package="com.meiste.greg.ptw">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -37,31 +37,37 @@
         android:protectionLevel="signature" />
     <uses-permission android:name="com.meiste.greg.ptw.permission.C2D_MESSAGE" />
 
-    <uses-feature android:glEsVersion="0x00020000" android:required="true" />
-    <uses-feature android:name="android.hardware.nfc" android:required="false" />
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+    <uses-feature
+        android:name="android.hardware.nfc"
+        android:required="false" />
 
     <application
         android:name=".PTW"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-        android:allowBackup="false"
         android:requiredAccountType="com.google"
         android:supportsRtl="false"
+        android:theme="@style/AppTheme"
         tools:ignore="UnusedAttribute">
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyAE_JAGDH6A-J_UKNp54uGRqCmc-zjfh8Q" />
-        <meta-data android:name="com.google.android.gms.version"
+        <meta-data
+            android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-        <meta-data android:name="com.crashlytics.ApiKey"
+        <meta-data
+            android:name="com.crashlytics.ApiKey"
             android:value="25ea93cf97cee26fdd589f4e279807d62696912f" />
+
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name"
+            android:configChanges="orientation|screenSize"
             android:launchMode="singleTask"
-            android:noHistory="true"
-            android:configChanges="orientation|screenSize" >
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -70,30 +76,24 @@
         </activity>
         <activity
             android:name=".GameActivity"
-            android:label="@string/app_name"
             android:launchMode="singleTask" />
-        <activity
-            android:label="@string/app_name"
-            android:name=".EditPreferences">
+        <activity android:name=".EditPreferences">
             <intent-filter>
                 <action android:name="android.intent.action.MANAGE_NETWORK_USAGE" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
-            android:label="@string/race_details"
             android:name=".RaceActivity"
+            android:label="@string/race_details"
             android:launchMode="singleTask" />
         <activity
-            android:label="@string/app_name"
             android:name=".AccountsActivity"
             android:configChanges="orientation|screenSize" />
         <activity
-            android:label="@string/app_name"
             android:name=".NfcSendActivity"
             android:launchMode="singleTop" />
         <activity
-            android:label="@string/app_name"
             android:name=".NfcRecvActivity"
             android:launchMode="singleTop">
             <intent-filter>
@@ -102,8 +102,14 @@
                 <data android:mimeType="application/com.meiste.greg.ptw" />
             </intent-filter>
         </activity>
-        <service android:name=".RaceAlarm" android:exported="false" />
-        <service android:name=".QuestionAlarm" android:exported="false" />
+
+        <service
+            android:name=".RaceAlarm"
+            android:exported="false" />
+        <service
+            android:name=".QuestionAlarm"
+            android:exported="false" />
+
         <receiver android:name=".BootSetup">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -117,14 +123,14 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
         <receiver
             android:name=".gcm.GcmBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND" >
+            android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <category android:name="com.meiste.greg.ptw" />
             </intent-filter>
         </receiver>
         <service android:name=".gcm.GcmIntentService" />
-        <receiver android:name=".WidgetProvider" >
+        <receiver android:name=".WidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_ENABLED" />
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -133,20 +139,21 @@
                 <action android:name="com.meiste.greg.ptw.action.SCHEDULE" />
                 <action android:name="com.meiste.greg.ptw.action.ANSWERS" />
             </intent-filter>
-            <meta-data android:name="android.appwidget.provider"
-                       android:resource="@xml/widget_info" />
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info" />
         </receiver>
 
         <!-- Add GTM container preview activity -->
         <activity
             android:name="com.google.android.gms.tagmanager.PreviewActivity"
-            android:label="@string/app_name"
             android:noHistory="true">
             <intent-filter>
                 <data android:scheme="tagmanager.c.com.meiste.greg.ptw" />
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
         </activity>
     </application>
