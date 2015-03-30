@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2014-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import android.content.Context;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Logger.LogLevel;
 import com.google.android.gms.analytics.Tracker;
 
 public class Analytics {
@@ -39,11 +38,7 @@ public class Analytics {
 
     public static void init(final Context context) {
         GoogleAnalytics.getInstance(context).setLocalDispatchPeriod(60);
-
-        if (BuildConfig.DEBUG) {
-            GoogleAnalytics.getInstance(context).setDryRun(true);
-            GoogleAnalytics.getInstance(context).getLogger().setLogLevel(LogLevel.VERBOSE);
-        }
+        GoogleAnalytics.getInstance(context).setDryRun(BuildConfig.DEBUG);
 
         getTracker(context);
     }
