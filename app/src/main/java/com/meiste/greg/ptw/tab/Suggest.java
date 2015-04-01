@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,8 @@ import com.meiste.greg.ptw.view.ObservableScrollView;
 import com.meiste.greg.ptw.view.ObservableScrollView.ScrollViewListener;
 import com.meiste.greg.ptw.R;
 import com.meiste.greg.ptw.Race;
-import com.meiste.greg.ptw.Util;
+
+import timber.log.Timber;
 
 public final class Suggest extends TabFragment implements View.OnClickListener, ScrollViewListener, GaeListener {
     private EditText mQuestion;
@@ -102,7 +103,7 @@ public final class Suggest extends TabFragment implements View.OnClickListener, 
     @Override
     public void onClick(final View v) {
         if (ActivityManager.isUserAMonkey()) {
-            Util.log("Suggest: onClick: User is a monkey!");
+            Timber.v("onClick: User is a monkey!");
         } else {
             final String json = new Gson().toJson(mQuestion.getText().toString().trim());
             GAE.getInstance(getActivity()).postPage(this, "suggest", json);
@@ -122,12 +123,12 @@ public final class Suggest extends TabFragment implements View.OnClickListener, 
 
     @Override
     public void onFailedConnect(final Context context) {
-        Util.log("Suggest: onFailedConnect");
+        Timber.e("onFailedConnect");
     }
 
     @Override
     public void onConnectSuccess(final Context context, final String json) {
-        Util.log("Suggest: onConnectSuccess");
+        Timber.d("onConnectSuccess");
     }
 
     @Override

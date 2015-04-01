@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,8 @@ import com.meiste.greg.ptw.Race;
 import com.meiste.greg.ptw.RaceActivity;
 import com.meiste.greg.ptw.RaceItemAdapter;
 import com.meiste.greg.ptw.Races;
-import com.meiste.greg.ptw.Util;
+
+import timber.log.Timber;
 
 public final class Schedule extends TabFragment implements OnRefreshListener, GaeListener  {
 
@@ -66,7 +67,7 @@ public final class Schedule extends TabFragment implements OnRefreshListener, Ga
         lv.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(final AdapterView<?> parent, final View v, final int pos, final long id) {
-                Util.log("Starting activity for race " + id);
+                Timber.i("Starting activity for race %d", id);
 
                 final Intent intent = new Intent(getActivity(), RaceActivity.class);
                 intent.putExtra(RaceActivity.INTENT_ID, (int)id);
@@ -128,7 +129,7 @@ public final class Schedule extends TabFragment implements OnRefreshListener, Ga
         @Override
         public void onReceive(final Context context, final Intent intent) {
             if (intent.getAction().equals(PTW.INTENT_ACTION_SCHEDULE)) {
-                Util.log("Schedule.onReceive: Schedule Updated");
+                Timber.d("onReceive: Schedule Updated");
                 mAdapter.notifyDataSetChanged();
             }
         }

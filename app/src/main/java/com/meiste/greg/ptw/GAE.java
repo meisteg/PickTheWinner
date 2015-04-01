@@ -55,6 +55,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 
+import timber.log.Timber;
+
 public final class GAE {
 
     public static final String PROD_URL = "https://ptwgame.appspot.com";
@@ -115,7 +117,7 @@ public final class GAE {
     public static GAE getInstance(final Context context) {
         synchronized (sInstanceSync) {
             if (sInstance == null) {
-                Util.log("Instantiate GAE object");
+                Timber.v("Instantiate GAE object");
                 sInstance = new GAE(context);
             }
         }
@@ -161,7 +163,7 @@ public final class GAE {
             public void run() {
                 synchronized (mListenerSync) {
                     if (mListener == null) {
-                        Util.log("Getting page " + page);
+                        Timber.i("Getting page %s", page);
                         mListener = listener;
                         new GetPageTask().execute(page);
                     } else
@@ -186,7 +188,7 @@ public final class GAE {
             public void run() {
                 synchronized (mListenerSync) {
                     if (mListener == null) {
-                        Util.log("Posting to " + page + " page: " + json);
+                        Timber.i("Posting to %s page: %s", page, json);
                         mListener = listener;
                         new PostPageTask().execute(page, json);
                     } else
@@ -231,7 +233,7 @@ public final class GAE {
                 return true;
             }
         }
-        Util.log("Account not found!");
+        Timber.e("Account not found!");
         return false;
     }
 
@@ -243,7 +245,7 @@ public final class GAE {
 
                 final Intent launch = (Intent) result.get(AccountManager.KEY_INTENT);
                 if (launch != null) {
-                    Util.log("Need to launch activity before getting authToken");
+                    Timber.i("Need to launch activity before getting authToken");
                     // How can we get the result of the activity if it is a new task!?
                     launch.setFlags(launch.getFlags() & ~Intent.FLAG_ACTIVITY_NEW_TASK);
                     cbLaunchIntent(launch);
@@ -252,21 +254,21 @@ public final class GAE {
 
                 final String authToken = result.getString(AccountManager.KEY_AUTHTOKEN);
                 if (mNeedInvalidate) {
-                    Util.log("Invalidating token and starting over");
+                    Timber.i("Invalidating token and starting over");
                     mNeedInvalidate = false;
 
                     final AccountManager mgr = AccountManager.get(mContext);
                     mgr.invalidateAuthToken(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE, authToken);
                     reconnect();
                 } else {
-                    Util.log("authToken=" + authToken);
+                    Timber.v("authToken=%s", authToken);
                     mNeedInvalidate = true;
 
                     // Phase 2: get authCookie from PTW server
                     new GetCookieTask().execute(authToken);
                 }
             } catch (final IOException e) {
-                Util.log("Get auth token failed with IOException: online=" + isOnline());
+                Timber.e("Get auth token failed with IOException: online=" + isOnline());
 
                 if (isOnline() && (mRemainingRetries > 0)) {
                     mRemainingRetries--;
@@ -274,7 +276,7 @@ public final class GAE {
                 } else
                     cbFailedConnect();
             } catch (final Exception e) {
-                Util.log("Get auth token failed with exception " + e);
+                Timber.e(e, "Get auth token failed with exception");
                 cbFailedConnect();
             }
         }
@@ -300,18 +302,18 @@ public final class GAE {
                 final Header[] headers = res.getHeaders("Set-Cookie");
                 final int statusCode = res.getStatusLine().getStatusCode();
                 if (statusCode != 302 || headers.length == 0) {
-                    Util.log("Get auth cookie failed: statusCode=" + statusCode);
+                    Timber.e("Get auth cookie failed (statusCode=%d)", statusCode);
                     return false;
                 }
 
                 for (final Cookie cookie : client.getCookieStore().getCookies()) {
                     if (AUTH_COOKIE_NAME.equals(cookie.getName())) {
                         authCookie = AUTH_COOKIE_NAME + "=" + cookie.getValue();
-                        Util.log(authCookie);
+                        Timber.v(authCookie);
                     }
                 }
             } catch (final Exception e) {
-                Util.log("Get auth cookie failed with exception " + e);
+                Timber.e(e, "Get auth cookie failed with exception");
                 return false;
             }
 
@@ -370,19 +372,19 @@ public final class GAE {
                     break;
                 case HttpStatus.SC_MOVED_TEMPORARILY:
                     if (mAccountName != null) {
-                        Util.log("Get page failed (status 302)");
+                        Timber.e("Get page failed (status 302)");
                         return false;
                     }
-                    Util.log("Cookie expired? Attempting reconnect");
+                    Timber.i("Cookie expired? Attempting reconnect");
                     mGetPage = pages[0];
                     mAccountName = prefs.getString(EditPreferences.KEY_ACCOUNT_EMAIL, null);
                     return reconnect();
                 default:
-                    Util.log("Get page failed (invalid status code)");
+                    Timber.e("Get page failed (invalid status code)");
                     return false;
                 }
             } catch (final Exception e) {
-                Util.log("Get page failed with exception " + e);
+                Timber.e(e, "Get page failed with exception");
                 return false;
             }
 
@@ -431,20 +433,20 @@ public final class GAE {
                     break;
                 case HttpStatus.SC_MOVED_TEMPORARILY:
                     if (mAccountName != null) {
-                        Util.log("Post page failed (status 302)");
+                        Timber.e("Post page failed (status 302)");
                         return false;
                     }
-                    Util.log("Cookie expired? Attempting reconnect");
+                    Timber.i("Cookie expired? Attempting reconnect");
                     mGetPage = args[0];
                     mJson = args[1];
                     mAccountName = prefs.getString(EditPreferences.KEY_ACCOUNT_EMAIL, null);
                     return reconnect();
                 default:
-                    Util.log("Post page failed (invalid status code)");
+                    Timber.e("Post page failed (invalid status code)");
                     return false;
                 }
             } catch (final Exception e) {
-                Util.log("Post page failed with exception " + e);
+                Timber.e(e, "Post page failed with exception");
                 return false;
             }
 

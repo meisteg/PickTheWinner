@@ -31,6 +31,8 @@ import com.meiste.greg.ptw.GAE.GaeListener;
 import com.meiste.greg.ptw.GtmHelper.OnContainerAvailableListener;
 import com.meiste.greg.ptw.tab.RuleBook;
 
+import timber.log.Timber;
+
 public class MainActivity extends BaseActivity implements OnContainerAvailableListener {
 
     private boolean isRunning = false;
@@ -47,13 +49,13 @@ public class MainActivity extends BaseActivity implements OnContainerAvailableLi
     @Override
     public void onContainerAvailable(final Context context, final Container container) {
         if (!container.getBoolean(GtmHelper.KEY_GAME_ENABLED)) {
-            Util.log("Application has been remotely disabled!");
+            Timber.w("Application has been remotely disabled!");
             setContentView(R.layout.disabled);
         } else if (isInitNeeded()) {
-            Util.log("Initialization required");
+            Timber.i("Initialization required");
             beginInit();
         } else {
-            Util.log("No initialization needed. Starting game...");
+            Timber.i("No initialization needed. Starting game...");
             startGameActivity();
         }
     }
@@ -76,13 +78,13 @@ public class MainActivity extends BaseActivity implements OnContainerAvailableLi
 
         final Race[] races = Races.get(this);
         if (races.length <= 0) {
-            Util.log("No valid schedule found");
+            Timber.d("No valid schedule found");
             return true;
         } else if (races[0].getStartTimestamp() < minTime) {
-            Util.log("Race schedule is too old!");
+            Timber.d("Race schedule is too old!");
             return true;
         } else if (!RuleBook.isValid(this, minTime)) {
-            Util.log("Rules missing or are too old");
+            Timber.d("Rules missing or are too old");
             return true;
         }
         return false;
@@ -113,7 +115,7 @@ public class MainActivity extends BaseActivity implements OnContainerAvailableLi
             retry.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-                    Util.log("Retrying initialization");
+                    Timber.d("Retrying initialization");
                     beginInit();
                 }
             });
@@ -123,7 +125,7 @@ public class MainActivity extends BaseActivity implements OnContainerAvailableLi
     private final GaeListener mScheduleListener = new GaeListener() {
         @Override
         public void onGet(final Context context, final String json) {
-            Util.log("Schedule downloaded");
+            Timber.d("Schedule downloaded");
             if (Races.update(context, json)) {
                 GAE.getInstance(getApplicationContext()).getPage(mRulesListener, "rule_book");
             } else {
@@ -133,7 +135,7 @@ public class MainActivity extends BaseActivity implements OnContainerAvailableLi
 
         @Override
         public void onFailedConnect(final Context context) {
-            Util.log("Schedule init failure!");
+            Timber.e("Schedule init failure!");
             showError();
         }
 
@@ -147,14 +149,14 @@ public class MainActivity extends BaseActivity implements OnContainerAvailableLi
     private final GaeListener mRulesListener = new GaeListener() {
         @Override
         public void onGet(final Context context, final String json) {
-            Util.log("Rule Book init success!");
+            Timber.d("Rule Book init success!");
             RuleBook.update(context, json);
             startGameActivity();
         }
 
         @Override
         public void onFailedConnect(final Context context) {
-            Util.log("Rule Book init failure!");
+            Timber.e("Rule Book init failure!");
             showError();
         }
 

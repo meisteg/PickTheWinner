@@ -30,7 +30,8 @@ import com.meiste.greg.ptw.Driver;
 import com.meiste.greg.ptw.R;
 import com.meiste.greg.ptw.RaceAnswers;
 import com.meiste.greg.ptw.RaceQuestions;
-import com.meiste.greg.ptw.Util;
+
+import timber.log.Timber;
 
 public class QuestionsAnswers extends Fragment {
 
@@ -64,7 +65,7 @@ public class QuestionsAnswers extends Fragment {
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
             final Bundle savedInstanceState) {
-        Util.log("QuestionsAnswers: onCreateView");
+        Timber.v("onCreateView");
 
         final String qjson = getArguments().getString(RACE_QUESTIONS);
         if (qjson == null) {
@@ -103,7 +104,7 @@ public class QuestionsAnswers extends Fragment {
 
         final String cajson = getArguments().getString(RACE_CORRECT_ANSWERS);
         if (cajson != null) {
-            Util.log("QuestionsAnswers: Correct answers available");
+            Timber.d("Correct answers available");
             final RaceAnswers rca = RaceAnswers.fromJson(cajson);
 
             // Have to check for null in case there is no correct answer

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,8 @@ import com.google.gson.JsonSyntaxException;
 import com.meiste.greg.ptw.view.ObservableScrollView;
 import com.meiste.greg.ptw.view.ObservableScrollView.ScrollViewListener;
 import com.meiste.greg.ptw.R;
-import com.meiste.greg.ptw.Util;
+
+import timber.log.Timber;
 
 public final class RuleBook extends TabFragment implements ScrollViewListener {
     private static final String FILENAME = "rule_book";
@@ -101,10 +102,7 @@ public final class RuleBook extends TabFragment implements ScrollViewListener {
 
     public static boolean isValid(final Context context, final long time) {
         final Rules rules = Rules.get(context);
-        if ((rules != null) && (time <= rules.timestamp)) {
-            return true;
-        }
-        return false;
+        return ((rules != null) && (time <= rules.timestamp));
     }
 
     public static void update(final Context context, final String json) {
@@ -113,7 +111,7 @@ public final class RuleBook extends TabFragment implements ScrollViewListener {
             fos.write(json.getBytes());
             fos.close();
         } catch (final Exception e) {
-            Util.log("Failed to save new rule book");
+            Timber.e(e, "Failed to save new rule book");
         }
     }
 
@@ -137,7 +135,7 @@ public final class RuleBook extends TabFragment implements ScrollViewListener {
                 in.close();
                 return new Gson().fromJson(buffer.toString(), Rules.class);
             } catch (final JsonSyntaxException e) {
-                Util.log(e.toString());
+                Timber.e(e, null);
                 context.deleteFile(FILENAME);
             } catch (final IOException e) {
             }

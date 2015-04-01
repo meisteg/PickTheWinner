@@ -49,6 +49,8 @@ import com.meiste.greg.ptw.iab.IabResult;
 import com.meiste.greg.ptw.iab.Inventory;
 import com.meiste.greg.ptw.iab.Purchase;
 
+import timber.log.Timber;
+
 public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo, OnContainerAvailableListener {
 
     private static final String LAST_TAB = "tab.last";
@@ -69,7 +71,7 @@ public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo, O
         super.onCreate(savedInstanceState);
 
         mHelper = new IabHelper(this, PTW.PUB_KEY);
-        mHelper.enableDebugLogging(BuildConfig.DEBUG, PTW.TAG);
+        mHelper.enableDebugLogging(BuildConfig.DEBUG);
 
         // This has to be called before setContentView
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
@@ -104,7 +106,7 @@ public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo, O
 
     @Override
     protected void onNewIntent(final Intent intent) {
-        Util.log(GameActivity.class.getSimpleName() + ".onNewIntent: " + intent);
+        Timber.d("onNewIntent: %s", intent.toString());
 
         setIntent(intent);
 
@@ -122,7 +124,7 @@ public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo, O
         }
 
         if (mPager != null) {
-            Util.log("Saving state: tab=" + mPager.getCurrentItem());
+            Timber.d("Saving state: tab=%d", mPager.getCurrentItem());
             Util.getState(this).edit().putInt(LAST_TAB, mPager.getCurrentItem()).apply();
         }
     }
@@ -163,7 +165,7 @@ public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo, O
                 // calling dispose will cause an exception when it tries to
                 // unbind from the service it never connected to. Working
                 // around issue here instead of fixing Google code.
-                Util.log("Error when disposing IabHelper: " + e);
+                Timber.e(e, "Error when disposing IabHelper");
             }
             mHelper = null;
         }
@@ -218,7 +220,7 @@ public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo, O
                 trackEvent("onOptionsItemSelected", "ads_remove");
             } catch (final IllegalStateException e) {
                 // Can be caused by user double clicking option item
-                Util.log("Unable to launch purchase flow: " + e);
+                Timber.e(e, "Unable to launch purchase flow");
             }
             return true;
         }
@@ -243,7 +245,7 @@ public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo, O
         } catch (final NullPointerException e) {
             // Happens when the Play Store updates at this exact moment.
             // IabHelper cannot handle that use case. For now, do nothing.
-            Util.log("Unable to start IAB setup!");
+            Timber.e("Unable to start IAB setup!");
         }
     }
 
@@ -265,7 +267,7 @@ public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo, O
                 });
                 mDialog.show();
             } else {
-                Util.log("This device is not supported.");
+                Timber.e("This device is not supported.");
                 finish();
             }
             return false;
@@ -315,7 +317,7 @@ public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo, O
     private final AdListener mAdListener = new AdListener() {
         @Override
         public void onAdLoaded() {
-            Util.log("onAdLoaded");
+            Timber.v("onAdLoaded");
             final LinearLayout l = (LinearLayout) findViewById(R.id.main_layout);
             if ((mAdView != null) && (mAdView.getParent() == null)) {
                 l.addView(mAdView);
@@ -324,7 +326,7 @@ public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo, O
 
         @Override
         public void onAdFailedToLoad(final int errorCode) {
-            Util.log("onAdFailedToLoad: " + errorCode);
+            Timber.w("onAdFailedToLoad: %d", errorCode);
         }
     };
 
@@ -336,7 +338,7 @@ public class GameActivity extends BaseActivity implements Eula.OnEulaAgreedTo, O
                 if (mHelper != null)
                     mHelper.queryInventoryAsync(false, mGotInventoryListener);
             } else {
-                Util.log("Problem setting up in-app billing: " + result);
+                Timber.e("Problem setting up in-app billing: " + result);
                 trackEvent("onIabSetupFinished", result.getMessage());
                 loadAd();
             }

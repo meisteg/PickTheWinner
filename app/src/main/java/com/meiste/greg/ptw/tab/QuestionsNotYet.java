@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2013-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,8 @@ import android.widget.TextView;
 
 import com.meiste.greg.ptw.R;
 import com.meiste.greg.ptw.Race;
-import com.meiste.greg.ptw.Util;
+
+import timber.log.Timber;
 
 public class QuestionsNotYet extends Fragment {
 
@@ -52,7 +53,7 @@ public class QuestionsNotYet extends Fragment {
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
             final Bundle savedInstanceState) {
-        Util.log("QuestionsNotYet: onCreateView");
+        Timber.v("onCreateView");
 
         final View v = inflater.inflate(R.layout.questions_not_yet, container, false);
         final Race race = Race.getInstance(getActivity(), getArguments().getInt(RACE_ID, 0));

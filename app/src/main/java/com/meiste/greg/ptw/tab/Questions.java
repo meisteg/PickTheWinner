@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,6 +47,8 @@ import com.meiste.greg.ptw.QuestionsRaceAdapter;
 import com.meiste.greg.ptw.R;
 import com.meiste.greg.ptw.Race;
 import com.meiste.greg.ptw.Util;
+
+import timber.log.Timber;
 
 public final class Questions extends TabFragment implements GaeListener {
 
@@ -123,7 +125,7 @@ public final class Questions extends TabFragment implements GaeListener {
         // to user manually setting back time). This is needed so the check in
         // onResume() will not continuously (and incorrectly) set mChanged=true
         if (mSubFragmentTime < PlayerHistory.getTime(getActivity())) {
-            Util.log("Reseting player history time to " + mSubFragmentTime);
+            Timber.d("Resetting player history time to %d", mSubFragmentTime);
             PlayerHistory.setTime(getActivity(), mSubFragmentTime);
         }
 
@@ -187,7 +189,7 @@ public final class Questions extends TabFragment implements GaeListener {
             // callback will try to update the fragment and fail, so set changed
             // flag so UI is updated on next resume.
             mChanged = true;
-            Util.log("Questions fragment commit failed. Setting changed flag instead.");
+            Timber.e("Questions fragment commit failed. Setting changed flag instead.");
         }
 
         if (mRaceSpinner != null) {
@@ -231,7 +233,7 @@ public final class Questions extends TabFragment implements GaeListener {
         }
 
         if (mChanged) {
-            Util.log("Questions: onResume: notifyChanged");
+            Timber.d("onResume: notifyChanged");
             resetRaceSelected();
         }
     }
@@ -256,7 +258,7 @@ public final class Questions extends TabFragment implements GaeListener {
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(final Context context, final Intent intent) {
-            Util.log("Questions.onReceive: " + intent.getAction());
+            Timber.d("onReceive: %s", intent.getAction());
             mChanged = true;
             resetRaceSelected();
         }
@@ -286,7 +288,7 @@ public final class Questions extends TabFragment implements GaeListener {
             final Race race = (Race) parent.getItemAtPosition(pos);
             if (mRaceSelected.getId() != race.getId()) {
                 mRaceSelected = race;
-                Util.log("Questions: Selected race = " + mRaceSelected.getId());
+                Timber.d("Selected race %d", mRaceSelected.getId());
                 if (mChanged) {
                     notifyChanged();
                 } else {
@@ -313,7 +315,7 @@ public final class Questions extends TabFragment implements GaeListener {
 
         @Override
         public void onFailedConnect(final Context context) {
-            Util.log("CorrectAnswersListener: onFailedConnect");
+            Timber.e("CorrectAnswersListener: onFailedConnect");
 
             if (mRaceSpinner != null) {
                 mRaceSpinner.setEnabled(true);
@@ -329,7 +331,7 @@ public final class Questions extends TabFragment implements GaeListener {
 
         @Override
         public void onGet(final Context context, final String json) {
-            Util.log("CorrectAnswersListener: onGet: " + json);
+            Timber.d("CorrectAnswersListener: onGet: %s", json);
 
             final SharedPreferences cache = context.getSharedPreferences(CACACHE, Activity.MODE_PRIVATE);
             cache.edit().putString(cachePrefix() + raceId, json).apply();
@@ -364,7 +366,7 @@ public final class Questions extends TabFragment implements GaeListener {
 
     @Override
     public void onFailedConnect(final Context context) {
-        Util.log("Questions: onFailedConnect");
+        Timber.e("onFailedConnect");
 
         // Verify application wasn't closed before callback returned
         if (getActivity() != null) {
@@ -376,7 +378,7 @@ public final class Questions extends TabFragment implements GaeListener {
 
     @Override
     public void onGet(final Context context, final String json) {
-        Util.log("Questions: onGet: " + json);
+        Timber.d("onGet: %s", json);
 
         final SharedPreferences cache = context.getSharedPreferences(QCACHE, Activity.MODE_PRIVATE);
         cache.edit().putString(cachePrefix() + mRaceNext.getId(), json).apply();
@@ -389,7 +391,7 @@ public final class Questions extends TabFragment implements GaeListener {
 
     @Override
     public void onConnectSuccess(final Context context, final String json) {
-        Util.log("Questions: onConnectSuccess: " + json);
+        Timber.d("onConnectSuccess: %s", json);
         Toast.makeText(context, R.string.questions_success, Toast.LENGTH_SHORT).show();
 
         final SharedPreferences cache = context.getSharedPreferences(ACACHE, Activity.MODE_PRIVATE);

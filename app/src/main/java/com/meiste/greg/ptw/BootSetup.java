@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,17 +19,18 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import timber.log.Timber;
+
 public final class BootSetup extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
         if (Eula.hasAccepted(context)) {
-            Util.log("Running boot setup");
+            Timber.d("Running boot setup");
             RaceAlarm.set(context);
             QuestionAlarm.set(context);
         } else {
-            Util.log("Skipping boot setup since EULA not accepted");
+            Timber.d("Skipping boot setup since EULA not accepted");
         }
     }
-
 }

@@ -25,6 +25,8 @@ import android.content.Intent;
 
 import com.google.gson.Gson;
 
+import timber.log.Timber;
+
 public final class Races {
 
     private static final String FILENAME = "schedule";
@@ -34,7 +36,7 @@ public final class Races {
     public static Race[] get(final Context context) {
         synchronized (sRacesSync) {
             if (sRaces == null) {
-                Util.log("Populating race array");
+                Timber.d("Populating race array");
                 sRaces = getDownloaded(context);
             }
         }
@@ -46,7 +48,7 @@ public final class Races {
             try {
                 sRaces = new Gson().fromJson(json, Race[].class);
             } catch (final Exception e) {
-                Util.log("Failed to parse downloaded schedule: " + e);
+                Timber.e(e, "Failed to parse downloaded schedule");
                 return false;
             }
 
@@ -55,7 +57,7 @@ public final class Races {
                 fos.write(json.getBytes());
                 fos.close();
             } catch (final Exception e) {
-                Util.log("Failed to save update to schedule: " + e);
+                Timber.e(e, "Failed to save update to schedule");
                 return false;
             }
         }
@@ -76,7 +78,7 @@ public final class Races {
             in.close();
             return new Gson().fromJson(buffer.toString(), Race[].class);
         } catch (final Exception e) {
-            Util.log("Failed to open/parse schedule: " + e);
+            Timber.e(e, "Failed to open/parse schedule");
         }
         return new Race[0];
     }

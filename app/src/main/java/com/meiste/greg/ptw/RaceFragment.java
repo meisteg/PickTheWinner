@@ -39,6 +39,8 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.meiste.greg.ptw.view.ObservableScrollView;
 import com.meiste.greg.ptw.view.ObservableScrollView.ScrollViewListener;
 
+import timber.log.Timber;
+
 public class RaceFragment extends Fragment implements ScrollViewListener, OnMapReadyCallback {
     private static final String ARG_RACE_ID = "race_id";
     private static final String MAP_FRAGMENT_TAG = "map";
@@ -63,7 +65,7 @@ public class RaceFragment extends Fragment implements ScrollViewListener, OnMapR
         final Bundle args = getArguments();
         final View v = inflater.inflate(R.layout.race_details, container, false);
 
-        Util.log("RaceFragment: " + ARG_RACE_ID + "=" + args.getInt(ARG_RACE_ID));
+        Timber.d("%s = %d", ARG_RACE_ID, args.getInt(ARG_RACE_ID));
         mRace = Race.getInstance(getActivity(), args.getInt(ARG_RACE_ID));
 
         mScrollView = (ObservableScrollView) v.findViewById(R.id.scroll);
@@ -154,7 +156,7 @@ public class RaceFragment extends Fragment implements ScrollViewListener, OnMapR
         if (isWorkaroundNeeded((ViewGroup) mMapFragment.getView())) {
             // Workaround not needed on Android 4.1+ devices using TextureView:
             // https://code.google.com/p/gmaps-api-issues/issues/detail?id=4659#c35
-            Util.log("Google Map scrolling workaround needed");
+            Timber.d("Google Map scrolling workaround needed");
 
             mScrollView.setScrollViewListener(this);
 

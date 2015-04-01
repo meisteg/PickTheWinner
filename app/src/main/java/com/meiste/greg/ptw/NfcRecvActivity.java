@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2013-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,8 @@ import android.widget.Toast;
 
 import com.meiste.greg.ptw.GAE.GaeListener;
 import com.meiste.greg.ptw.tab.Standings;
+
+import timber.log.Timber;
 
 public class NfcRecvActivity extends BaseActivity implements GaeListener {
 
@@ -62,7 +64,7 @@ public class NfcRecvActivity extends BaseActivity implements GaeListener {
         final NdefMessage msg = (NdefMessage) rawMsgs[0];
         // record 0 contains the MIME type, record 1 is the AAR, if present
         final String json = new String(msg.getRecords()[0].getPayload());
-        Util.log("NFC received: " + json);
+        Timber.d("NFC received: %s", json);
 
         if (GAE.isAccountSetupNeeded(getApplicationContext())) {
             Toast.makeText(this, R.string.friend_fail_no_account, Toast.LENGTH_LONG).show();

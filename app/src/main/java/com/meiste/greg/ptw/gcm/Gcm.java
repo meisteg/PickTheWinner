@@ -1,6 +1,6 @@
 /*
  * Copyright 2012-2013 Google Inc.
- * Copyright (C) 2013-2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2013-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,8 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.meiste.greg.ptw.BuildConfig;
 import com.meiste.greg.ptw.EditPreferences;
 import com.meiste.greg.ptw.GAE;
-import com.meiste.greg.ptw.Util;
+
+import timber.log.Timber;
 
 /**
  * Utilities for device registration.
@@ -70,13 +71,13 @@ public final class Gcm {
     public static boolean isRegisteredOnServer(final Context context) {
         final SharedPreferences prefs = getGcmPrefs(context);
         final boolean isRegistered = prefs.getBoolean(PROPERTY_ON_SERVER, false);
-        Util.log("Is registered on server: " + isRegistered);
+        Timber.i("Is registered on server: %b", isRegistered);
         if (isRegistered) {
             // checks if the information is not stale
             final long expirationTime =
                     prefs.getLong(PROPERTY_ON_SERVER_EXPIRATION_TIME, -1);
             if (System.currentTimeMillis() > expirationTime) {
-                Util.log("flag expired on: " + new Timestamp(expirationTime));
+                Timber.i("flag expired on: %s", new Timestamp(expirationTime).toString());
                 return false;
             }
         }
@@ -95,7 +96,7 @@ public final class Gcm {
         final SharedPreferences prefs = getGcmPrefs(context);
         final String registrationId = prefs.getString(PROPERTY_REG_ID, "");
         if (registrationId.isEmpty()) {
-            Util.log("Registration not found.");
+            Timber.i("Registration not found");
             return "";
         }
         // Check if app was updated; if so, it must clear the registration ID
@@ -103,7 +104,7 @@ public final class Gcm {
         // app version.
         final int registeredVersion = prefs.getInt(PROPERTY_APP_VERSION, Integer.MIN_VALUE);
         if (registeredVersion != BuildConfig.VERSION_CODE) {
-            Util.log("App version changed from " + registeredVersion + " to " + BuildConfig.VERSION_CODE);
+            Timber.i("App version changed from " + registeredVersion + " to " + BuildConfig.VERSION_CODE);
             return "";
         }
         return registrationId;
@@ -114,10 +115,10 @@ public final class Gcm {
      */
     public static void registerIfNeeded(final Context context) {
         if (!isRegistered(context) || !isRegisteredOnServer(context)) {
-            Util.log("Registering with GCM");
+            Timber.i("Registering with GCM");
             register(context);
         } else {
-            Util.log("Already registered with GCM: " + getRegistrationId(context));
+            Timber.v("Already registered with GCM: %s", getRegistrationId(context));
         }
     }
 
@@ -136,7 +137,7 @@ public final class Gcm {
                             storeRegistrationId(context, regId);
                         }
                     } catch (final IOException e) {
-                        Util.log("GCM registration failed: " + e);
+                        Timber.e(e, "GCM registration failed");
                     }
                 }
             }
@@ -159,7 +160,7 @@ public final class Gcm {
      */
     private static void storeRegistrationId(final Context context, final String regId) {
         final SharedPreferences prefs = getGcmPrefs(context);
-        Util.log("Saving regId on app version " + BuildConfig.VERSION_CODE);
+        Timber.d("Saving regId on app version %d", BuildConfig.VERSION_CODE);
         final SharedPreferences.Editor editor = prefs.edit();
         editor.putString(PROPERTY_REG_ID, regId);
         editor.putInt(PROPERTY_APP_VERSION, BuildConfig.VERSION_CODE);
@@ -175,8 +176,8 @@ public final class Gcm {
         editor.putBoolean(PROPERTY_ON_SERVER, flag);
         // set the flag's expiration date
         final long expirationTime = System.currentTimeMillis() + ON_SERVER_LIFESPAN_MS;
-        Util.log("Setting registeredOnServer status as " + flag + " until " +
-                new Timestamp(expirationTime));
+        Timber.d("Setting registeredOnServer status as %b until %s",
+                flag, new Timestamp(expirationTime));
         editor.putLong(PROPERTY_ON_SERVER_EXPIRATION_TIME, expirationTime);
         editor.apply();
     }
@@ -185,28 +186,28 @@ public final class Gcm {
      * Sends the registration ID to app server.
      */
     private static boolean sendRegistrationIdToBackend(final Context context, final String regId) {
-        Util.log("Device registered with GCM: regId = " + regId);
+        Timber.d("Device registered with GCM: regId = %s", regId);
 
         final String serverUrl = GAE.PROD_URL + "/register";
         long backoff = BACKOFF_MILLI_SECONDS;
 
         for (int i = 1; i <= MAX_ATTEMPTS; i++) {
-            Util.log("Attempt #" + i + " to register device on PTW server");
+            Timber.d("Attempt %d to register device on PTW server", i);
             try {
                 post(context, serverUrl, regId);
                 setRegisteredOnServer(context, true);
-                Util.log("Device successfully registered on PTW server");
+                Timber.i("Device successfully registered on PTW server");
                 return true;
             } catch (final IOException e) {
-                Util.log("Failed to register on attempt " + i + " with " + e);
+                Timber.e(e, "Failed to register on attempt %d", i);
                 if (i == MAX_ATTEMPTS) {
                     break;
                 }
                 try {
-                    Util.log("Sleeping for " + backoff + " ms before retry");
+                    Timber.d("Sleeping for %d ms before retry", backoff);
                     Thread.sleep(backoff);
                 } catch (final InterruptedException e1) {
-                    Util.log("Thread interrupted: abort remaining retries!");
+                    Timber.e("Thread interrupted: abort remaining retries!");
                     break;
                 }
                 // increase backoff exponentially
@@ -235,7 +236,7 @@ public final class Gcm {
             throw new IllegalArgumentException("invalid url: " + endpoint);
         }
         final String body = "regId=" + regId;
-        Util.log("Posting '" + body + "' to " + url);
+        Timber.d("Posting '%s' to %s", body, url);
         final byte[] bytes = body.getBytes();
         HttpURLConnection conn = null;
         try {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,8 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 
 import com.meiste.greg.ptw.TabFragmentAdapter.FragmentListener;
-import com.meiste.greg.ptw.Util;
+
+import timber.log.Timber;
 
 public abstract class TabFragment extends Fragment {
 
@@ -31,17 +32,17 @@ public abstract class TabFragment extends Fragment {
 
     protected void notifyChanged() {
         final String tab = this.getClass().getSimpleName();
-        Util.log("notifyChanged() called by " + tab);
+        Timber.d("notifyChanged() called by %s", tab);
 
         try {
             if (mFragmentListener != null)
                 mFragmentListener.onChangedFragment();
         } catch (final Exception e) {
-            Util.log(tab + ": Failed to notifyChanged! - " + e);
+            Timber.e(e, "%s: Failed to notifyChanged!", tab);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    Util.log(tab + ": Trying notifyChanged again...");
+                    Timber.d("%s: Trying notifyChanged again...", tab);
                     mFragmentListener.onChangedFragment();
                 }
             }, 1000);

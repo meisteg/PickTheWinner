@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,14 +23,12 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.text.format.DateUtils;
 import android.text.format.Time;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
@@ -40,18 +38,8 @@ public final class Util {
     private final static String PREFS_STATE = "state";
     private final static String PREFS_SETUP = "setup";
 
-    public static boolean LOGGING_ENABLED = BuildConfig.DEBUG;
-
     private Util() {
         throw new UnsupportedOperationException();
-    }
-
-    public static void log(final String msg) {
-        if (LOGGING_ENABLED) {
-            Crashlytics.log(Log.DEBUG, PTW.TAG, msg);
-        } else {
-            Crashlytics.log(msg);
-        }
     }
 
     public static SharedPreferences getState(final Context context) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2013-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.meiste.greg.ptw.R;
-import com.meiste.greg.ptw.Util;
+
+import timber.log.Timber;
 
 public class QuestionsConnectFail extends Fragment {
 
@@ -40,7 +41,7 @@ public class QuestionsConnectFail extends Fragment {
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
             final Bundle savedInstanceState) {
-        Util.log("QuestionsConnectFail: onCreateView");
+        Timber.v("onCreateView");
         final View v = inflater.inflate(R.layout.no_connection, container, false);
 
         final Button retry = (Button) v.findViewById(R.id.retry);

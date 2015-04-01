@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,8 @@ import android.view.MenuItem;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
 
+import timber.log.Timber;
+
 public class EditPreferences extends BaseActivity {
     public static final String KEY_ACCOUNT_EMAIL = "account.email";
     public static final String KEY_ACCOUNT_COOKIE = "account.cookie";
@@ -55,8 +57,6 @@ public class EditPreferences extends BaseActivity {
     private static final String KEY_ACCOUNT_SCREEN = "account_screen";
     private static final String KEY_REMINDER_SETTINGS = "reminder_settings_category";
     private static final String KEY_BUILD = "build";
-
-    private static final int TAPS_TO_ENABLE_LOGGING = 7;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -84,7 +84,6 @@ public class EditPreferences extends BaseActivity {
     public static class SettingsFragment extends PreferenceFragment implements
             OnSharedPreferenceChangeListener {
 
-        private int mLogHitCountdown;
         private Preference mVibrate;
         private Preference mLed;
         private Preference mAccount;
@@ -92,7 +91,7 @@ public class EditPreferences extends BaseActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            Util.log("SettingsFragment.onCreate");
+            Timber.v("onCreate");
 
             addPreferencesFromResource(R.xml.preferences);
 
@@ -102,7 +101,7 @@ public class EditPreferences extends BaseActivity {
 
             final Vibrator vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
             if (vibrator == null || !vibrator.hasVibrator()) {
-                Util.log("Remove vibrator option since vibrator not present");
+                Timber.i("Remove vibrator option since vibrator not present");
                 pc.removePreference(mVibrate);
                 mVibrate = null;
             }
@@ -111,12 +110,12 @@ public class EditPreferences extends BaseActivity {
                 final int intrusiveNotificationLedId = Resources.getSystem().getIdentifier(
                         "config_intrusiveNotificationLed", "bool", "android");
                 if (!getResources().getBoolean(intrusiveNotificationLedId)) {
-                    Util.log("Remove LED option since it is not intrusive");
+                    Timber.i("Remove LED option since it is not intrusive");
                     pc.removePreference(mLed);
                     mLed = null;
                 }
             } catch (final Resources.NotFoundException e) {
-                Util.log("Failed to check for intrusive notification LED");
+                Timber.w("Failed to check for intrusive notification LED");
             }
 
             mAccount = findPreference(KEY_ACCOUNT_SCREEN);
@@ -126,7 +125,7 @@ public class EditPreferences extends BaseActivity {
         @Override
         public void onResume() {
             super.onResume();
-            Util.log("SettingsFragment.onResume");
+            Timber.v("onResume");
 
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
             prefs.registerOnSharedPreferenceChangeListener(this);
@@ -134,14 +133,12 @@ public class EditPreferences extends BaseActivity {
             setRingtoneSummary(prefs);
 
             mAccount.setSummary(prefs.getString(KEY_ACCOUNT_EMAIL, getString(R.string.account_needed)));
-
-            mLogHitCountdown = TAPS_TO_ENABLE_LOGGING;
         }
 
         @Override
         public void onPause() {
             super.onPause();
-            Util.log("SettingsFragment.onPause");
+            Timber.v("onPause");
             PreferenceManager.getDefaultSharedPreferences(getActivity())
                     .unregisterOnSharedPreferenceChangeListener(this);
         }
@@ -149,7 +146,7 @@ public class EditPreferences extends BaseActivity {
         @Override
         public void onDestroy() {
             super.onDestroy();
-            Util.log("SettingsFragment.onDestroy");
+            Timber.v("onDestroy");
         }
 
         @Override
@@ -175,14 +172,14 @@ public class EditPreferences extends BaseActivity {
         }
 
         private void setRingtoneSummary(final SharedPreferences prefs) {
-            String tone = prefs.getString(KEY_NOTIFY_RINGTONE, PTW.DEFAULT_NOTIFY_SND);
-            Preference preference = findPreference(KEY_NOTIFY_RINGTONE);
+            final String tone = prefs.getString(KEY_NOTIFY_RINGTONE, PTW.DEFAULT_NOTIFY_SND);
+            final Preference preference = findPreference(KEY_NOTIFY_RINGTONE);
 
             if (TextUtils.isEmpty(tone)) {
                 // Empty values correspond to 'silent' (no ringtone).
                 preference.setSummary(R.string.ringtone_silent);
             } else {
-                Ringtone ringtone = RingtoneManager.getRingtone(
+                final Ringtone ringtone = RingtoneManager.getRingtone(
                         preference.getContext(), Uri.parse(tone));
 
                 if (ringtone == null) {
@@ -198,13 +195,7 @@ public class EditPreferences extends BaseActivity {
         @Override
         public boolean onPreferenceTreeClick(final PreferenceScreen preferenceScreen,
                                              @NonNull final Preference preference) {
-            if (preference.getKey().equals(KEY_BUILD) && (mLogHitCountdown > 0)) {
-                mLogHitCountdown--;
-                if ((mLogHitCountdown == 0) && !Util.LOGGING_ENABLED) {
-                    Util.LOGGING_ENABLED = true;
-                    Util.log("Debug logging is temporarily enabled");
-                }
-            } else if (preference instanceof CheckBoxPreference) {
+            if (preference instanceof CheckBoxPreference) {
                 final String setting = ((CheckBoxPreference)preference).isChecked() ? "enable" : "disable";
                 Analytics.trackEvent(getActivity(), "Preferences", preference.getKey(), setting);
             } else if (preference.getKey().equals(KEY_ACCOUNT_SCREEN)) {
@@ -217,13 +208,13 @@ public class EditPreferences extends BaseActivity {
                             .getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
                     for (Account account : accounts) {
                         if (account.name.equals(currAccount)) {
-                            Util.log("Defaulting to current account: " + currAccount);
+                            Timber.d("Defaulting to current account");
                             selAccount = account;
                             break;
                         }
                     }
                 }
-                Intent intent = AccountPicker.newChooseAccountIntent(selAccount, null,
+                final Intent intent = AccountPicker.newChooseAccountIntent(selAccount, null,
                         new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE},
                         true, null, "ah", null, null);
                 getActivity().startActivityForResult(intent, REQUEST_ACCOUNT_CODE);

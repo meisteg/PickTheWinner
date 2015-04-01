@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2014-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.meiste.greg.ptw.R;
-import com.meiste.greg.ptw.Util;
+
+import timber.log.Timber;
 
 public class QuestionsLate extends Fragment {
 
@@ -39,7 +40,7 @@ public class QuestionsLate extends Fragment {
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
             final Bundle savedInstanceState) {
-        Util.log("QuestionsLate: onCreateView");
+        Timber.v("onCreateView");
         return inflater.inflate(R.layout.questions_late, container, false);
     }
 }

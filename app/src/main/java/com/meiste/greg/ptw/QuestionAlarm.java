@@ -33,6 +33,8 @@ import android.support.v4.app.NotificationCompat;
 import com.google.android.gms.tagmanager.Container;
 import com.meiste.greg.ptw.GtmHelper.OnContainerAvailableListener;
 
+import timber.log.Timber;
+
 public final class QuestionAlarm extends IntentService implements OnContainerAvailableListener {
 
     private static final String LAST_REMIND = "question_last_remind";
@@ -64,7 +66,7 @@ public final class QuestionAlarm extends IntentService implements OnContainerAva
         }
 
         if (!alarm_set) {
-            Util.log("Setting question alarm for race " + race.getId());
+            Timber.d("Setting question alarm for race %d", race.getId());
 
             final AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
             final Intent intent = new Intent(context, QuestionAlarm.class);
@@ -80,7 +82,7 @@ public final class QuestionAlarm extends IntentService implements OnContainerAva
 
             alarm_set = true;
         } else {
-            Util.log("Not setting question alarm: alarm_set=true");
+            Timber.v("Not setting question alarm: alarm_set=true");
         }
     }
 
@@ -94,7 +96,7 @@ public final class QuestionAlarm extends IntentService implements OnContainerAva
     protected void onHandleIntent(final Intent intent) {
         alarm_set = false;
         final Race race = Race.getInstance(this, intent.getIntExtra(RACE_ID, 0));
-        Util.log("Received question alarm for race " + race.getId());
+        Timber.d("Received question alarm for race %d", race.getId());
 
         synchronized (mSync) {
             if (mContainer == null) {
@@ -137,7 +139,7 @@ public final class QuestionAlarm extends IntentService implements OnContainerAva
 
             getNM(this).notify(R.string.remind_questions_ticker, b.build());
         } else {
-            Util.log("Ignoring question alarm since option is disabled");
+            Timber.v("Ignoring question alarm since option is disabled");
         }
 
         // Remember that user was reminded of this race

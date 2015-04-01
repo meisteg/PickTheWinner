@@ -43,9 +43,10 @@ import com.meiste.greg.ptw.PlayerAdapter;
 import com.meiste.greg.ptw.PlayerHistory;
 import com.meiste.greg.ptw.R;
 import com.meiste.greg.ptw.Races;
-import com.meiste.greg.ptw.Util;
 import com.meiste.greg.ptw.tab.RuleBook;
 import com.meiste.greg.ptw.tab.Standings;
+
+import timber.log.Timber;
 
 public class GcmIntentService extends IntentService implements OnContainerAvailableListener {
 
@@ -97,15 +98,15 @@ public class GcmIntentService extends IntentService implements OnContainerAvaila
              */
             switch (messageType) {
                 case GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR:
-                    Util.log("GCM send error: " + extras.toString());
+                    Timber.d("GCM send error: %s", extras.toString());
                     break;
                 case GoogleCloudMessaging.MESSAGE_TYPE_DELETED:
-                    Util.log("GCM deleted messages on server: " + extras.toString());
+                    Timber.d("GCM deleted messages on server: %s", extras.toString());
                     break;
                 case GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE:
                     if (intent.hasExtra(MSG_KEY)) {
                         final String message = intent.getStringExtra(MSG_KEY);
-                        Util.log("Received " + message + " message from GCM");
+                        Timber.d("Received %s message from GCM", message);
 
                         switch (message) {
                             case MSG_KEY_SYNC:
@@ -119,7 +120,7 @@ public class GcmIntentService extends IntentService implements OnContainerAvaila
                                 getFromServer("rule_book", rulesListener, false);
                                 break;
                             default:
-                                Util.log("Message type unknown. Ignoring...");
+                                Timber.w("Message type unknown. Ignoring...");
                                 break;
                         }
                     }
@@ -145,11 +146,11 @@ public class GcmIntentService extends IntentService implements OnContainerAvaila
 
         for (int i = 1; i <= MAX_ATTEMPTS; i++) {
             if (accountRequired && GAE.isAccountSetupNeeded(this)) {
-                Util.log("Skipping " + page + " sync since account not setup");
+                Timber.d("Skipping %s sync since account not setup", page);
                 break;
             }
 
-            Util.log("Attempt #" + i + " to get " + page + " from PTW server");
+            Timber.d("Attempt %d to get %s from PTW server", i, page);
             synchronized (mSync) {
                 GAE.getInstance(getApplicationContext()).getPage(l, page);
                 try {
@@ -162,7 +163,7 @@ public class GcmIntentService extends IntentService implements OnContainerAvaila
             if (mGaeSuccess || (i == MAX_ATTEMPTS))
                 break;
             try {
-                Util.log("Sleeping for " + backoff + " ms before retry");
+                Timber.d("Sleeping for %d ms before retry", backoff);
                 Thread.sleep(backoff);
             } catch (final InterruptedException e) {
                 // Continue anyway
@@ -176,7 +177,7 @@ public class GcmIntentService extends IntentService implements OnContainerAvaila
     private final GcmGaeListener scheduleListener = new GcmGaeListener() {
         @Override
         public void onGet(final Context context, final String json) {
-            Util.log("scheduleListener: onGet");
+            Timber.d("scheduleListener: onGet");
 
             if (Races.update(context, json)) {
                 super.onGet(context, json);
@@ -189,7 +190,7 @@ public class GcmIntentService extends IntentService implements OnContainerAvaila
     private final GcmGaeListener standingsListener = new GcmGaeListener() {
         @Override
         public void onGet(final Context context, final String json) {
-            Util.log("standingsListener: onGet");
+            Timber.d("standingsListener: onGet");
 
             final PlayerAdapter pAdapter = new PlayerAdapter(getApplicationContext());
             final int beforeUpdate = pAdapter.getRaceAfterNum();
@@ -201,7 +202,7 @@ public class GcmIntentService extends IntentService implements OnContainerAvaila
             final int afterUpdate = pAdapter.getRaceAfterNum();
 
             if ((beforeUpdate != afterUpdate) && (afterUpdate > 0)) {
-                Util.log("Notifying user of standings update");
+                Timber.d("Notifying user of standings update");
                 showResultsNotification(context, pAdapter.getRaceAfterName());
             }
 
@@ -212,7 +213,7 @@ public class GcmIntentService extends IntentService implements OnContainerAvaila
     private final GcmGaeListener historyListener = new GcmGaeListener() {
         @Override
         public void onGet(final Context context, final String json) {
-            Util.log("historyListener: onGet");
+            Timber.d("historyListener: onGet");
 
             PlayerHistory.fromJson(json).commit(context);
             sendBroadcast(new Intent(PTW.INTENT_ACTION_HISTORY));
@@ -224,7 +225,7 @@ public class GcmIntentService extends IntentService implements OnContainerAvaila
     private final GcmGaeListener rulesListener = new GcmGaeListener() {
         @Override
         public void onGet(final Context context, final String json) {
-            Util.log("rulesListener: onGet");
+            Timber.d("rulesListener: onGet");
 
             RuleBook.update(context, json);
             super.onGet(context, json);
@@ -242,7 +243,7 @@ public class GcmIntentService extends IntentService implements OnContainerAvaila
 
         @Override
         public void onFailedConnect(final Context context) {
-            Util.log("GcmGaeListener: onFailedConnect");
+            Timber.e("GcmGaeListener: onFailedConnect");
             synchronized (mSync) {
                 mGaeSuccess = false;
                 mSync.notify();

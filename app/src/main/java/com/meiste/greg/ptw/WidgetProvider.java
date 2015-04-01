@@ -35,6 +35,8 @@ import com.meiste.greg.ptw.GtmHelper.OnContainerAvailableListener;
 import com.meiste.greg.ptw.tab.Questions;
 import com.squareup.picasso.Picasso;
 
+import timber.log.Timber;
+
 public class WidgetProvider extends AppWidgetProvider implements OnContainerAvailableListener {
 
     private static final long UPDATE_INTERVAL = DateUtils.MINUTE_IN_MILLIS;
@@ -54,17 +56,17 @@ public class WidgetProvider extends AppWidgetProvider implements OnContainerAvai
         if (intent.hasExtra(Intent.EXTRA_ALARM_COUNT)) {
             onUpdate(context, appWM, appWidgetIds);
         } else if (intent.getAction().equals(Intent.ACTION_TIME_CHANGED)) {
-            Util.log("WidgetProvider.onReceive: Time change");
+            Timber.d("onReceive: Time change");
             setAlarm(context);
         } else if (intent.getAction().equals(PTW.INTENT_ACTION_SCHEDULE)) {
-            Util.log("WidgetProvider.onReceive: Schedule Updated");
+            Timber.d("onReceive: Schedule Updated");
             if (appWidgetIds.length > 0) {
                 /* Force full widget update */
                 Util.getState(context).edit().putInt(WIDGET_STATE_RACE, -1).apply();
                 onUpdate(context, appWM, appWidgetIds);
             }
         } else if (intent.getAction().equals(PTW.INTENT_ACTION_ANSWERS)) {
-            Util.log("WidgetProvider.onReceive: Answers submitted");
+            Timber.d("onReceive: Answers submitted");
             if (appWidgetIds.length > 0) {
                 onUpdate(context, appWM, appWidgetIds);
             }
@@ -76,7 +78,7 @@ public class WidgetProvider extends AppWidgetProvider implements OnContainerAvai
     @Override
     public void onEnabled(final Context context) {
         final boolean prevEnabled = Util.getState(context).getBoolean(WIDGET_STATE, false);
-        Util.log("WidgetProvider.onEnabled: prevEnabled=" + prevEnabled);
+        Timber.d("onEnabled: prevEnabled=" + prevEnabled);
 
         /* onEnabled gets called on device power up, so prevent extra enables
          * from being tracked. */
@@ -88,7 +90,7 @@ public class WidgetProvider extends AppWidgetProvider implements OnContainerAvai
 
     @Override
     public void onUpdate(final Context context, final AppWidgetManager appWM, final int[] appWidgetIds) {
-        Util.log("WidgetProvider.onUpdate: num=" + appWidgetIds.length);
+        Timber.d("onUpdate: num=" + appWidgetIds.length);
         GtmHelper.getInstance(context).getContainer(this);
 
         /* Set alarm to update widget when device is awake. */
@@ -97,7 +99,7 @@ public class WidgetProvider extends AppWidgetProvider implements OnContainerAvai
 
     @Override
     public void onDisabled(final Context context) {
-        Util.log("WidgetProvider.onDisabled");
+        Timber.d("onDisabled");
 
         final AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         am.cancel(getAlarmIntent(context));

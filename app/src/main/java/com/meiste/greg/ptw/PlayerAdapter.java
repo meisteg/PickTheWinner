@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,8 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.meiste.greg.ptw.tab.Standings;
+
+import timber.log.Timber;
 
 public final class PlayerAdapter extends ArrayAdapter<Player> {
     private class _Standings {
@@ -67,7 +69,7 @@ public final class PlayerAdapter extends ArrayAdapter<Player> {
             mStandings = new Gson().fromJson(buffer.toString(), _Standings.class);
             addSelf();
         } catch (final Exception e) {
-            Util.log("Standings file not found");
+            Timber.e(e, "Standings file not found");
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import android.content.SharedPreferences.Editor;
 import com.google.gson.Gson;
 import com.meiste.greg.ptw.tab.Questions;
 
+import timber.log.Timber;
+
 public final class PlayerHistory {
     private List<Integer> ids;
     private List<RaceQuestions> questions;
@@ -42,7 +44,7 @@ public final class PlayerHistory {
         if (ids.size() <= 0)
             return;
 
-        Util.log("PlayerHistory: Restoring " + ids.size() + " races for player.");
+        Timber.d("Restoring %d races for player", ids.size());
 
         final SharedPreferences qcache = context.getSharedPreferences(Questions.QCACHE, Activity.MODE_PRIVATE);
         final SharedPreferences acache = context.getSharedPreferences(Questions.ACACHE, Activity.MODE_PRIVATE);

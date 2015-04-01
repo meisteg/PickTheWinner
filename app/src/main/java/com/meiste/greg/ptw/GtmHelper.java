@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2014-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,8 @@ import com.google.android.gms.tagmanager.Container.FunctionCallMacroCallback;
 import com.google.android.gms.tagmanager.ContainerHolder;
 import com.google.android.gms.tagmanager.TagManager;
 
+import timber.log.Timber;
+
 public class GtmHelper implements ResultCallback<ContainerHolder>, ContainerHolder.ContainerAvailableListener,
 FunctionCallMacroCallback {
 
@@ -48,7 +50,7 @@ FunctionCallMacroCallback {
 
     private final Context mContext;
     private final TagManager mTagManager;
-    private final List<OnContainerAvailableListener> mListeners = new ArrayList<OnContainerAvailableListener>();
+    private final List<OnContainerAvailableListener> mListeners = new ArrayList<>();
     private ContainerHolder mContainerHolder;
 
     public interface OnContainerAvailableListener {
@@ -81,12 +83,12 @@ FunctionCallMacroCallback {
     @Override
     public synchronized void onResult(final ContainerHolder containerHolder) {
         if (!containerHolder.getStatus().isSuccess()) {
-            Util.log("Failure loading container. Trying again.");
+            Timber.e("Failure loading container. Trying again.");
             loadContainer();
             return;
         }
 
-        Util.log("Container loaded successfully");
+        Timber.d("Container loaded successfully");
         mContainerHolder = containerHolder;
 
         mTagManager.getDataLayer().push(KEY_SCREEN_LAYOUT,
@@ -103,9 +105,10 @@ FunctionCallMacroCallback {
     }
 
     @Override
-    public void onContainerAvailable(final ContainerHolder containerHolder, final String containerVersion) {
+    public void onContainerAvailable(final ContainerHolder containerHolder,
+                                     final String containerVersion) {
         // Components will get the new container on next call to getContainer()
-        Util.log("New container available: version=" + containerVersion);
+        Timber.d("New container available: version=%s", containerVersion);
         setCallbackFunctions();
     }
 

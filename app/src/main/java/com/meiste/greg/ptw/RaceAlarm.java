@@ -35,6 +35,8 @@ import com.google.android.gms.tagmanager.Container;
 import com.meiste.greg.ptw.GtmHelper.OnContainerAvailableListener;
 import com.meiste.greg.ptw.tab.Questions;
 
+import timber.log.Timber;
+
 public final class RaceAlarm extends IntentService implements OnContainerAvailableListener {
 
     private static final String RACE_ID = "race_id";
@@ -57,7 +59,7 @@ public final class RaceAlarm extends IntentService implements OnContainerAvailab
         final Race race = Race.getNext(context, true, true);
 
         if (!alarm_set && (race != null)) {
-            Util.log("Setting race alarm for race " + race.getId());
+            Timber.d("Setting race alarm for race %d", race.getId());
 
             final AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
             final Intent intent = new Intent(context, RaceAlarm.class);
@@ -73,7 +75,7 @@ public final class RaceAlarm extends IntentService implements OnContainerAvailab
 
             alarm_set = true;
         } else {
-            Util.log("Not setting race alarm: alarm_set=" + alarm_set);
+            Timber.v("Not setting race alarm: alarm_set=%b", alarm_set);
         }
     }
 
@@ -92,7 +94,7 @@ public final class RaceAlarm extends IntentService implements OnContainerAvailab
     protected void onHandleIntent(final Intent intent) {
         alarm_set = false;
         final Race race = Race.getInstance(this, intent.getIntExtra(RACE_ID, 0));
-        Util.log("Received race alarm for race " + race.getId());
+        Timber.d("Received race alarm for race %d", race.getId());
 
         synchronized (mSync) {
             if (mContainer == null) {
@@ -147,7 +149,7 @@ public final class RaceAlarm extends IntentService implements OnContainerAvailab
 
             getNM(this).notify(R.string.remind_race_ticker, b.build());
         } else {
-            Util.log("Ignoring race alarm since option is disabled");
+            Timber.v("Ignoring race alarm since option is disabled");
         }
 
         // Reset alarm for the next race

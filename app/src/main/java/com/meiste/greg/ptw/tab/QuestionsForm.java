@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2013-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,8 @@ import com.meiste.greg.ptw.Driver;
 import com.meiste.greg.ptw.DriverAdapter;
 import com.meiste.greg.ptw.R;
 import com.meiste.greg.ptw.RaceQuestions;
-import com.meiste.greg.ptw.Util;
+
+import timber.log.Timber;
 
 public class QuestionsForm extends Fragment implements View.OnClickListener {
 
@@ -80,7 +81,7 @@ public class QuestionsForm extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
             final Bundle savedInstanceState) {
-        Util.log("QuestionsForm: onCreateView");
+        Timber.v("onCreateView");
 
         final String json = getArguments().getString(RACE_QUESTIONS);
         if (json == null) {
@@ -185,7 +186,7 @@ public class QuestionsForm extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(final View v) {
         if (ActivityManager.isUserAMonkey()) {
-            Util.log("QuestionsForm: onClick: User is a monkey!");
+            Timber.v("onClick: User is a monkey!");
             return;
         }
         final Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();

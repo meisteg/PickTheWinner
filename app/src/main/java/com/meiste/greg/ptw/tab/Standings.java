@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Gregory S. Meiste  <http://gregmeiste.com>
+ * Copyright (C) 2012-2015 Gregory S. Meiste  <http://gregmeiste.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,6 +57,8 @@ import com.meiste.greg.ptw.dialog.FriendPlayerDialog;
 import com.meiste.greg.ptw.dialog.PrivacyDialog;
 import com.meiste.greg.ptw.gcm.Gcm;
 import com.meiste.greg.ptw.gcm.GcmIntentService;
+
+import timber.log.Timber;
 
 public final class Standings extends TabFragment implements OnRefreshListener, GaeListener, DialogInterface.OnClickListener {
     public static final String FILENAME = "standings";
@@ -134,13 +136,13 @@ public final class Standings extends TabFragment implements OnRefreshListener, G
             public void onItemClick(final AdapterView<?> parent, final View v, final int pos, final long id) {
                 final Player player = (Player) parent.getItemAtPosition(pos);
                 if (mAdapter.isSelf(player)) {
-                    Util.log("Opening privacy dialog");
+                    Timber.v("Opening privacy dialog");
                     if (mPrivacyDialog == null) {
                         mPrivacyDialog = new PrivacyDialog(getActivity(), Standings.this);
                     }
                     mPrivacyDialog.show(mAdapter.getPlayerName());
                 } else {
-                    Util.log("Opening friend action dialog");
+                    Timber.v("Opening friend action dialog");
                     if (mFriendActionDialog == null) {
                         mFriendActionDialog = new FriendActionDialog(getActivity(), Standings.this);
                     }
@@ -157,14 +159,14 @@ public final class Standings extends TabFragment implements OnRefreshListener, G
                         (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) &&
                         mAdapter.getPlayer().isIdentifiable() &&
                         Gcm.isRegistered(getActivity())) {
-                    Util.log("NFC available. Need to ask user add method.");
+                    Timber.d("NFC available. Need to ask user add method.");
                     if (mFriendMethodDialog == null) {
                         mFriendMethodDialog = new FriendMethodDialog(getActivity(), Standings.this);
                     }
                     mFriendMethodDialog.reset();
                     mFriendMethodDialog.show();
                 } else {
-                    Util.log("NFC not available. Adding friend via username.");
+                    Timber.d("NFC not available. Adding friend via username.");
                     showFriendPlayerDialog();
                 }
             }
@@ -187,7 +189,7 @@ public final class Standings extends TabFragment implements OnRefreshListener, G
 
         if ((mSetupNeeded != GAE.isAccountSetupNeeded(getActivity())) ||
                 (mAccountSetupTime != Util.getAccountSetupTime(getActivity()))) {
-            Util.log("Standings: onResume: notifyChanged");
+            Timber.d("onResume: notifyChanged");
             notifyChanged();
         }
         if (mPrivacyDialog != null) {
@@ -264,7 +266,7 @@ public final class Standings extends TabFragment implements OnRefreshListener, G
         @Override
         public void onReceive(final Context context, final Intent intent) {
             if (intent.getAction().equals(PTW.INTENT_ACTION_STANDINGS)) {
-                Util.log("Standings.onReceive: Standings Updated");
+                Timber.d("onReceive: Standings Updated");
                 if (mAdapter != null) {
                     mAdapter.notifyDataSetChanged();
                     mAfterRace.setText(getRaceAfterText(context));
@@ -276,7 +278,7 @@ public final class Standings extends TabFragment implements OnRefreshListener, G
 
     @Override
     public void onFailedConnect(final Context context) {
-        Util.log("Standings: onFailedConnect");
+        Timber.e("onFailedConnect");
 
         // mConnecting not set for pull to refresh case
         if (!mConnecting) {
@@ -294,7 +296,7 @@ public final class Standings extends TabFragment implements OnRefreshListener, G
 
     @Override
     public void onGet(final Context context, final String json) {
-        Util.log("Standings: onGet");
+        Timber.d("onGet");
         update(context, json);
 
         // mConnecting not set for pull to refresh case
@@ -316,7 +318,7 @@ public final class Standings extends TabFragment implements OnRefreshListener, G
 
     @Override
     public void onConnectSuccess(final Context context, final String json) {
-        Util.log("Standings: onConnectSuccess");
+        Timber.d("onConnectSuccess");
 
         mCheckName = true;
         onGet(context, json);
@@ -330,7 +332,7 @@ public final class Standings extends TabFragment implements OnRefreshListener, G
         }
 
         if (ActivityManager.isUserAMonkey()) {
-            Util.log("Standings: onClick: User is a monkey!");
+            Timber.v("onClick: User is a monkey!");
             return;
         }
 
@@ -340,14 +342,14 @@ public final class Standings extends TabFragment implements OnRefreshListener, G
             notifyChanged();
             GAE.getInstance(getActivity()).postPage(this, "standings", json);
         } else if (dialog == mFriendActionDialog) {
-            Util.log("Toggling " + mFriendActionDialog.getPlayer().getName() + " friend status");
+            Timber.d("Toggling %s friend status", mFriendActionDialog.getPlayer().getName());
             final FriendRequest fReq = new FriendRequest(mFriendActionDialog.getPlayer());
             fReq.player.friend = !fReq.player.friend;
             mConnecting = mChanged = true;
             notifyChanged();
             GAE.getInstance(getActivity()).postPage(mFriendListener, "friend", fReq.toJson());
         } else if (dialog == mFriendPlayerDialog) {
-            Util.log("Requesting to add " + mFriendPlayerDialog.getPlayerName() + " as friend");
+            Timber.d("Requesting to add %s as friend", mFriendPlayerDialog.getPlayerName());
             final FriendRequest fReq = new FriendRequest(new Player());
             fReq.player.name = mFriendPlayerDialog.getPlayerName();
             fReq.player.friend = true;
@@ -357,11 +359,11 @@ public final class Standings extends TabFragment implements OnRefreshListener, G
         } else if (dialog == mFriendMethodDialog) {
             switch (mFriendMethodDialog.getSelectedMethod()) {
             case FriendMethodDialog.METHOD_MANUAL:
-                Util.log("Adding friend via username");
+                Timber.d("Adding friend via username");
                 showFriendPlayerDialog();
                 break;
             case FriendMethodDialog.METHOD_NFC:
-                Util.log("Adding friend using NFC");
+                Timber.d("Adding friend using NFC");
                 final FriendRequest fReq = new FriendRequest(mAdapter.getPlayer(),
                         Gcm.getRegistrationId(getActivity().getApplicationContext()));
                 final Intent intent = new Intent(getActivity(), NfcSendActivity.class);
@@ -389,7 +391,7 @@ public final class Standings extends TabFragment implements OnRefreshListener, G
 
         @Override
         public void onFailedConnect(final Context context) {
-            Util.log("Standings: mFriendListener: onFailedConnect");
+            Timber.e("mFriendListener: onFailedConnect");
             mConnecting = false;
             mChanged = true;
             Toast.makeText(context, R.string.friend_fail_generic, Toast.LENGTH_LONG).show();
@@ -416,7 +418,7 @@ public final class Standings extends TabFragment implements OnRefreshListener, G
             fos.write(json.getBytes());
             fos.close();
         } catch (final Exception e) {
-            Util.log("Failed to save new standings");
+            Timber.e(e, "Failed to save new standings");
         }
     }
 }
