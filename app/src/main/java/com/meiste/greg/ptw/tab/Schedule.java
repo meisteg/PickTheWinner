@@ -31,18 +31,19 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.meiste.greg.ptw.BuildConfig;
-import com.meiste.greg.ptw.GAE;
-import com.meiste.greg.ptw.GAE.GaeListener;
 import com.meiste.greg.ptw.PTW;
 import com.meiste.greg.ptw.R;
 import com.meiste.greg.ptw.Race;
 import com.meiste.greg.ptw.RaceActivity;
 import com.meiste.greg.ptw.RaceItemAdapter;
 import com.meiste.greg.ptw.Races;
+import com.meiste.greg.ptw.backend.Backend;
+import com.meiste.greg.ptw.backend.ResultGet;
+import com.meiste.greg.ptw.backend.ResultCallback;
 
 import timber.log.Timber;
 
-public final class Schedule extends TabFragment implements OnRefreshListener, GaeListener  {
+public final class Schedule extends TabFragment implements OnRefreshListener, ResultCallback<ResultGet> {
 
     private SwipeRefreshLayout mSwipeRefreshWidget;
     private RaceItemAdapter mAdapter;
@@ -102,28 +103,8 @@ public final class Schedule extends TabFragment implements OnRefreshListener, Ga
         // Prevent multiple refresh attempts
         mSwipeRefreshWidget.setEnabled(false);
 
-        GAE.getInstance(getActivity()).getPage(this, "schedule");
+        Backend.getInstance(getActivity()).getPage("schedule").setResultCallback(this);
     }
-
-    @Override
-    public void onFailedConnect(final Context context) {
-        mSwipeRefreshWidget.setRefreshing(false);
-        mSwipeRefreshWidget.setEnabled(BuildConfig.DEBUG);
-        Toast.makeText(context, R.string.failed_connect, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onGet(final Context context, final String json) {
-        Races.update(context, json);
-        mSwipeRefreshWidget.setRefreshing(false);
-        mSwipeRefreshWidget.setEnabled(BuildConfig.DEBUG);
-    }
-
-    @Override
-    public void onLaunchIntent(final Intent launch) {}
-
-    @Override
-    public void onConnectSuccess(final Context context, final String json) {}
 
     private final BroadcastReceiver mScheduleUpdateReceiver = new BroadcastReceiver() {
         @Override
@@ -134,4 +115,19 @@ public final class Schedule extends TabFragment implements OnRefreshListener, Ga
             }
         }
     };
+
+    @Override
+    public void onResult(final ResultGet result) {
+        Timber.v("onResult");
+        if (getActivity() != null) {
+            if (result.isSuccess()) {
+                Races.update(getActivity(), result.getJson());
+            } else {
+                Toast.makeText(getActivity(), R.string.failed_connect, Toast.LENGTH_SHORT).show();
+            }
+
+            mSwipeRefreshWidget.setRefreshing(false);
+            mSwipeRefreshWidget.setEnabled(BuildConfig.DEBUG);
+        }
+    }
 }
